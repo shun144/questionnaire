@@ -1,5 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
+
+
 import React, { useCallback } from 'react';
 import {
     ReactFlow,
@@ -16,10 +18,10 @@ import {
     // Panel
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import TextUpdaterNode from './TextUpdaterNode';
-import { getInfoFromSchema } from './SchemaVisualizer/utils';
-import { schema } from './SchemaVisualizer/constants';
-import ModelNode from './SchemaVisualizer/ModelNode';
+import { getInfoFromSchema } from './utils';
+import { schema } from './constants';
+import ModelNode from './ModelNode';
+
 
 // const initialNodes = [
 //     { id: '1', position: { x: 0, y: 0 }, data: { label: '1' }, type: 'input' },
