@@ -1,0 +1,1 @@
+import{r,j as t}from"./app-BZJsT1XC.js";import{H as e,P as s}from"./index-DddH6ykK.js";const n=()=>{const o=r.useCallback(()=>{},[]);return t.jsxs(t.Fragment,{children:[t.jsx(e,{type:"target",position:s.Left,id:"a"}),t.jsx("div",{children:t.jsx("input",{id:"text",name:"text",onChange:o})}),t.jsx(e,{type:"source",position:s.Right})]})};export{n as default};
