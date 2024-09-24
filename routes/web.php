@@ -23,9 +23,8 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('/dashboard', function () {
-    return Inertia::render('Quize/Board');
-})->middleware(['auth', 'verified'])->name('quize.board');
-
+    return Inertia::render('Quize/BoardLayout');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
 
 
