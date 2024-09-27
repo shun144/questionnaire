@@ -1,4 +1,4 @@
-/* :root {
+:root {
   --triangle-width: 9px;
   --triangle-height: calc(var(--triangle-width) / 1.5)
 }
@@ -35,4 +35,4 @@
 .react-flow__handle-right:hover::before,
 .react-flow__handle-left:hover::before {
   border-left: calc(var(--triangle-width)/1.5) solid #c9df37;
-} */
+}

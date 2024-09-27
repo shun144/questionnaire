@@ -15,7 +15,6 @@ import {
   useNodesState,
   useEdgesState,
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import QuizeNode from './QuizeNode';
 import ResultNode from './ResultNode';
 import { DndContext, DragOverlay, DragEndEvent } from "@dnd-kit/core";

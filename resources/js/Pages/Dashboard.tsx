@@ -15,7 +15,6 @@ import {
     Edge,
     // Panel
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import TextUpdaterNode from './TextUpdaterNode';
 import { getInfoFromSchema } from './SchemaVisualizer/utils';
 import { schema } from './SchemaVisualizer/constants';

@@ -17,7 +17,6 @@ import {
     Edge,
     // Panel
 } from '@xyflow/react';
-import '@xyflow/react/dist/style.css';
 import { getInfoFromSchema } from './utils';
 import { schema } from './constants';
 import ModelNode from './ModelNode';

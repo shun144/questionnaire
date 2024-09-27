@@ -6,7 +6,7 @@ import {
   useHandleConnections,
 } from '@xyflow/react';
 
-import './index.css'
+// import './index.css'
 
 
 export type ChoiceSourceHandleProps = {
