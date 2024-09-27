@@ -12,13 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('quizes', function (Blueprint $table) {
-            // $table->id();
             $table->string('quize_no',15)->primary();
             $table->string('topic')->nullable();
-            // 総桁9の小数点以下5桁以内
-            $table->float('x', 9, 5)->nullable();
-            // 総桁9の小数点以下5桁以内
-            $table->float('y', 9, 5)->nullable();
+            $table->float('x', 9, 5)->nullable();   // 総桁9の小数点以下5桁以内
+            $table->float('y', 9, 5)->nullable();   // 総桁9の小数点以下5桁以内
             $table->timestamps();
         });
     }

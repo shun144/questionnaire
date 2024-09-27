@@ -9,7 +9,7 @@ class Quize extends Model
 {
     use HasFactory;
 
-    // 主キーカラム名を指定
+    // 主キーカラムを指定
     protected $primaryKey = 'quize_no';
 
     // オートインクリメント無効化
@@ -18,8 +18,8 @@ class Quize extends Model
     // Laravel 6.0+以降なら主キーの型を指定
     protected $keyType = 'string';
 
-    // public function choice()
-    // {
-    //     return $this->hasOne(Status::class, 'post_number');
-    // }
+    public function choices()
+    {
+        return $this->hasMany(Choice::class);
+    }
 }

@@ -1,58 +1,41 @@
-import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEvent } from 'react'
-import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, } from '@xyflow/react';
+import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEvent, useEffect } from 'react'
+import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, NodeTypes, } from '@xyflow/react';
 import { QuizeNodeType } from './types';
 import ChoiceSourceHandle from './ChoiceSourceHandleProps';
 import { getNewChoiceNo, getNewId } from './utils';
 
-const QuizeNode = ({ id: nodeId, data: nodeData, selected }: NodeProps<Node<QuizeNodeType>>) => {
+const QuizeNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuizeNodeType>>) => {
 
-  const { setNodes, setEdges, getEdges } = useReactFlow();
-  // const nodes = useNodes();
-
+  const { setEdges, updateNodeData, deleteElements } = useReactFlow();
   /**
    * 質問内容の更新
    * @param evt 
    */
   const onUpdateTopic = (evt: ChangeEvent<HTMLInputElement>) => {
-    const inputValue = evt.currentTarget.value;
-    setNodes((nds) =>
-      nds.map((nd) => {
-        if (nd.id === nodeId) {
-          return {
-            ...nd,
-            data: {
-              ...nd.data,
-              topic: inputValue
-            }
-          };
-        }
-        return nd;
-      })
-    );
+    updateNodeData(
+      nodeId, {
+      ...nodeData,
+      topic: evt.currentTarget.value
+    });
   }
+
+  /**
+   * 選択肢追加
+   */
 
   const onAddChoice = () => {
     const newChoiceNo = getNewChoiceNo(nodeData.choices, `${nodeId}-`);
-    setNodes((nds) =>
-      nds.map((nd) => {
-        if (nd.id === nodeId) {
-          return {
-            ...nd,
-            data: {
-              ...nd.data,
-              choices: [
-                ...(nd.data as QuizeNodeType).choices,
-                {
-                  choiceNo: newChoiceNo,
-                  content: ""
-                }
-              ]
-            }
-          };
+    updateNodeData(
+      nodeId, {
+      ...nodeData,
+      choices: [
+        ...nodeData.choices,
+        {
+          choiceNo: newChoiceNo,
+          content: ""
         }
-        return nd;
-      })
-    );
+      ]
+    });
   }
 
   /**
@@ -61,114 +44,54 @@ const QuizeNode = ({ id: nodeId, data: nodeData, selected }: NodeProps<Node<Quiz
    * @param choiceId 
    */
   const onUpdateChoice = (evt: ChangeEvent<HTMLInputElement>, choiceNo: string) => {
-    const inputValue = evt.currentTarget.value;
 
-    setNodes((nds) =>
-      nds.map((nd) => {
-        if (nd.id === nodeId) {
+    // 選択肢は最低6つ
+    if (nodeData.choices.length >= 6) return
+
+    updateNodeData(
+      nodeId, {
+      ...nodeData,
+      choices: nodeData.choices.map(choice => {
+        if (choice.choiceNo === choiceNo) {
           return {
-            ...nd,
-            data: {
-              ...nd.data,
-              choices: (nd.data as QuizeNodeType).choices.map(c => {
-                if (c.choiceNo === choiceNo) {
-                  return {
-                    ...c,
-                    content: inputValue
-                  }
-                }
-                return c;
-              })
-            }
-          };
+            choiceNo,
+            content: evt.currentTarget.value
+          }
+        } else {
+          return choice;
         }
-        return nd;
       })
-    );
-  }
+    });
+  };
 
+
+  /**
+   * 選択肢削除
+   * @param choiceNo 選択肢No 
+   * @returns 
+   */
   const onDeleteChoice = (choiceNo: string) => {
+
+    // 選択肢は最低1つ
     if (nodeData.choices.length <= 1) return
 
-    // setNodes((nds) =>
-    //   nds.map((nd) => {
-    //     if (nd.id === nodeId) {
-    //       return {
-    //         ...nd,
-    //         data: {
-    //           ...nd.data,
-    //           choices: (nd.data as QuizeNodeType).choices.filter(c => c.choiceNo != choiceNo)
-    //         }
-    //       };
-    //     }
-    //     return nd;
-    //   })
-    // );
-
-    setNodes((nds) => {
-      return [
-        ...nds,
-        {
-          id: nodeData.quizeNo,
-          position: {
-            x: nodeData.x,
-            y: nodeData.y,
-          },
-          data: {
-            ...nodeData,
-            choices: nodeData.choices.filter(c => c.choiceNo != choiceNo)
-          },
-          type: "quizeNode"
-        }
-        // {
-        //   id: nodeData.quizeNo,
-        //   position: {
-        //     x: nodeData.x,
-        //     y: nodeData.y,
-        //   },
-        //   data: {
-        //     x: nodeData.x,
-        //     y: nodeData.y,
-        //     topic: nodeData.topic,
-        //     choices: []
-        //   }
-        // }
-      ];
+    updateNodeData(
+      nodeId, {
+      ...nodeData,
+      choices: nodeData.choices.filter(c => c.choiceNo != choiceNo)
     });
 
-    // const aaa = getEdges();
-    // console.log(aaa)
-
-    // setEdges((eds) => {
-
-    // })
+    // 選択肢のコネクション削除
+    setEdges((eds) => eds.filter(ed => ed.sourceHandle != choiceNo))
   }
 
-
-
-  // const onDeleteChoice = (choiceNo: string) => {
-  //   if (nodeData.choices.length <= 1) return
-  //   setNodes((nds) =>
-  //     nds.map((nd) => {
-  //       if (nd.id === nodeId) {
-  //         return {
-  //           ...nd,
-  //           data: {
-  //             ...nd.data,
-  //             choices: (nd.data as QuizeNodeType).choices.filter(c => c.choiceNo != choiceNo)
-  //           }
-  //         };
-  //       }
-  //       return nd;
-  //     })
-  //   );
-  // }
-
-
-
+  /**
+ * 質問ノード削除
+ */
   const onDeleteQuize = () => {
-
+    deleteElements({ nodes: [{ id: nodeId }] })
   }
+
 
   return (
     <>

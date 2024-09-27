@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('choices', function (Blueprint $table) {
-            // $table->id();
             $table->string('choice_no',15)->primary();
             $table->string('content')->nullable();
-            $table->foreignId('quize_no')->constrained('quize'); // 外部キー制約と型の制約を一度につける
+
+            // 外部キー
+            $table->string('quize_no');
+            $table->foreign('quize_no')->references('quize_no')->on('quizes')->onDelete('cascade');
+
+
             $table->timestamps();
         });
     }

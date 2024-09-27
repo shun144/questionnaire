@@ -1,0 +1,1 @@
+import{j as e}from"./app-DpxkVMrK.js";const n=({isDragging:r,label:o})=>e.jsx("div",{style:{textAlign:"center",padding:20,border:"solid 1px black",backgroundColor:"#fff",userSelect:"none",cursor:r?"grabbing":"grab",opacity:r?.5:void 0,width:"fit-content"},children:o});export{n as DraggableBlockSource};

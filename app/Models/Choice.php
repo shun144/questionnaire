@@ -18,8 +18,9 @@ class Choice extends Model
     // Laravel 6.0+以降なら主キーの型を指定
     protected $keyType = 'string';
 
-    // public function quize()
-    // {
-    //     return $this->belongsTo(Quize::class, 'quize_no');
-    // }
+    // Choiceテーブルの'quize_no'はQuizeテーブルに属する
+    public function quize()
+    {
+        return $this->belongsTo(Quize::class, 'quize_no');
+    }
 }

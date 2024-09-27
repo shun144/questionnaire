@@ -1,12 +1,46 @@
 import { QuizeNodeType, ResultNodeType, ChoiceType } from "./types"
 import { Node, Edge } from '@xyflow/react';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 
+type QuizeNodeApiType = QuizeNodeType & {
+  x: number;
+  y: number;
+}
 
 const getQuizeNode = (): QuizeNodeType[] => {
+  (async () => {
+    try {
+      // const res = await axios.get<QuizeNodeApiType[]>('/quize');
+
+      const res = await axios.get('/quize');
+
+      const initialQuizeNodes = (res.data["quize"] as QuizeNodeApiType[]).map(nd => {
+        return {
+          id: nd.quizeNo,
+          position: { x: nd.x, y: nd.y },
+          data: {
+            topic: nd.topic,
+            choices: nd.choices
+          },
+          type: "quizeNode"
+        }
+      });
+
+      // console.log(initialQuizeNodes)
+
+
+
+
+
+    } catch (error) {
+      console.log(error);
+    }
+  })();
+
+
+
   const nodes = [{
     quizeNo: 'quize-1',
-    x: 0,
-    y: 0,
     topic: '好きな動物は？',
     choices: [
       {
@@ -27,15 +61,12 @@ const getQuizeNode = (): QuizeNodeType[] => {
       },
     ]
   }]
-
   return nodes;
 }
 
 const getResultNode = (): ResultNodeType[] => {
   const nodes = [{
     resultNo: 'result-1',
-    x: 300,
-    y: 100,
     message: 'あなたは良い人です',
   }]
   return nodes;
@@ -46,7 +77,7 @@ export const getInitialNodes = () => {
   const initialQuizeNodes: Node[] = getQuizeNode().map(nd => {
     return {
       id: nd.quizeNo,
-      position: { x: nd.x, y: nd.y },
+      position: { x: 0, y: 0 },
       data: nd,
       type: "quizeNode"
     }
@@ -55,7 +86,7 @@ export const getInitialNodes = () => {
   const initialResultNodes: Node[] = getResultNode().map(nd => {
     return {
       id: nd.resultNo,
-      position: { x: nd.x, y: nd.y },
+      position: { x: 300, y: 100 },
       data: nd,
       type: "resultNode"
     }
@@ -68,7 +99,7 @@ export const getInitialNodes = () => {
 export const getInitialEdges = (): Edge[] => {
   return [
     {
-      id: "1",
+      id: "edge-1",
       type: "smoothstep",
       source: "quize-1",
       sourceHandle: "quize-1-1",
