@@ -1,5 +1,4 @@
 import { useDraggable } from "@dnd-kit/core";
-import { FC } from "react";
 import { DraggableBlockSource } from "./DraggableBlockSource";
 
 type Props = {
@@ -7,8 +6,7 @@ type Props = {
   label: string;
 };
 
-export const Draggable: FC<Props> = ({ id, label }) => {
-  // useDraggableを使って必要な値をもらう
+export const Draggable = ({ id, label }: Props) => {
   const {
     setNodeRef,
     listeners,
@@ -28,7 +26,8 @@ export const Draggable: FC<Props> = ({ id, label }) => {
       {...listeners}
       style={{
         transform: transformStyle,
-        height: "fit-content"
+        height: "fit-content",
+        width: "130px"
       }}
     >
       <DraggableBlockSource isDragging={isDragging} label={label} />

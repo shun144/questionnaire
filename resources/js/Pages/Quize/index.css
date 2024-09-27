@@ -1,0 +1,42 @@
+:root {
+  --triangle-width: 9px;
+  --triangle-height: calc(var(--triangle-width) / 1.5)
+}
+
+.react-flow__handle {
+  border-radius: 0%;
+  border: none;
+  background-color: transparent;
+}
+
+.react-flow__handle-right,
+.react-flow__handle-left {
+  width: 0;
+  height: 0;
+  border-top: var(--triangle-height) solid transparent;
+  border-bottom: var(--triangle-height) solid transparent;
+  border-left: var(--triangle-width) solid white;
+}
+
+
+
+
+.react-flow__handle-right::before,
+.react-flow__handle-left::before {
+  content: '';
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  transform: translate(-130%, -50%);
+  width: 0;
+  height: 0;
+  border-top: calc(var(--triangle-height)/1.5) solid transparent;
+  border-bottom: calc(var(--triangle-height)/1.5) solid transparent;
+  border-left: calc(var(--triangle-width)/1.5) solid #4d4d4d;
+}
+
+
+.react-flow__handle-right:hover::before,
+.react-flow__handle-left:hover::before {
+  border-left: calc(var(--triangle-width)/1.5) solid #c9df37;
+}

@@ -1,6 +1,8 @@
-import React, { useState, ChangeEventHandler, useCallback, ChangeEvent } from 'react'
+import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, memo } from 'react'
 import { Node, NodeProps, Handle, Position, useReactFlow, useNodes } from '@xyflow/react';
 import { ResultNodeType } from './types';
+import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
+
 
 
 const ResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<ResultNodeType>>) => {
@@ -26,31 +28,36 @@ const ResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<ResultNodeTyp
     deleteElements({ nodes: [{ id: nodeId }] })
   }
 
-
   return (
     <>
-      <div className="max-w-sm rounded overflow-hidden shadow-lg bg-amber-400">
-        <Handle id={nodeId} position={Position.Left} type="target" />
-        <div className="flex px-4 py-4">
-
-          <input
-            className="font-bold  bg-amber-400 text-white"
-            value={nodeData.message}
-            onChange={(evt) => onUpdateMessage(evt)}
-          />
-
+      <div className="rounded-t-md min-w-64 px-2">
+        <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer" }} />
+        {/* 質問内容 */}
+        <div className='flex flex-col custom-drag-handle'>
           <button
-            className="rounded-md bg-slate-800 p-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="text-white hover:text-red-300 font-bold mb-1 rounded w-fit self-end text-sm"
             type="button"
             onClick={onDeleteResult}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-            </svg>
+            <FaRegTrashAlt />
           </button>
+          <div className=" rounded-t-md p-1 text-center bg-orange-500 text-white w-full">
+            判定結果
+          </div>
         </div>
+
+        <div className='flex justify-between p-1 text-white bg-slate-800'>
+          <input
+            className=" border-blue-100 focus:border-blue-400 focus:ring-0 bg-transparent text-white w-full"
+            value={nodeData.message}
+            placeholder="判定結果を入力してください"
+            onChange={(evt) => onUpdateMessage(evt)}
+          />
+        </div>
+
       </div>
     </>
   )
+
 }
 
-export default ResultNode
+export default memo(ResultNode);

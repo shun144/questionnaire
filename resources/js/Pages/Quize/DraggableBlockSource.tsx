@@ -1,28 +1,17 @@
-import { FC } from "react";
-
-type DraggableBlockSourceType = {
+type Props = {
   isDragging?: boolean;
   label: string;
 };
 
-export const DraggableBlockSource: FC<DraggableBlockSourceType> = ({
-  isDragging,
-  label
-}) => {
+export const DraggableBlockSource = ({ isDragging, label }: Props) => {
   return (
-    <div
+    <div className="max-w-sm p-6 bg-white border border-gray-200 rounded shadow dark:bg-gray-800 dark:border-gray-700 text-center select-none"
       style={{
-        textAlign: "center",
-        padding: 20,
-        border: "solid 1px black",
-        backgroundColor: "#fff",
-        userSelect: "none",
         cursor: isDragging ? "grabbing" : "grab",
         opacity: isDragging ? 0.5 : undefined,
-        width: "fit-content"
-      }}
-    >
+      }}>
       {label}
-    </div>
+    </div >
   );
 };
+

@@ -6,6 +6,9 @@ import {
   useHandleConnections,
 } from '@xyflow/react';
 
+import './index.css'
+
+
 export type ChoiceSourceHandleProps = {
   id: string;
   type: HandleType;
@@ -26,7 +29,8 @@ const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: Choi
       type={type}
       position={position}
       isConnectable={connections.length < connectionLimit}  // コネクション数を制限する
-      style={style} />
+      style={{ ...style, cursor: "pointer" }
+      } />
   );
 };
 

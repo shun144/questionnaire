@@ -1,8 +1,9 @@
-import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEvent, useEffect } from 'react'
+import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEvent, useEffect, memo } from 'react'
 import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, NodeTypes, } from '@xyflow/react';
 import { QuizeNodeType } from './types';
 import ChoiceSourceHandle from './ChoiceSourceHandleProps';
 import { getNewChoiceNo, getNewId } from './utils';
+import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
 
 const QuizeNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuizeNodeType>>) => {
 
@@ -95,62 +96,75 @@ const QuizeNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuizeNodeType>
 
   return (
     <>
-      <div className="rounded-t-md min-w-64">
-        <Handle id={nodeId} position={Position.Left} type="target" />
+      <div className="rounded-t-md min-w-64 px-2">
+        <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer" }} />
         {/* 質問内容 */}
-        <div className='flex'>
-          <input
-            className="rounded-t-md p-1 text-center bg-slate-500 text-white w-full"
-            value={nodeData.topic}
-            onChange={(evt) => onUpdateTopic(evt)}
-          />
+        <div className='flex flex-col custom-drag-handle'>
           <button
-            className="rounded-md bg-slate-800 p-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+            className="text-white hover:text-red-300 font-bold mb-1 rounded w-fit self-end text-sm"
             type="button"
             onClick={onDeleteQuize}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-              <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-            </svg>
+            <FaRegTrashAlt />
           </button>
+          <input
+            className="placeholder-gray-400 rounded-t-md p-1 text-center bg-slate-500 text-white w-full border-none focus:ring-0"
+            value={nodeData.topic}
+            placeholder="質問を入力してください"
+            onChange={(evt) => onUpdateTopic(evt)}
+          />
         </div>
+
         {/* 選択肢 */}
-        {nodeData.choices.map(({ choiceNo, content }, index) => (
-          <div
-            key={choiceNo}
-            className='flex justify-between p-1 text-white bg-slate-800'>
+        <div className="bg-slate-800">
 
-            <input
-              className="bg-transparent text-white w-full"
-              value={content}
-              onChange={(evt) => onUpdateChoice(evt, choiceNo)}
-            />
+          {nodeData.choices.map(({ choiceNo, content }, index) => (
+            <div
+              key={choiceNo}
+              className='flex justify-between p-1 text-white bg-slate-800'>
+              <input
+                className="placeholder-gray-600 border-blue-100 focus:border-blue-400 focus:ring-0 bg-transparent text-white w-full"
+                value={content}
+                placeholder="選択肢を入力してください"
+                onChange={(evt) => onUpdateChoice(evt, choiceNo)}
+              />
+              <button
+                className="rounded-md bg-slate-800 p-1 border border-transparent text-center text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button"
+                onClick={() => onDeleteChoice(choiceNo)}>
+                <FaRegTrashAlt className='text-[10px]' />
+              </button>
+              <ChoiceSourceHandle
+                id={choiceNo}
+                type="source"
+                position={Position.Right}
+                connectionLimit={1}
+                style={{ top: 75 + 51 * index }}
+              />
+            </div>
+          ))}
+
+          <div className='p-1'>
+            {/* 選択肢追加ボタン */}
             <button
-              className="rounded-md bg-slate-800 p-2.5 border border-transparent text-center text-sm text-white transition-all shadow-sm hover:shadow-lg focus:bg-slate-700 focus:shadow-none active:bg-slate-700 hover:bg-slate-700 active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-              type="button"
-              onClick={() => onDeleteChoice(choiceNo)}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
-                <path d="m11.645 20.91-.007-.003-.022-.012a15.247 15.247 0 0 1-.383-.218 25.18 25.18 0 0 1-4.244-3.17C4.688 15.36 2.25 12.174 2.25 8.25 2.25 5.322 4.714 3 7.688 3A5.5 5.5 0 0 1 12 5.052 5.5 5.5 0 0 1 16.313 3c2.973 0 5.437 2.322 5.437 5.25 0 3.925-2.438 7.111-4.739 9.256a25.175 25.175 0 0 1-4.244 3.17 15.247 15.247 0 0 1-.383.219l-.022.012-.007.004-.003.001a.752.752 0 0 1-.704 0l-.003-.001Z" />
-              </svg>
+              className="text-gray-600 border border-gray-600 hover:text-gray-300 hover:border-gray-300 font-bold mt-1 w-full text-[10px] py-1 flex justify-center items-center gap-1"
+              onClick={onAddChoice}
+            >
+              <FaPlus />
+              <p>選択肢追加</p>
             </button>
-            <ChoiceSourceHandle
-              id={choiceNo}
-              type="source"
-              position={Position.Right}
-              connectionLimit={1}
-              style={{ top: 56 + 51 * index }}
-            />
           </div>
-        ))}
 
-        <button
-          className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'
-          onClick={onAddChoice}
-        >追加
-        </button>
+
+        </div>
+
+
+
+
+
       </div>
 
     </>
   )
 }
 
-export default QuizeNode;
+export default memo(QuizeNode);

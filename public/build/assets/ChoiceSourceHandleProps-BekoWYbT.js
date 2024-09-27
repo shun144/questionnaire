@@ -1,1 +1,0 @@
-import{j as r}from"./app-DpxkVMrK.js";import{e as c,H as i}from"./index-CLsSsi3L.js";const u=({id:n,type:e,position:o,connectionLimit:s,style:t})=>{const a=c({id:n,type:e});return r.jsx(i,{id:n,type:e,position:o,isConnectable:a.length<s,style:t})};export{u as default};

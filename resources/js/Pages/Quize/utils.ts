@@ -8,34 +8,30 @@ type QuizeNodeApiType = QuizeNodeType & {
 }
 
 const getQuizeNode = (): QuizeNodeType[] => {
-  (async () => {
-    try {
-      // const res = await axios.get<QuizeNodeApiType[]>('/quize');
+  // (async () => {
+  //   try {
+  //     // const res = await axios.get<QuizeNodeApiType[]>('/quize');
 
-      const res = await axios.get('/quize');
+  //     const res = await axios.get('/quize');
 
-      const initialQuizeNodes = (res.data["quize"] as QuizeNodeApiType[]).map(nd => {
-        return {
-          id: nd.quizeNo,
-          position: { x: nd.x, y: nd.y },
-          data: {
-            topic: nd.topic,
-            choices: nd.choices
-          },
-          type: "quizeNode"
-        }
-      });
+  //     const initialQuizeNodes = (res.data["quize"] as QuizeNodeApiType[]).map(nd => {
+  //       return {
+  //         id: nd.quizeNo,
+  //         position: { x: nd.x, y: nd.y },
+  //         data: {
+  //           topic: nd.topic,
+  //           choices: nd.choices
+  //         },
+  //         type: "quizeNode"
+  //       }
+  //     });
 
-      // console.log(initialQuizeNodes)
+  //     // console.log(initialQuizeNodes)
 
-
-
-
-
-    } catch (error) {
-      console.log(error);
-    }
-  })();
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // })();
 
 
 
@@ -55,9 +51,27 @@ const getQuizeNode = (): QuizeNodeType[] => {
         choiceNo: "quize-1-3",
         content: "うさぎ"
       },
+    ]
+  },
+  {
+    quizeNo: 'quize-2',
+    topic: '好きな季節は？',
+    choices: [
       {
-        choiceNo: "quize-1-4",
-        content: "馬"
+        choiceNo: "quize-2-1",
+        content: "春"
+      },
+      {
+        choiceNo: "quize-2-2",
+        content: "夏"
+      },
+      {
+        choiceNo: "quize-2-3",
+        content: "秋"
+      },
+      {
+        choiceNo: "quize-2-4",
+        content: "冬"
       },
     ]
   }]
@@ -67,28 +81,30 @@ const getQuizeNode = (): QuizeNodeType[] => {
 const getResultNode = (): ResultNodeType[] => {
   const nodes = [{
     resultNo: 'result-1',
-    message: 'あなたは良い人です',
+    message: 'あなたのタイプはAさんです',
   }]
   return nodes;
 }
 
 export const getInitialNodes = () => {
 
-  const initialQuizeNodes: Node[] = getQuizeNode().map(nd => {
+  const initialQuizeNodes: Node[] = getQuizeNode().map((nd, index) => {
     return {
       id: nd.quizeNo,
-      position: { x: 0, y: 0 },
+      position: { x: index * 350, y: index * 200 },
       data: nd,
-      type: "quizeNode"
+      type: "quizeNode",
+      dragHandle: '.custom-drag-handle',
     }
   });
 
-  const initialResultNodes: Node[] = getResultNode().map(nd => {
+  const initialResultNodes: Node[] = getResultNode().map((nd, index) => {
     return {
       id: nd.resultNo,
-      position: { x: 300, y: 100 },
+      position: { x: (index + 1) * 350, y: 0 },
       data: nd,
-      type: "resultNode"
+      type: "resultNode",
+      dragHandle: '.custom-drag-handle',
     }
   })
 
@@ -105,6 +121,22 @@ export const getInitialEdges = (): Edge[] => {
       sourceHandle: "quize-1-1",
       target: "result-1",
       targetHandle: "result-1",
+    },
+    {
+      id: "edge-2",
+      type: "smoothstep",
+      source: "quize-1",
+      sourceHandle: "quize-1-2",
+      target: "result-1",
+      targetHandle: "result-1",
+    },
+    {
+      id: "edge-3",
+      type: "smoothstep",
+      source: "quize-1",
+      sourceHandle: "quize-1-3",
+      target: "quize-2",
+      targetHandle: "quize-2",
     }
   ]
 }

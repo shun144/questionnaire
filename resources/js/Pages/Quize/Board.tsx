@@ -22,7 +22,6 @@ import { DndContext, DragOverlay, DragEndEvent } from "@dnd-kit/core";
 import { Draggable } from './Draggable';
 import { Droppable } from './Droppable';
 import { getNewId, getInitialNodes, getInitialEdges } from './utils';
-import axios from 'axios';
 
 const initialNodes = getInitialNodes();
 const initialEdges = getInitialEdges();
@@ -153,14 +152,10 @@ const Board = () => {
   return (
     <div className='flex h-full'>
       <DndContext onDragEnd={handleDragEnd}>
-        <div className='flex flex-col bg-green-200'>
-          <div className='w-[10%] min-w-40'>
-            <Draggable id="draggable-quize" label="質問追加" />
-          </div>
-
-          <div className='w-[10%] min-w-40'>
-            <Draggable id="draggable-result" label="結果追加" />
-          </div>
+        {/* サイドバー */}
+        <div className='w-[10%] flex items-center flex-col gap-y-3 pt-3 bg-slate-800'>
+          <Draggable id="draggable-quize" label="質問追加" />
+          <Draggable id="draggable-result" label="結果追加" />
         </div>
 
 
@@ -173,14 +168,16 @@ const Board = () => {
             onEdgesChange={onEdgesChange}       // エッジの変更を自動でsetEdgesしてくれる
             onNodesChange={onNodesChange}       // ノードの変更を自動でsetNodesしてくれる
             fitView
-            fitViewOptions={{ padding: 0.4 }}
+            fitViewOptions={{ padding: 0.2 }}
             snapToGrid
             onReconnect={onReconnect}
             onReconnectStart={onReconnectStart}
             onReconnectEnd={onReconnectEnd}
             onConnect={onConnect}
           >
-            <Background color='#222' variant={BackgroundVariant.Lines}></Background>
+            <Background color='#222' variant={BackgroundVariant.Lines}
+              gap={20} />
+            {/* <Background color='#222' variant={BackgroundVariant.Lines}></Background> */}
             <Controls />
           </ReactFlow>
         </Droppable>
