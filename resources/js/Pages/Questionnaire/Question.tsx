@@ -56,7 +56,7 @@ const Question = () => {
           <div className='w-full md:w-6/12'>
 
             {/* ドットインジケーター */}
-            <div className='w-full h-[50px] md:h-[100px]'>
+            <div className='w-full h-[50px] md:min-h-[75px] md:max-h-[75px]'>
               <Indicator />
             </div>
 
@@ -67,7 +67,7 @@ const Question = () => {
 
               {/* 質問エリア */}
               {/* <div className='w-full rounded-t-lg bg-slate-900 text-white text-3xl px-5 py-7 flex justify-center items-center'> */}
-              <div className='w-full rounded-t-lg bg-slate-900 text-white flex justify-center items-center text-xl px-3 py-3 md:text-2xl md:px-5 md:py-7 md:h-[100px]'>
+              <div className='w-full rounded-t-lg bg-slate-900 text-white flex justify-center items-center text-lg px-3 py-3 md:text-2xl md:px-5 md:py-7 md:h-[100px]'>
 
                 {/* 質問番号 */}
                 <div className='w-1/12'>
@@ -75,14 +75,16 @@ const Question = () => {
                 </div>
 
                 {/* 質問タイトル */}
-                <div className="w-11/12 text-center break-all line-clamp-2">
+                {/* <div className="w-11/12 text-center break-all line-clamp-2"> */}
+                <div className="w-11/12 text-center break-all line-clamp-2 pl-4">
                   {quizeData[currentQuestion - 1].topic}
                 </div>
               </div>
 
               {/* 選択肢エリア */}
               <div className='bg-gradient-to-r from-amber-400 via-amber-200 to-amber-400'>
-                <div className='flex flex-col justify-center items-center h-full gap-y-7 py-8'>
+                {/* <div className='flex flex-col justify-center items-center h-full gap-y-7 py-8'> */}
+                <div className='flex flex-col justify-center items-center h-full gap-y-4 py-4 mb:gap-y-7 mb:py-8'>
                   {
                     // 選択肢
                     quizeData[currentQuestion - 1].choices.map(({ choiceNo, content }, idx) => (
@@ -90,20 +92,20 @@ const Question = () => {
                         key={choiceNo}
                         onClick={() => handleAnswer(content)}
                         // className="w-[90%] min-h-[60px] max-h-[100px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hover:opacity-70"
-                        className="w-[90%] min-h-[60px] max-h-[60px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hover:opacity-70"
+                        className="w-[90%] min-h-[60px] max-h-[60px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hoverable:hover:opacity-70 md:min-h-[75px] md:max-h-[75px]"
                         style={{ boxShadow: "8px 6px 1px rgba(0, 0, 0, .3)" }}
                       >
                         {/* 選択肢番号 */}
                         <div className="w-1/12 px-1">
                           {/* <div className='text-lg text-center font-bold h-[40px] w-[40px] bg-amber-100 rounded-full my-0 mx-auto flex justify-center items-center'> */}
-                          <div className='text-center font-bold bg-amber-100 rounded-full my-0 mx-auto flex justify-center items-center text-lg h-[40px] w-[40px] md:text-2xl md:h-[50px] md:w-[50px]'>
+                          <div className='text-center font-bold bg-amber-100 rounded-full my-0 mx-auto flex justify-center items-center text-lg h-[35px] w-[35px] md:text-2xl md:h-[50px] md:w-[50px]'>
                             <p>{String.fromCharCode(idx + 65)}</p>
                           </div>
                         </div>
                         {/* 選択肢内容 */}
                         {/* TODO:選択肢のサイズを全て統一する */}
                         {/* <div className="w-11/12 pl-8 pr-4 text-lg font-bold text-start break-all line-clamp-2 min-h-[30px] max-h-[60px] leading-[30px]"> */}
-                        <div className="w-11/12  font-bold text-start break-all line-clamp-2 min-h-[30px] max-h-[60px] leading-[30px] text-lg pl-8 pr-4 md:text-2xl md:pl-4">
+                        <div className="w-11/12  font-bold text-start break-all line-clamp-2 min-h-[20px] max-h-[40px] leading-[20px] text-lg pl-8 pr-4 md:text-2xl md:pl-4 md:min-h-[30px] md:max-h-[60px] md:leading-[30px]">
                           {content}
                         </div>
                       </button>
@@ -118,7 +120,7 @@ const Question = () => {
             {isSecondQuestionOnward && (
               <div className='flex justify-start items-start'>
                 <button
-                  className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex justify-center items-center gap-1 shadow-2xl'
+                  className='bg-blue-500 hoverable:hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex justify-center items-center gap-1 shadow-2xl'
                   onClick={backQuestion}>
                   <IoArrowBack className="text-xl" />
                   <p>1つ前の質問に戻る</p>

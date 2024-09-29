@@ -37,10 +37,6 @@ const quizeData: QuizeNodeType[] = [
         choiceNo: "1-3",
         content: "木星"
       },
-      {
-        choiceNo: "1-4",
-        content: "土星"
-      },
     ]
   },
   {
@@ -58,6 +54,14 @@ const quizeData: QuizeNodeType[] = [
       {
         choiceNo: "2-3",
         content: "うさぎ"
+      },
+      {
+        choiceNo: "2-4",
+        content: "馬"
+      },
+      {
+        choiceNo: "2-5",
+        content: "亀"
       },
     ]
   },

@@ -18,6 +18,7 @@ export default {
         },
         screens: {
             'xs': '375px',
+            hoverable: { raw: '(hover: hover) and (pointer: fine)' },
             ...defaultTheme.screens,
         },
     },
