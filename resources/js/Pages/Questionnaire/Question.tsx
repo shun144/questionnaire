@@ -52,11 +52,11 @@ const Question = () => {
     <>
       {!showScore && quizeData.length > 0 &&
 
-        <div className='h-full w-full flex flex-col justify-start items-center px-2'>
-          <div className='w-12/12 md:w-6/12'>
+        <div className='h-full w-full flex flex-col justify-start items-center px-4'>
+          <div className='w-full md:w-6/12'>
 
             {/* ドットインジケーター */}
-            <div className='w-full h-[50px] md:h-[100px] '>
+            <div className='w-full h-[50px] md:h-[100px]'>
               <Indicator />
             </div>
 
@@ -67,7 +67,7 @@ const Question = () => {
 
               {/* 質問エリア */}
               {/* <div className='w-full rounded-t-lg bg-slate-900 text-white text-3xl px-5 py-7 flex justify-center items-center'> */}
-              <div className='w-full rounded-t-lg bg-slate-900 text-white flex justify-center items-center text-xl px-3 py-3  md:text-2xl md:px-5 md:py-7 md:h-[100px]'>
+              <div className='w-full rounded-t-lg bg-slate-900 text-white flex justify-center items-center text-xl px-3 py-3 md:text-2xl md:px-5 md:py-7 md:h-[100px]'>
 
                 {/* 質問番号 */}
                 <div className='w-1/12'>
@@ -89,7 +89,8 @@ const Question = () => {
                       <button
                         key={choiceNo}
                         onClick={() => handleAnswer(content)}
-                        className="w-[90%] min-h-[60px] max-h-[100px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hover:opacity-70"
+                        // className="w-[90%] min-h-[60px] max-h-[100px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hover:opacity-70"
+                        className="w-[90%] min-h-[60px] max-h-[60px] py-4 overflow-hidden bg-white rounded-md flex justify-start items-center transition-opacity duration-300 hover:opacity-70"
                         style={{ boxShadow: "8px 6px 1px rgba(0, 0, 0, .3)" }}
                       >
                         {/* 選択肢番号 */}

@@ -20,7 +20,7 @@ const Questionnaire = () => {
 
         {/* コンテンツ */}
         {/* <div className='h-[90%] min-h-[800px]'> */}
-        <div className='h-[90%] min-h-[600px] md:min-h-[800px]'>
+        <div className='h-[90%] min-h-[550px] md:min-h-[800px]'>
           <QuestionnaireProvider>
             <Question />
             <Score />
