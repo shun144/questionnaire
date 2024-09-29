@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Exam');
+    return Inertia::render('Questionnaire/Index');
 });
 
 // Route::get('/', function () {
