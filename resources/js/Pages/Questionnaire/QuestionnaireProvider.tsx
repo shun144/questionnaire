@@ -1,9 +1,10 @@
 import {
   useState, createContext, ReactNode, Dispatch,
-  SetStateAction, useContext
+  SetStateAction, useContext, useEffect
 } from 'react';
-import { AnswerHistoryType } from './types';
-import { QuizeNodeType } from '../Quize/types';
+import { AnswerHistoryType, } from './types';
+import { QuizeNodeType, ResultNodeType, GirlType } from '../Quize/types';
+import axios, { AxiosResponse } from 'axios';
 
 type Props = {
   children: ReactNode
@@ -11,13 +12,26 @@ type Props = {
 
 type ContextType = {
   quizeData: QuizeNodeType[];
+  resultData: ResultNodeType[];
   currentQuestion: number;
   setCurrentQuestion: Dispatch<SetStateAction<number>>;
   showScore: boolean;
   setShowScore: Dispatch<SetStateAction<boolean>>;
   answerHistories: AnswerHistoryType[];
   setAnswerHistories: Dispatch<SetStateAction<AnswerHistoryType[]>>;
+  baseGirlDataList: GirlType[];
+  loading: boolean;
 }
+
+const resultData: ResultNodeType[] = [
+  {
+    resultNo: "1",
+    result: "あなたはAタイプです",
+    message: "孤独を感じながらも自分というものをしっかりと持ち続けているあなたは氷元素の祝福を受けるのにふさわしい人物です。自分なりの信念を持つのは難しいことですが、あなたにはそれができているみたいです。周囲から完全に理解されることは難しいかもしれませんが、それでもきっと一番星の輝きは衰えないものです。よき伴星が現れたのなら、鬼に金棒ですね。",
+    img: "https://picsum.photos/id/237/200/300",
+    url: "https://shun-studio.com/"
+  }
+]
 
 
 const quizeData: QuizeNodeType[] = [
@@ -92,13 +106,27 @@ const quizeData: QuizeNodeType[] = [
 const QuestionnaireContext = createContext({} as ContextType);
 
 const QuestionnaireProvider = ({ children }: Props) => {
-
   const [currentQuestion, setCurrentQuestion] = useState<number>(1);
   const [showScore, setShowScore] = useState<boolean>(false);
   const [answerHistories, setAnswerHistories] = useState<AnswerHistoryType[]>([]);
+  const [baseGirlDataList, setBaseGirlDataList] = useState<GirlType[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await axios.get('/test');
+        setBaseGirlDataList(res.data.resultArray);
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        console.log(error);
+      }
+    })();
+  }, [])
 
   return (
-    <QuestionnaireContext.Provider value={{ quizeData, currentQuestion, setCurrentQuestion, showScore, setShowScore, answerHistories, setAnswerHistories }}>
+    <QuestionnaireContext.Provider value={{ quizeData, resultData, currentQuestion, setCurrentQuestion, showScore, setShowScore, answerHistories, setAnswerHistories, baseGirlDataList, loading }}>
       {children}
     </QuestionnaireContext.Provider>
   )

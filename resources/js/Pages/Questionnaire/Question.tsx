@@ -2,22 +2,22 @@ import React, { memo, useContext, useEffect, useState, useRef } from 'react'
 import { useQuestionnaireContext } from './QuestionnaireProvider';
 import { AnswerHistoryType } from './types';
 import Indicator from './Indicator';
-
 import { IoArrowBack } from "react-icons/io5";
+import axios from 'axios';
+
 
 
 const Question = () => {
 
   const { quizeData, showScore, currentQuestion, setCurrentQuestion, setAnswerHistories, setShowScore } = useQuestionnaireContext();
-
-  const [isSecondQuestionOnward, setIsSecondQuestionOnward] = useState(false);
+  const [isSecondQuestionOver, setIsSecondQuestionOver] = useState(false);
 
   useEffect(() => {
     // 2問目以降なら戻るボタンをクリックできるようにする
     if (currentQuestion >= 2) {
-      setIsSecondQuestionOnward(true);
+      setIsSecondQuestionOver(true);
     } else {
-      setIsSecondQuestionOnward(false);
+      setIsSecondQuestionOver(false);
     }
   }, [currentQuestion])
 
@@ -117,7 +117,7 @@ const Question = () => {
 
 
             {/* 戻るボタン */}
-            {isSecondQuestionOnward && (
+            {isSecondQuestionOver && (
               <div className='flex justify-start items-start'>
                 <button
                   className='bg-blue-500 hoverable:hover:bg-blue-700 text-white font-bold py-2 px-3 rounded flex justify-center items-center gap-1 shadow-2xl'

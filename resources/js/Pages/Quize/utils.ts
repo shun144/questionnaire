@@ -81,7 +81,7 @@ const getQuizeNode = (): QuizeNodeType[] => {
 const getResultNode = (): ResultNodeType[] => {
   const nodes = [{
     resultNo: 'result-1',
-    message: 'あなたのタイプはAさんです',
+    result: 'あなたのタイプはAさんです',
   }]
   return nodes;
 }

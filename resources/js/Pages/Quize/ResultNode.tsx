@@ -13,11 +13,11 @@ const ResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<ResultNodeTyp
    * 結果メッセージ変更
    * @param evt 
    */
-  const onUpdateMessage = (evt: ChangeEvent<HTMLInputElement>) => {
+  const onUpdateResult = (evt: ChangeEvent<HTMLInputElement>) => {
     updateNodeData(
       nodeId, {
       ...nodeData,
-      message: evt.currentTarget.value
+      result: evt.currentTarget.value
     });
   }
 
@@ -40,17 +40,23 @@ const ResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<ResultNodeTyp
             onClick={onDeleteResult}>
             <FaRegTrashAlt />
           </button>
-          <div className=" rounded-t-md p-1 text-center bg-orange-500 text-white w-full">
-            判定結果
+          <div className="rounded-t-md p-1 text-center bg-orange-500 text-white w-full">
+            {/* 判定結果 */}
+            <input
+              className="placeholder-gray-400 rounded-t-md p-1 text-center bg-orange-500 text-white w-full border-none focus:ring-0"
+              value={nodeData.result}
+              placeholder="判定結果を入力してください"
+              onChange={(evt) => onUpdateResult(evt)}
+            />
           </div>
         </div>
 
         <div className='flex justify-between p-1 text-white bg-slate-800'>
           <input
             className=" border-blue-100 focus:border-blue-400 focus:ring-0 bg-transparent text-white w-full"
-            value={nodeData.message}
+            value={nodeData.result}
             placeholder="判定結果を入力してください"
-            onChange={(evt) => onUpdateMessage(evt)}
+            onChange={(evt) => onUpdateResult(evt)}
           />
         </div>
 

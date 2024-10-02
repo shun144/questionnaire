@@ -10,6 +10,9 @@ Route::get('/', function () {
     return Inertia::render('Questionnaire/Index');
 });
 
+
+Route::get('/test', [ApiController::class, 'testCallApi'])->name('testCallApi');
+
 // Route::get('/', function () {
 //     return Inertia::render('Welcome', [
 //         'canLogin' => Route::has('login'),
