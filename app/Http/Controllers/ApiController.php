@@ -137,8 +137,6 @@ class ApiController extends Controller
     // }
 
 
-
-
     public function testCallApi() {
 
         try {                    

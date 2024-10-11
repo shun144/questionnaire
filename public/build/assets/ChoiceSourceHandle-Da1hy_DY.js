@@ -1,0 +1,1 @@
+import{j as a}from"./app-DNy52who.js";import{u as c,H as i}from"./index-CgwXn36O.js";const m=({id:n,type:o,position:e,connectionLimit:s,style:t})=>{const r=c({id:n,type:o});return a.jsx(i,{id:n,type:o,position:e,isConnectable:r.length<s,style:{...t,cursor:"pointer"}})};export{m as default};
