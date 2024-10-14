@@ -21,6 +21,7 @@ use App\Models\Result;
 // use GuzzleHttp\Client;
 // use Illuminate\Http\Client\Pool;
 // use Illuminate\Support\Facades\Http;
+use Inertia\Inertia;
 
 class OwnerContoller extends Controller
 {
@@ -31,40 +32,64 @@ class OwnerContoller extends Controller
     //     return $board_id;
     // }
 
-    public function commit(Request $request){
+    public function getFirstQuestionId(Request $request){
         try {
             // $board_id = $this->getBoardIdBySessionUser();
             $params = $request->only([
                 'flow_id',
-                'update_questions',
-                'update_results',
-                'update_edges'
+            ]);
+           
+            $record = DB::table('flows')
+            ->where('id', $params['flow_id'])
+            ->select('first_question_id')
+            ->first();
+
+            $data = isset($record) ? $record->first_question_id: '';
+
+            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+
+        }
+        catch (\Exception $e) {
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
+
+
+
+    public function addFlow(Request $request){
+        try {
+            $params = $request->only([
+                'title',
+                'category',
+                'url',
+            ]);
+            $user_id = Auth::user()->id;
+
+            // DB::table('flows')->insert(['email' => 'yamada@example.com','name' => 'yamada']);
+
+            $flow_id = DB::table('flows')->insertGetId([
+                'category' => $params['category'],
+                'user_id' => $user_id
             ]);
 
-            // $update_questions = $request->input('updateQuestions');
-            // $updateResults = $request->input('updateResults');
-            // $updateEdges = $request->input('updateEdges');
-
-            DB::table('questions')
-            ->where('board_id', $params['flow_id'])
-            ->update([
-                'node_datas' => $params['update_questions'],
+            DB::table('questions')->insert([
+                'flow_id' => $flow_id,
             ]);
 
-            DB::table('results')
-            ->where('board_id', $board_id)
-            ->update([
-                'node_datas' => $params['update_results'],
+            DB::table('results')->insert([
+                'flow_id' => $flow_id
             ]);
 
-
-            DB::table('edges')
-            ->where('board_id', $board_id)
-            ->update([
-                'edge_datas' => $params['update_edges'],
+            DB::table('edges')->insert([
+                'flow_id' => $flow_id
             ]);
 
-            // return response()->json($updateNodeData,200,[],JSON_UNESCAPED_UNICODE);
+            return response()->json($flow_id,200,[],JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $e) {
             // \Log::error('エラー機能:即時実行 【店舗ID:'.$store_id.'】');
@@ -78,13 +103,38 @@ class OwnerContoller extends Controller
         }
     }
 
+    public function getFlows(){
+        try {
+            // $board_id = $this->getBoardIdBySessionUser();
+            $user_id = Auth::user()->id;
+           
+            $records = DB::table('flows')
+            ->where('user_id', $user_id)
+            ->select('id','category', 'title','url', 'first_question_id as firstQuestionId')
+            ->get();
+
+
+            $data = isset($records) ? $records: [];
+            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+
+        }
+        catch (\Exception $e) {
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
+
 
     public function getEdges(Request $request){
         try {
             $params = $request->only(['flow_id']);
            
             $records = DB::table('edges')
-            ->where('board_id', $params['flow_id'])
+            ->where('flow_id', $params['flow_id'])
             ->select('edge_datas')
             ->first();
 
@@ -103,11 +153,11 @@ class OwnerContoller extends Controller
 
     public function getQuestionNodes(Request $request){
         try {
-            // $board_id = $this->getBoardIdBySessionUser();
+            // $flow_id = $this->getBoardIdBySessionUser();
             $params = $request->only(['flow_id']);
            
             $records = DB::table('questions')
-            ->where('board_id', $params['flow_id'])
+            ->where('flow_id', $params['flow_id'])
             ->select('node_datas')
             ->first();
 
@@ -126,11 +176,11 @@ class OwnerContoller extends Controller
 
     public function getResultNodes(Request $request){
         try {             
-            // $board_id = $this->getBoardIdBySessionUser();
+            // $flow_id = $this->getBoardIdBySessionUser();
             $params = $request->only(['flow_id']);
            
             $records = DB::table('results')
-            ->where('board_id', $params['flow_id'])
+            ->where('flow_id', $params['flow_id'])
             ->select('node_datas')
             ->first();
 
@@ -145,4 +195,54 @@ class OwnerContoller extends Controller
             return response()->json($data);
         }
     }
+
+    public function commit(Request $request){
+        try {
+            $params = $request->only([
+                'flow_id',
+                'update_questions',
+                'update_results',
+                'update_edges',
+                'first_question_id'
+            ]);
+
+
+            DB::table('questions')
+            ->where('flow_id', $params['flow_id'])
+            ->update([
+                'node_datas' => $params['update_questions'],
+            ]);
+
+            DB::table('results')
+            ->where('flow_id', $params['flow_id'])
+            ->update([
+                'node_datas' => $params['update_results'],
+            ]);
+
+            DB::table('edges')
+            ->where('flow_id', $params['flow_id'])
+            ->update([
+                'edge_datas' => $params['update_edges'],
+            ]);
+
+            DB::table('flows')
+            ->where('id', $params['flow_id'])
+            ->update([
+                'first_question_id' => $params['first_question_id'],
+            ]);
+
+            // return response()->json(['test' => $params['first_question_id']],200,[],JSON_UNESCAPED_UNICODE);
+        }
+        catch (\Exception $e) {
+            // \Log::error('エラー機能:即時実行 【店舗ID:'.$store_id.'】');
+            // \Log::error('エラー箇所:'.$e->getFile().'【'.$e->getLine().'行目】');
+            // \Log::error('エラー内容:'.$e->getMessage());
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
 }

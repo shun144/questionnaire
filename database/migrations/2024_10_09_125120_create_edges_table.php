@@ -13,10 +13,10 @@ return new class extends Migration
     {
         Schema::create('edges', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('board_id');
+            $table->unsignedBigInteger('flow_id');
             $table->json('edge_datas')->nullable()->default('[]');
             $table->timestamps();
-            $table->foreign('board_id')->references('id')->on('boards')->onDelete('cascade');
+            $table->foreign('flow_id')->references('id')->on('flows')->onDelete('cascade');
         });
     }
 

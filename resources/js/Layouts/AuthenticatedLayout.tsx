@@ -30,9 +30,15 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                             </div>
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                                <NavLink href={route('dashboard')} active={route().current('dashboard')}>
+                                <NavLink
+                                    href={route('dashboard')}
+                                    active={route().current('dashboard')}
+                                >
                                     Dashboard
                                 </NavLink>
+                                {/* <NavLink href={route('dashboard', { id: 1 })} active={route().current('dashboard')}>
+                                    Dashboard
+                                </NavLink> */}
                             </div>
                         </div>
 
@@ -101,6 +107,9 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
 
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
+                        {/* <ResponsiveNavLink href={route('dashboard', { id: 1 })} active={route().current('dashboard')}>
+                            Dashboard
+                        </ResponsiveNavLink> */}
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             Dashboard
                         </ResponsiveNavLink>
@@ -126,8 +135,14 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
 
             {header && (
                 <header className="bg-white h-[3vh]">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+                        {header}
+                    </div>
                 </header>
+
+                // <header className="bg-white h-[3vh]">
+                //     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
+                // </header>
                 // <header className="bg-white shadow">
                 //     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                 // </header>

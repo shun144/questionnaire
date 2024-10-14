@@ -15,24 +15,49 @@ use Illuminate\Support\Facades\Http;
 
 class QuestionnaireController extends Controller
 {
-    public function getQuestionnair(){
+    public function getFirstQuestionId(Request $request){
         try {
-            // $board_id = $request->input('board_id');
+            // $board_id = $this->getBoardIdBySessionUser();
+            $params = $request->only([
+                'flow_url',
+            ]);
+           
+            $record = DB::table('flows')
+            ->where('url', $params['flow_url'])
+            ->select('first_question_id')
+            ->first();
+            $data = isset($record) ? $record->first_question_id: '';
+            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
 
-            $board_id = 1;
+        }
+        catch (\Exception $e) {
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
+    public function getQuestionnair(Request $request){
+        try {
+
+            $flow_url = $request->only(['flow_url']);
+    
+            $flow_id = DB::table('flows')->where('url', $flow_url)->value('id');
 
             $questions_record = DB::table('questions')
-            ->where('board_id', $board_id)
+            ->where('flow_id', $flow_id)
             ->select('node_datas')
             ->first();
 
             $results_record = DB::table('results')
-            ->where('board_id', $board_id)
+            ->where('flow_id', $flow_id)
             ->select('node_datas')
             ->first();
 
             $edges_record = DB::table('edges')
-            ->where('board_id', $board_id)
+            ->where('flow_id', $flow_id)
             ->select('edge_datas')
             ->first();
 
@@ -43,11 +68,8 @@ class QuestionnaireController extends Controller
             $data = [
                 'questions' => $questions,
                 'results' => $results,
-                'edges' => $edges
+                'edges' => $edges,
             ];
-            // $data = [
-            //     'sample' => 'aaaa'
-            // ];
 
             return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
         }

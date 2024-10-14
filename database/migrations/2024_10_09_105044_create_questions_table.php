@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('board_id');
+            $table->unsignedBigInteger('flow_id');
             $table->json('node_datas')->nullable()->default('[]');
             $table->timestamps();
             // 外部キー設定
-            $table->foreign('board_id')->references('id')->on('boards')->onDelete('cascade');
+            $table->foreign('flow_id')->references('id')->on('flows')->onDelete('cascade');
         });
     }
 

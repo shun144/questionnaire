@@ -1,53 +1,57 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head } from '@inertiajs/react';
-import { useCallback, useState } from 'react';
-import Flow from './Flow';
-// import BoardLayout from './BoardLayout';
-
-const dummy = [
-  {
-    id: "1",
-    title: 'テスト',
-    url: 'test'
-  }
-]
+import { Head, usePage, Link, } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { getFlows } from './utils';
+import { FlowType } from './types';
+import AddFlowButton from './components/AddFlowButton';
 
 const MainBoard = () => {
-  const [flowId, setFlowId] = useState<string>("");
+  const [flows, setFlows] = useState<FlowType[]>([]);
 
-  const handleClick = useCallback((_id: string) => {
-    setFlowId(_id);
+  useEffect(() => {
+    (async () => {
+      try {
+        const res = await getFlows();
+        setFlows(res);
+      } catch (error) {
+        setFlows([]);
+      }
+    })();
   }, []);
 
+
   return (
+
     <AuthenticatedLayout
       header
     >
       <Head title="Board" />
 
-      {flowId ? (
-        Flow(flowId)
-      ) : (
-        <div className='grid grid-cols-3 gap-4'>
-          {
-            dummy &&
-            dummy.map(({ id, title, url }) => (
-              <div
-                key={id}
-                className="">
-                <button
-                  className="cursor-pointer"
-                  onClick={() => handleClick(id)}
-                >{title}</button>
 
-              </div>
+      <div className='grid grid-cols-5 gap-4'>
+        <>
+          {
+            flows.map(({ id, category, title, url, firstQuestionId }) => (
+              <Link
+                className="w-56 h-28 rounded-lg shadow border bg-slate-500 relative inline-block"
+                key={id} href={`flow/${category}/${id}`} as="button" type="button"
+              >
+                {title} {category}
+              </Link>
             ))
           }
-        </div>
-      )}
+          <AddFlowButton />
 
+        </>
+      </div>
 
     </AuthenticatedLayout >
   )
 }
+
+
 export default MainBoard
+
+
+
+

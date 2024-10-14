@@ -9,7 +9,7 @@ const Question = () => {
 
   const handleClick = useCallback((currentQuestion: QuestionType, answer: string, nextId?: string) => {
 
-    setAnswerHistories(currentQuestion.id, currentQuestion.topic, answer);
+    setAnswerHistories(currentQuestion.id, currentQuestion.topic, answer, []);
     setCurrentQuestionnarie(nextId);
   }, []);
 

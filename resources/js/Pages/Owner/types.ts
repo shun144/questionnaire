@@ -1,18 +1,32 @@
-// import { EdgeTypes } from '@xyflow/react';
+export type FlowCategoryType = 'custom' | 'check';
 
-export type StatusType = 'add' | 'update' | 'delete' | 'offset' | 'upsert';
+export type FlowType = {
+  id: number;
+  category: FlowCategoryType;
+  title: string;
+  url: string;
+  firstQuestionId: string;
+}
 
-
-export type QuestionNodeType = {
-  id: string,
-  topic: string;
-  choices: ChoiceType[];
+export type SalsPointType = {
+  label: string;
+  no: string;
+  value: string;
 }
 
 export type ChoiceType = {
   id: string;
   content: string;
+  salePoints: SalsPointType[]
 }
+
+export type QuestionNodeType = {
+  id: string,
+  topic: string;
+  img?: string;
+  choices: ChoiceType[];
+}
+
 
 export type ResultNodeType = {
   id: string;
@@ -22,17 +36,18 @@ export type ResultNodeType = {
   url?: string;
 }
 
-export type GirlType = {
+export type RecommendNodeType = {
   id: string;
-  name: string;
-  catchphrase: string;
-  diary_flg: boolean;
-  review_flg: boolean;
-  picture_url: string;
-  mypage_url: string;
-  yoyaku_url: string;
-  today_work_flg: boolean;
-  w_shukkin: string[];
-  salespoint_ids: string[];
-  earn_point: number;
+  message?: string;
 }
+
+export type OwnerState = {
+  firstNodeId: string,
+  setFirstNodeId: (by: string) => void,
+}
+
+
+
+
+
+

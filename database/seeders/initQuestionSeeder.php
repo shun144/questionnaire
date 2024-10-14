@@ -12,7 +12,7 @@ class initQuestionSeeder extends Seeder
     {
         DB::table('questions')->insert([
             [
-                'board_id' => 1,
+                'flow_id' => 1,
                 'node_datas' => json_encode([
                     [
                         "id"=> "q-2",

@@ -12,7 +12,7 @@ class initResultSeeder extends Seeder
     {
         DB::table('results')->insert([
             [
-                'board_id' => 1,
+                'flow_id' => 1,
                 'node_datas' => json_encode([
                     [
                         "id"=> "aac009b7-9203-456d-8135-e237f65cb64a",

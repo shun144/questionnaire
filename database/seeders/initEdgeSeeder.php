@@ -12,7 +12,7 @@ class initEdgeSeeder extends Seeder
     {
         DB::table('edges')->insert([
             [
-                'board_id' => 1,
+                'flow_id' => 1,
                 'edge_datas' => json_encode([
                     [
                         "id"=> "e-1",

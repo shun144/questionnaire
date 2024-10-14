@@ -1,0 +1,1 @@
+import{j as o}from"./app-Djr3pS6i.js";import{a as t}from"./core.esm-BfgOf-z1.js";const i=({children:e,id:s})=>{const{setNodeRef:r,isOver:a}=t({id:s});return o.jsx("div",{ref:r,className:"bg-slate-950 w-[90%]",children:e})};export{i as Droppable};
