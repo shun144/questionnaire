@@ -1,6 +1,6 @@
 import { QuestionNodeType, ResultNodeType, ChoiceType, } from "./types"
 import { Node, Edge } from '@xyflow/react';
-import axios, { AxiosResponse, AxiosError } from 'axios';
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { FlowType, FlowCategoryType } from './types';
 
@@ -17,10 +17,30 @@ export const addFlow = async (category: FlowCategoryType): Promise<number> => {
   }
 }
 
+
+export const getFlowTitleAndUrl = async (flowId: number): Promise<{ title: string, url: string }> => {
+  try {
+    const res = await axios.get('/flow-info', {
+      params: {
+        flow_id: flowId,
+      }
+    });
+    // console.log(res.data);
+
+    // const initialQuestionNodes: Node[] = res.data.length ? JSON.parse(questionNodes.data) : [];
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    return {
+      title: "",
+      url: ""
+    };
+  }
+}
+
 export const getFlows = async (): Promise<FlowType[]> => {
   try {
     const res = await axios.get('/flows');
-    console.log(res.data)
     return res.data as FlowType[];
   } catch (error) {
     console.log(error);
@@ -28,45 +48,7 @@ export const getFlows = async (): Promise<FlowType[]> => {
   }
 }
 
-export const commitCustomFlow = async (flowId: number, nodes: Node[], edges: Edge[]) => {
-
-  const questionNodes = nodes.filter(x => x.type === 'questionNode');
-  const resultNodes = nodes.filter(x => x.type === 'resultNode');
-
-  try {
-    const res = await axios.post('/commit', {
-      flow_id: flowId,
-      update_questions: JSON.stringify(questionNodes),
-      update_results: JSON.stringify(resultNodes),
-      update_edges: JSON.stringify(edges),
-    });
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-export const commitCheckFlow = async (flowId: number, nodes: Node[], edges: Edge[], firstQuestionId: string) => {
-
-
-  const questionCheckNode = nodes.filter(x => x.type === 'questionCheckNode');
-  const resultNodes = nodes.filter(x => x.type === 'recommendNode');
-  try {
-    const res = await axios.post('/commit', {
-      flow_id: flowId,
-      update_questions: JSON.stringify(questionCheckNode),
-      update_results: JSON.stringify(resultNodes),
-      update_edges: JSON.stringify(edges),
-      first_question_id: firstQuestionId,
-    });
-
-  } catch (error) {
-    console.log(error);
-  }
-}
-
-
-
-// export const commitFlow = async (flowId: number, nodes: Node[], edges: Edge[]) => {
+// export const commitCustomFlow = async (flowId: number, nodes: Node[], edges: Edge[]) => {
 
 //   const questionNodes = nodes.filter(x => x.type === 'questionNode');
 //   const resultNodes = nodes.filter(x => x.type === 'resultNode');
@@ -78,11 +60,60 @@ export const commitCheckFlow = async (flowId: number, nodes: Node[], edges: Edge
 //       update_results: JSON.stringify(resultNodes),
 //       update_edges: JSON.stringify(edges),
 //     });
-//     console.log(res.data);
 //   } catch (error) {
 //     console.log(error);
 //   }
 // }
+
+const commitFlow = async (
+  flowId: number, nodes: Node[], edges: Edge[],
+  firstNodeId: string, questionNodeTypeName: string, resultNodeTypeName: string,
+  title: string, url: string
+) => {
+
+  const questionNodes = nodes.filter(x => x.type === questionNodeTypeName);
+  const resultNodes = nodes.filter(x => x.type === resultNodeTypeName);
+  try {
+    const res = await axios.post('/flows', {
+      flow_id: flowId,
+      update_questions: JSON.stringify(questionNodes),
+      update_results: JSON.stringify(resultNodes),
+      update_edges: JSON.stringify(edges),
+      first_question_id: firstNodeId,
+      title,
+      url,
+    });
+
+    return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+export const commitStandardFlow = async (
+  flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
+  title: string, url: string
+) => {
+  const res = commitFlow(flowId, nodes, edges, firstNodeId, 'questionNode', 'resultNode', title, url);
+  return res;
+}
+
+
+
+export const commitCityHeavenFlow = async (
+  flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
+  title: string, url: string
+) => {
+  const res = commitFlow(flowId, nodes, edges, firstNodeId, 'cityHeavenQuestionNode', 'cityHeavenResultNode', title, url);
+  return res;
+}
+
+
+
+
+
+
 
 export const getFirstQuestionId = async (flowId: number) => {
   const res = await axios.get<string>('/firstQuestionId', {
@@ -100,7 +131,6 @@ export const getInitialNodes = async (flowId: number) => {
       flow_id: flowId
     }
   });
-
   const axiosGetResultNode = axios.get<string>('/result-nodes', {
     params: {
       flow_id: flowId
@@ -109,9 +139,7 @@ export const getInitialNodes = async (flowId: number) => {
   const [questionNodes, resultNodes] = await Promise.all([axiosGetQuestionNode, axiosGetResultNode]);
 
   const initialQuestionNodes: Node[] = questionNodes.data.length ? JSON.parse(questionNodes.data) : [];
-
   const initialResultNodes: Node[] = resultNodes.data.length ? JSON.parse(resultNodes.data) : [];
-
 
   return [...initialQuestionNodes, ...initialResultNodes];
 }
@@ -128,8 +156,6 @@ export const getInitialEdges = async (flowId: number) => {
 
   return initialEdges;
 }
-
-
 
 export const getUniqueId = () => {
   const uniqueId = uuidv4();

@@ -19,6 +19,9 @@ return new class extends Migration
             $table->string('first_question_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
+            // 外部キー設定
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+
         });
     }
 

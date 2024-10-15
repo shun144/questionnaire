@@ -1,4 +1,4 @@
-export type FlowCategoryType = 'custom' | 'check';
+export type FlowCategoryType = 'standard' | 'cityheaven';
 
 export type FlowType = {
   id: number;
@@ -43,7 +43,12 @@ export type RecommendNodeType = {
 
 export type OwnerState = {
   firstNodeId: string,
+  flowTitle: string,
+  flowUrl: string,
+
   setFirstNodeId: (by: string) => void,
+  setFlowTitle: (by: string) => void,
+  setFlowUrl: (by: string) => void,
 }
 
 

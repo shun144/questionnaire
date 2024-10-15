@@ -32,6 +32,32 @@ class OwnerContoller extends Controller
     //     return $board_id;
     // }
 
+    public function getFlowTitleAndUrl(Request $request){
+        try {
+            $params = $request->only(['flow_id']);
+            
+            $records = DB::table('flows')
+            ->where('id', $params['flow_id'])
+            ->select('title', 'url')
+            ->first();
+
+            $data = isset($records) ? [
+                'title' => $records->title,
+                'url' => $records->url,
+            ]: [];
+    
+            return response()->json($records,200,[],JSON_UNESCAPED_UNICODE);
+        }
+        catch (\Exception $e) {
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
+
     public function getFirstQuestionId(Request $request){
         try {
             // $board_id = $this->getBoardIdBySessionUser();
@@ -70,7 +96,6 @@ class OwnerContoller extends Controller
             ]);
             $user_id = Auth::user()->id;
 
-            // DB::table('flows')->insert(['email' => 'yamada@example.com','name' => 'yamada']);
 
             $flow_id = DB::table('flows')->insertGetId([
                 'category' => $params['category'],
@@ -203,9 +228,10 @@ class OwnerContoller extends Controller
                 'update_questions',
                 'update_results',
                 'update_edges',
-                'first_question_id'
+                'first_question_id',
+                'title',
+                'url'
             ]);
-
 
             DB::table('questions')
             ->where('flow_id', $params['flow_id'])
@@ -229,9 +255,11 @@ class OwnerContoller extends Controller
             ->where('id', $params['flow_id'])
             ->update([
                 'first_question_id' => $params['first_question_id'],
+                'title' => $params['title'],
+                'url' => $params['url'],
             ]);
 
-            // return response()->json(['test' => $params['first_question_id']],200,[],JSON_UNESCAPED_UNICODE);
+            return response()->json(['title' => $params['title']],200,[],JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $e) {
             // \Log::error('エラー機能:即時実行 【店舗ID:'.$store_id.'】');

@@ -36,6 +36,13 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 >
                                     Dashboard
                                 </NavLink>
+                                <NavLink
+                                    href={route('setting')}
+                                    active={route().current('setting')}
+                                >
+                                    Setting
+                                </NavLink>
+
                                 {/* <NavLink href={route('dashboard', { id: 1 })} active={route().current('dashboard')}>
                                     Dashboard
                                 </NavLink> */}
@@ -134,11 +141,19 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
             </nav>
 
             {header && (
-                <header className="bg-white h-[3vh]">
-                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                        {header}
-                    </div>
+                <header className="bg-white shadow">
+                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
                 </header>
+
+                // <header className="bg-white shadow">
+                //     <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">{header}</div>
+                // </header>
+
+                // <header className="h-[5vh] min-h-[5vh] max-h-[5vh] ">
+                //     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
+                //         {header}
+                //     </div>
+                // </header>
 
                 // <header className="bg-white h-[3vh]">
                 //     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
@@ -151,8 +166,8 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
             {/* このmain要素の親要素のflexに対してflex-grow:1を指定することで
             nav要素やheader要素など、他のheight:autoな子要素の残りの高さを自動で割り当てる
             */}
-            <main className={` ${header ? 'h-[90vh]' : 'h-[93vh]'} min-h-40`}>{children}</main>
-            {/* <main>{children}</main> */}
+            {/* <main className={` ${header ? 'h-[88vh]' : 'h-[93vh]'} min-h-40`}>{children}</main> */}
+            <main>{children}</main>
         </div>
     );
 }

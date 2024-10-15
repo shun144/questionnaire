@@ -11,153 +11,40 @@ use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
-use App\Models\Quize;
 use GuzzleHttp\Client;
 use Illuminate\Http\Client\Pool;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Crypt;
 
 class ApiController extends Controller
 {
 
-    /**
-     * $keyで昇順ソートする
-     */
-    private function sortAscArrayByKey(&$array, $key) {
-        $arrayCols = array_column($array, $key);
-        array_multisort($arrayCols, SORT_ASC, $array);               
-    }
-
-    private function getShukkinDayForOneWeek() {
-        $client = new Client();
-
-        // 週間出勤情報取得API
-        $API_SHUKKIN_LIST = "http://api.cityheaven.net/ApiShukkinList.php";
-        $resApiShukkin = $client->post($API_SHUKKIN_LIST,
-            [
-                'form_params' => [
-                    'keyid' => '4cklsVa5Gn4wBSVxRJSwHqYGUyChmFSo',
-                    'shopid' => '1500000311',
-                    'mode' => '0',
-                    'base_day' => date("Ymd")
-                ]
-            ]
-        );
-        $xmlApiShukkin = simplexml_load_string($resApiShukkin->getBody());
-        $shukkinArray = [];
-        foreach (json_decode(json_encode($xmlApiShukkin->xpath('//girls')), true) as $work) {
-            $shukkinArray[] = [
-                'id' => $work["girls_id"],
-                // 今日から一週間以内の出勤日の配列を取得
-                // 一週間全て欠勤の場合、全てnullの配列を返す
-                'w_shukkin' =>  array_values(
-                    array_map(
-                        function($value) {
-                            // day_off_flgが'0'なら出勤
-                            if ($value['day_off_flg'] === '0') return $value['year'].$value['month'].sprintf('%02d', $value['day']);
-                        }, $work["w_shukkin"]
-                    ), 
-                )
-
-                // 'w_shukkin' =>  array_values(
-                //                     array_filter(
-                //                         array_map(
-                //                             function($value) {
-                //                                 // day_off_flgが'0'なら出勤
-                //                                 if ($value['day_off_flg'] === '0') return $value['year'].$value['month'].$value['day'];
-                //                             }, $work["w_shukkin"]
-                //                         ), 
-                //                         function($value){
-                //                             return !is_null($value);
-                //                         }
-                //                     )
-                //                 )
-            ];
-        };
-        return $shukkinArray;
-    }
-
-    private function getAllGirls() {
-        $client = new Client();
-        // 在籍女の子一覧API
-        $API_GIRLS_LIST = "http://api.cityheaven.net/ApiGirlsList.php";
-        $resApiGirls = $client->post($API_GIRLS_LIST,
-            [
-                'form_params' => [
-                    'keyid' => '4cklsVa5Gn4wBSVxRJSwHqYGUyChmFSo',
-                    'shopid' => '1500000311',
-                ]
-            ]
-        );
-        $xmlApiGirls = simplexml_load_string($resApiGirls->getBody());
-        $girlsArray = [];
-        foreach (json_decode(json_encode($xmlApiGirls->xpath('//girlslist')), true) as $girl) {
-            $girlsArray[] = [
-                'id' => $girl["girls_id"],
-                'name' => $girl["name"],
-                'catchphrase' => $girl["girls_catch"],
-                'bwh' => [$girl["bust"], $girl["waist"], $girl["hip"]],
-                'diary_flg' => $girl["diary_flg"] == '1' ? TRUE : FALSE,
-                'review_flg' => $girl["girls_review_flg"] == '1' ? TRUE : FALSE,
-                'girls_url' => $girl["girls_url"],
-                'girls_yoyaku_url' => $girl["girls_yoyaku_url"],
-                'picture_url' => $girl["picture1"],
-                'girls_salespoint_ids' => array_map(function($num) use($girl){
-                                                        return empty($girl["girls_salespoint_id".sprintf('%02d', $num)]) ? null : $girl["girls_salespoint_id".sprintf('%02d', $num)];
-                                                    },range(1, 20))
-            ];
-        };
-        return $girlsArray;
-    }
-
-    // public function testCallApi() {
-    //     try {
-    //         $responses = Http::pool(fn (Pool $pool) => [
-    //             $pool->asForm()->post('http://api.cityheaven.net/ApiShukkinList.php', [
-    //                 'keyid' => '4cklsVa5Gn4wBSVxRJSwHqYGUyChmFSo',
-    //                 'shopid' => '1500000311',
-    //                 'mode' => '0',
-    //                 'base_day' => date("Ymd")
-    //             ]),
-    //             $pool->asForm()->post('http://api.cityheaven.net/ApiGirlsList.php', [
-    //                 'keyid' => '4cklsVa5Gn4wBSVxRJSwHqYGUyChmFSo',
-    //                 'shopid' => '1500000311',
-    //             ]),
-    //         ]);
-
-    //         $data = [
-    //             'first' => simplexml_load_string($responses[0]->getBody()),
-    //             'second' => simplexml_load_string($responses[1]->getBody())
-    //         ];
-    //         return response()->json($data);
-    //     } catch (\Exception $e) {
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //     }
-    // }
-
-
-    public function testCallApi() {
-
+    public function getCityHeavenGirls() {
         try {                    
-            // ①当日出勤している
-            // ②チェック項目に一致している数が多い
-            // ③写メ日記がある
-            // ④口コミがある
-            // ⑤直近1週間以内に出勤予定がある。
 
-            // 「名前」「キャッチ」「URL」「スリーサイズ」
+            $cityheaven_credential = DB::table('city_heavens')
+            ->where('user_id', 1)->select('access_key', 'shop_id')->first();
 
-            $shukkinArray = $this->getShukkinDayForOneWeek();
+            $decrypted_access_key = Crypt::decryptString($cityheaven_credential->access_key);
+            $decrypted_shop_id = Crypt::decryptString($cityheaven_credential->shop_id);
+
+            $shukkinArray = $this->getShukkinDayForOneWeek(
+                $decrypted_access_key,
+                $decrypted_shop_id,
+            );            
             $this->sortAscArrayByKey($shukkinArray, 'id');
             
-            $girlsArray =  $this->getAllGirls();
+            $girlsArray = $this->getAllGirls(
+                $decrypted_access_key,
+                $decrypted_shop_id,
+            );
+
             $this->sortAscArrayByKey($girlsArray, 'id');
     
             $resultArray = [];
             $keys = array_keys($shukkinArray);
 
-            
             $todayYYYYMMDD = date("Ymd");
             foreach ($keys as $key) {
                 $girlInfo = $girlsArray[$key];
@@ -205,152 +92,98 @@ class ApiController extends Controller
     }
 
 
-    public function get()
-    {
-        return response()->json(
+    // $keyで昇順ソートする
+    private function sortAscArrayByKey(&$array, $key) {
+        $arrayCols = array_column($array, $key);
+        array_multisort($arrayCols, SORT_ASC, $array);               
+    }
+
+    // 直近1週間に出勤予定の女の子情報を取得
+    private function getShukkinDayForOneWeek($access_key, $shop_id) {
+
+        $client = new Client();
+
+        // 週間出勤情報取得API
+        $API_SHUKKIN_LIST = "http://api.cityheaven.net/ApiShukkinList.php";
+        $resApiShukkin = $client->post($API_SHUKKIN_LIST,
             [
-                "quize" => [
-                    [
-                        "quizeNo" => "quize-1",
-                        "topic" => "好きな動物は？",
-                        "x" => "0",
-                        "y" => "0",
-                        "choices" => [
-                            [
-                                "choiceNo" => "quize-1-1",
-                                "content" => "犬"
-                            ],
-                            [
-                                "choiceNo" => "quize-1-2",
-                                "content" => "猫"
-                            ],
-                            [
-                                "choiceNo" => "quize-1-3",
-                                "content" => "うさぎ"
-                            ],
-                            [
-                                "choiceNo" => "quize-1-4",
-                                "content" => "馬"
-                            ],
-                        ],
-                    ],
-                    [
-                        "quizeNo" => "quize-2",
-                        "topic" => "好きな動物は？",
-                        "x" => "0",
-                        "y" => "0",
-                        "choices" => [
-                            [
-                                "choiceNo" => "quize-2-1",
-                                "content" => "犬"
-                            ],
-                            [
-                                "choiceNo" => "quize-2-2",
-                                "content" => "猫"
-                            ],
-                            [
-                                "choiceNo" => "quize-2-3",
-                                "content" => "うさぎ"
-                            ],
-                            [
-                                "choiceNo" => "quize-2-4",
-                                "content" => "馬"
-                            ],
-                        ],
-                    ],
+                'form_params' => [
+                    'keyid' => $access_key,
+                    'shopid' => $shop_id,
+                    // 'keyid' => '4cklsVa5Gn4wBSVxRJSwHqYGUyChmFSo',
+                    // 'shopid' => '1500000311',
+                    'mode' => '0',
+                    'base_day' => date("Ymd")
                 ]
             ]
         );
 
-        // return response()->json(
-        //     [
-        //         "quizeNo" => "quize-1",
-        //         "topic" => "好きな動物は？",
-        //         "x" => "0",
-        //         "y" => "0",
-        //         "choices" => [
-        //             [
-        //                 "choiceNo" => "quize-1-1",
-        //                 "content" => "犬"
-        //             ],
-        //             [
-        //                 "choiceNo" => "quize-1-2",
-        //                 "content" => "猫"
-        //             ],
-        //             [
-        //                 "choiceNo" => "quize-1-3",
-        //                 "content" => "うさぎ"
-        //             ],
-        //             [
-        //                 "choiceNo" => "quize-1-4",
-        //                 "content" => "馬"
-        //             ],
-        //         ],
-        //     ],
-        // );
 
-        // return response()->json(
-        //     [
-        //         "quize" => [
-        //             "quizeNo" => "quize-1",
-        //             "topic" => "好きな動物は？",
-        //             "choices" => [
-        //               [
-        //                 "choiceNo" => "quize-1-1",
-        //                 "content" => "犬"
-        //               ],
-        //             ]
-        //         ]
+        $xmlApiShukkin = simplexml_load_string($resApiShukkin->getBody());
+        $shukkinArray = [];
+        foreach (json_decode(json_encode($xmlApiShukkin->xpath('//girls')), true) as $work) {
+            $shukkinArray[] = [
+                'id' => $work["girls_id"],
+                // 今日から一週間以内の出勤日の配列を取得
+                // 一週間全て欠勤の場合、全てnullの配列を返す
+                'w_shukkin' =>  array_values(
+                    array_map(
+                        function($value) {
+                            // day_off_flgが'0'なら出勤
+                            if ($value['day_off_flg'] === '0') return $value['year'].$value['month'].sprintf('%02d', $value['day']);
+                        }, $work["w_shukkin"]
+                    ), 
+                )
 
-        //     ],
-        // );
+                // 'w_shukkin' =>  array_values(
+                //                     array_filter(
+                //                         array_map(
+                //                             function($value) {
+                //                                 // day_off_flgが'0'なら出勤
+                //                                 if ($value['day_off_flg'] === '0') return $value['year'].$value['month'].$value['day'];
+                //                             }, $work["w_shukkin"]
+                //                         ), 
+                //                         function($value){
+                //                             return !is_null($value);
+                //                         }
+                //                     )
+                //                 )
+            ];
+        };
+        return $shukkinArray;
+    }
 
-    
-        // return response()->json(
-        //     [
-        //      "post" => [
-        //           [
-        //        "id" => 1,
-        //            "title" => "タイトルです",
-        //            "content" => "投稿内容です投稿内容です投稿内容です投稿内容です投稿内容です。"
-        //           ],
-        //           [
-        //        "id" => 2,
-        //            "title" => "タイトルです",
-        //            "content" => "投稿内容です投稿内容です投稿内容です投稿内容です投稿内容です。"
-        //           ],
-        //           [
-        //        "id" => 3,
-        //            "title" => "タイトルです",
-        //            "content" => "投稿内容です投稿内容です投稿内容です投稿内容です投稿内容です。"
-        //           ],
-        //         ]
-        //     ],
-        //     200,[],
-        //     JSON_UNESCAPED_UNICODE //文字化け対策
-        // );
+    private function getAllGirls($access_key, $shop_id) {
+        $client = new Client();
 
-
-
-        // $store_id = Auth::user()->store_id;
-        // $lines = DB::table('lines')
-        // ->select('id','user_name', 'is_valid','created_at')
-        // ->whereNull('deleted_at')
-        // ->where('store_id', $store_id)
-        // ->orderBy('created_at')
-        // ->get();
-        // $url_name = DB::table('stores')->find($store_id)->url_name;
-
-
-
-        // $request->user()->fill($request->validated());
-
-        // if ($request->user()->isDirty('email')) {
-        //     $request->user()->email_verified_at = null;
-        // }
-
-        // $request->user()->save();
-
-        // return Redirect::route('profile.edit');
+        // 在籍女の子一覧API
+        $API_GIRLS_LIST = "http://api.cityheaven.net/ApiGirlsList.php";
+        $resApiGirls = $client->post($API_GIRLS_LIST,
+            [
+                'form_params' => [
+                    'keyid' => $access_key,
+                    'shopid' => $shop_id,
+                ]
+            ]
+        );
+        $xmlApiGirls = simplexml_load_string($resApiGirls->getBody());
+        $girlsArray = [];
+        foreach (json_decode(json_encode($xmlApiGirls->xpath('//girlslist')), true) as $girl) {
+            $girlsArray[] = [
+                'id' => $girl["girls_id"],
+                'name' => $girl["name"],
+                'catchphrase' => $girl["girls_catch"],
+                'bwh' => [$girl["bust"], $girl["waist"], $girl["hip"]],
+                'diary_flg' => $girl["diary_flg"] == '1' ? TRUE : FALSE,
+                'review_flg' => $girl["girls_review_flg"] == '1' ? TRUE : FALSE,
+                'girls_url' => $girl["girls_url"],
+                'girls_yoyaku_url' => $girl["girls_yoyaku_url"],
+                'picture_url' => $girl["picture1"],
+                'girls_salespoint_ids' => array_map(function($num) use($girl){
+                                                        return empty($girl["girls_salespoint_id".sprintf('%02d', $num)]) ? null : $girl["girls_salespoint_id".sprintf('%02d', $num)];
+                                                    },range(1, 20))
+            ];
+        };
+        return $girlsArray;
     }
 }
