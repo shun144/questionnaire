@@ -11,9 +11,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 // use Illuminate\Support\Facades\Redirect;
-// use Inertia\Inertia;
 use Inertia\Response;
-use App\Models\Board;
+use App\Models\Flow;
 use App\Models\Question;
 use App\Models\Choice;
 use App\Models\Result;
@@ -26,36 +25,81 @@ use Inertia\Inertia;
 class OwnerContoller extends Controller
 {
 
-    // private function getBoardIdBySessionUser() {
-    //     $user_id = Auth::user()->id;
-    //     $board_id = Board::where('user_id',$user_id)->first()->id;
-    //     return $board_id;
-    // }
-
-    public function getFlowTitleAndUrl(Request $request){
+    public function getFlow($id) {
         try {
-            $params = $request->only(['flow_id']);
-            
-            $records = DB::table('flows')
-            ->where('id', $params['flow_id'])
+            // $params = $request->only(['flow_id']);
+           
+            $flow_records = DB::table('flows')
+            ->where('id', $id)
             ->select('title', 'url')
             ->first();
 
-            $data = isset($records) ? [
-                'title' => $records->title,
-                'url' => $records->url,
-            ]: [];
-    
-            return response()->json($records,200,[],JSON_UNESCAPED_UNICODE);
+            $question_records = DB::table('questions')
+            ->where('flow_id', $id)
+            ->select('node_datas')
+            ->first();
+
+            $result_records = DB::table('results')
+            ->where('flow_id', $id)
+            ->select('node_datas')
+            ->first();
+
+            $edge_records = DB::table('edges')
+            ->where('flow_id', $id)
+            ->select('edge_datas')
+            ->first();
+
+            $question_datas = isset($question_records) ? $question_records->node_datas: '[]';
+            $result_datas = isset($result_records) ? $result_records->node_datas: '[]';
+            $edge_datas = isset($edge_records) ? $edge_records->edge_datas: '[]';
+
+            return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
+                'id' =>  $id,
+                'quesitions' => $question_datas,
+                'results' => $result_datas,
+                'edges' => $edge_datas,
+                'title' => $flow_records->title,
+                'url' => $flow_records->url,
+            ]);
+
+            // return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $e) {
 
             $data = [
                 'err' => $e->getMessage()
             ];
-            return response()->json($data);
+            return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
+                'id' =>  $id,
+                'flowData' => $data,
+            ]);
         }
     }
+
+    // public function getFlowTitleAndUrl(Request $request){
+    //     try {
+    //         $params = $request->only(['flow_id']);
+            
+    //         $records = DB::table('flows')
+    //         ->where('id', $params['flow_id'])
+    //         ->select('title', 'url')
+    //         ->first();
+
+    //         $data = isset($records) ? [
+    //             'title' => $records->title,
+    //             'url' => $records->url,
+    //         ]: [];
+    
+    //         return response()->json($records,200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
+
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
 
     public function getFirstQuestionId(Request $request){
@@ -83,8 +127,6 @@ class OwnerContoller extends Controller
             return response()->json($data);
         }
     }
-
-
 
 
     public function addFlow(Request $request){
@@ -128,6 +170,19 @@ class OwnerContoller extends Controller
         }
     }
 
+    public function deleteFlow(Request $request){
+        try {
+            $params = $request->only(['flowId']);
+            Flow::destroy($params['flowId']);
+        }
+        catch (\Exception $e) {
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
     public function getFlows(){
         try {
             // $board_id = $this->getBoardIdBySessionUser();
@@ -151,8 +206,6 @@ class OwnerContoller extends Controller
             return response()->json($data);
         }
     }
-
-
 
     public function getEdges(Request $request){
         try {

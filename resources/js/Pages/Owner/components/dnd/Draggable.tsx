@@ -29,8 +29,17 @@ export const Draggable = ({ id, label }: Props) => {
         height: "fit-content",
         width: "130px"
       }}
+
     >
-      <DraggableBlockSource isDragging={isDragging} label={label} />
+      <div
+        className="flex justify-center items-center bg-slate-500 h-20 text-white rounded shadow transition-all hover:bg-slate-600 hover:shadow-xl"
+        style={{
+          cursor: isDragging ? "grabbing" : "grab",
+          opacity: isDragging ? 0.5 : undefined,
+        }}>
+        <p className="text-center select-none">{label}</p>
+      </div >
+      {/* <DraggableBlockSource isDragging={isDragging} label={label} /> */}
     </div>
   );
 };

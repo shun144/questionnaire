@@ -6,10 +6,7 @@ import {
   useHandleConnections,
 } from '@xyflow/react';
 
-// import './index.css'
-
-
-export type ChoiceSourceHandleProps = {
+export type Props = {
   id: string;
   type: HandleType;
   position: Position;
@@ -17,7 +14,7 @@ export type ChoiceSourceHandleProps = {
   style: CSSProperties;
 }
 
-const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: ChoiceSourceHandleProps) => {
+const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: Props) => {
 
   // コネクション情報
   const connections = useHandleConnections({ id, type });

@@ -7,8 +7,6 @@ import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 
 export default function UpdateCityHeavenApiForm({ className = '' }: { className?: string }) {
-    // const passwordInput = useRef<HTMLInputElement>(null);
-    // const currentPasswordInput = useRef<HTMLInputElement>(null);
     const accessKeyInput = useRef<HTMLInputElement>(null);
     const shopIdInput = useRef<HTMLInputElement>(null);
 
@@ -37,26 +35,6 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
         });
     };
 
-    // const updatePassword: FormEventHandler = (e) => {
-    //     e.preventDefault();
-
-    //     put(route('password.update'), {
-    //         preserveScroll: true,
-    //         onSuccess: () => reset(),
-    //         onError: (errors) => {
-    //             if (errors.password) {
-    //                 reset('password', 'password_confirmation');
-    //                 passwordInput.current?.focus();
-    //             }
-
-    //             if (errors.current_password) {
-    //                 reset('current_password');
-    //                 currentPasswordInput.current?.focus();
-    //             }
-    //         },
-    //     });
-    // };
-
     return (
         <section className={className}>
             <header>
@@ -76,7 +54,7 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
                         ref={accessKeyInput}
                         value={data.access_key}
                         onChange={(e) => setData('access_key', e.target.value)}
-                        // type="password"
+                        type="password"
                         className="mt-1 block w-full"
                         autoComplete="access-key"
                     />
@@ -91,59 +69,12 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
                         ref={shopIdInput}
                         value={data.shop_id}
                         onChange={(e) => setData('shop_id', e.target.value)}
-                        // type="password"
+                        type="password"
                         className="mt-1 block w-full"
                         autoComplete="shop-id"
                     />
                     <InputError message={errors.shop_id} className="mt-2" />
                 </div>
-
-                {/* <div>
-                    <InputLabel htmlFor="current_password" value="Current Password" />
-
-                    <TextInput
-                        id="current_password"
-                        ref={currentPasswordInput}
-                        value={data.current_password}
-                        onChange={(e) => setData('current_password', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="current-password"
-                    />
-
-                    <InputError message={errors.current_password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password" value="New Password" />
-
-                    <TextInput
-                        id="password"
-                        ref={passwordInput}
-                        value={data.password}
-                        onChange={(e) => setData('password', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                    />
-
-                    <InputError message={errors.password} className="mt-2" />
-                </div>
-
-                <div>
-                    <InputLabel htmlFor="password_confirmation" value="Confirm Password" />
-
-                    <TextInput
-                        id="password_confirmation"
-                        value={data.password_confirmation}
-                        onChange={(e) => setData('password_confirmation', e.target.value)}
-                        type="password"
-                        className="mt-1 block w-full"
-                        autoComplete="new-password"
-                    />
-
-                    <InputError message={errors.password_confirmation} className="mt-2" />
-                </div> */}
 
                 <div className="flex items-center gap-4">
                     <PrimaryButton disabled={processing}>保存</PrimaryButton>

@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
             initQuestionSeeder::class,
             initResultSeeder::class,
             initEdgeSeeder::class,
+            initCityHeavenSeeder::class,
         ]);
 
     }
