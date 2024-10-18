@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('flow_id');
-            $table->json('node_datas')->nullable()->default('[]');
+            $table->json('node_datas')->nullable();
+            // $table->json('node_datas')->nullable()->default('[]');
             $table->timestamps();
             // 外部キー設定
             $table->foreign('flow_id')->references('id')->on('flows')->onDelete('cascade');
