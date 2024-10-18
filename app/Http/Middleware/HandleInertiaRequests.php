@@ -34,6 +34,7 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $request->user(),
             ],
+            // 'MY_ENV_VAR' => env('MY_ENV_VAR'),
         ];
     }
 }

@@ -5,20 +5,20 @@ import { Head } from '@inertiajs/react';
 import CityHeavenFlow from './CityHeavenFlow'
 import { useOwnerStore } from '../../store';
 
-const FlowLayout = ({ id, quesitions, results, edges, title, url }: { id: number, quesitions: string, results: string, edges: string, title: string, url: string }) => {
+const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuestionId }: { id: number, quesitions: string, results: string, edges: string, title: string, url: string, initFirstQuestionId: string }) => {
 
   const flowTitle = useOwnerStore((state) => state.flowTitle);
   const flowUrl = useOwnerStore((state) => state.flowUrl);
 
   const setFlowTitle = useOwnerStore((state) => state.setFlowTitle);
   const setFlowUrl = useOwnerStore((state) => state.setFlowUrl);
+  const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
 
   useEffect(() => {
     setFlowTitle(title);
     setFlowUrl(url);
+    setFirstNodeId(initFirstQuestionId);
   }, [])
-
-
 
   return (
     <AuthenticatedLayout

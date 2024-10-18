@@ -4,8 +4,8 @@ import { useOwnerStore } from '../../store';
 import QuestionNode from './QuestionNode';
 import ResultNode from './ResultNode';
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { Draggable } from '../../components/dnd/Draggable';
-import { Droppable } from '../../components/dnd/Droppable';
+import Draggable from '../../components/dnd/Draggable';
+import Droppable from '../../components/dnd/Droppable';
 import { ReactFlow, Node, Edge, Connection, useNodesState, useEdgesState, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import '../../../../../css/owner/flow.css'

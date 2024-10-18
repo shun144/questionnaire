@@ -106,11 +106,12 @@ export type DbEdgeType = {
 export type GirlType = {
   id: string;
   name: string;
-  catchphrase: string;
+  catchphrase: string | string[];
   diary_flg: boolean;
   review_flg: boolean;
   picture_url: string;
   mypage_url: string;
+  bwh: string[];
   yoyaku_url: string;
   today_work_flg: boolean;
   w_shukkin: string[];

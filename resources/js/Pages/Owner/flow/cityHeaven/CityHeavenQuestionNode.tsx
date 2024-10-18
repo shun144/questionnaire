@@ -27,21 +27,22 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
   }
 
   // 質問内容の更新
-  const handleUpdateTopic = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleUpdateTopic = useCallback((event: ChangeEvent<HTMLTextAreaElement>) => {
     updateNodeData(
       nodeId,
       { ...nodeData, topic: event.currentTarget.value }
     );
-  }
+  }, [updateNodeData, nodeId, nodeData]);
 
-  const handleAddChoice = () => {
+
+  const handleAddChoice = useCallback(() => {
     const newChoiceNo = getUniqueId();
     updateNodeData(
       nodeId, {
       ...nodeData,
       choices: [...nodeData.choices, { id: newChoiceNo, content: "" }]
     });
-  };
+  }, [updateNodeData, nodeId, nodeData]);
 
 
   // 選択肢の内容更新
@@ -55,7 +56,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
       ...nodeData,
       choices: nodeData.choices.map(c => c.id === _choice.id ? { ...c, content: targetValue } : c)
     });
-  }, [nodeId, nodeData])
+  }, [updateNodeData, nodeId, nodeData])
 
 
   // 選択肢削除
@@ -71,7 +72,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
 
     // 選択肢のコネクション削除
     setEdges((eds) => eds.filter(ed => ed.sourceHandle != _choice.id))
-  }, [nodeId, nodeData]);
+  }, [updateNodeData, nodeId, nodeData]);
 
   // // 質問ノード削除
   // const handleDeleteQuize = () => {
@@ -86,15 +87,15 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
   // }
 
 
-  const onChangeSelect = useCallback((_choiceId: string, options: SalsPointType[] | null) => {
-    if (options) {
-      updateNodeData(
-        nodeId, {
-        ...nodeData,
-        choices: nodeData.choices.map(c => c.id === _choiceId ? { ...c, salePoints: options } : c)
-      });
-    }
-  }, [nodeId, nodeData, updateNodeData]);
+  // const onChangeSelect = useCallback((_choiceId: string, options: SalsPointType[] | null) => {
+  //   if (options) {
+  //     updateNodeData(
+  //       nodeId, {
+  //       ...nodeData,
+  //       choices: nodeData.choices.map(c => c.id === _choiceId ? { ...c, salePoints: options } : c)
+  //     });
+  //   }
+  // }, [nodeId, nodeData, updateNodeData]);
 
   const handleSelectChange = useCallback((_choiceId: string, options: SalsPointType[] | null) => {
     if (options) {
@@ -105,7 +106,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
       });
       setSelectedOptions(options);
     }
-  }, [nodeId, nodeData]);
+  }, [nodeId, nodeData, updateNodeData, setSelectedOptions]);
 
 
 
@@ -119,18 +120,6 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
   //   }
   // };
 
-
-
-  // const handleSelectChange = (_choiceId: string, options: SalsPointType[] | null) => {
-  //   if (options) {
-  //     updateNodeData(
-  //       nodeId, {
-  //       ...nodeData,
-  //       choices: nodeData.choices.map(c => c.id === _choiceId ? { ...c, salePoints: options } : c)
-  //     });
-  //     setSelectedOptions(options);
-  //   }
-  // };
 
   const customStyles: StylesConfig<SalsPointType, true> = useMemo(() => (
     {
@@ -220,7 +209,9 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
     }), []);
 
   return (
-    <div className="rounded-md w-72 pb-7 bg-slate-100 border-none shadow-lg">
+    <div
+      className={`rounded-md w-72 pb-7 bg-slate-100 shadow-lg
+      ${firstNodeId === nodeId && "border-2 border-orange-300"}`}>
       <div
         className='custom-drag-handle rounded-t-md bg-slate-900 flex justify-end items-center h-8 pr-2'>
         <BsThreeDots

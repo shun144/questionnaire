@@ -1,1 +1,0 @@
-import{c as l}from"./react-9UC6Oz1t.js";const t=l(e=>({firstNodeId:"",flowTitle:"",flowUrl:"",setFirstNodeId:o=>e({firstNodeId:o}),setFlowTitle:o=>e({flowTitle:o}),setFlowUrl:o=>e({flowUrl:o})}));export{t as u};

@@ -4,10 +4,10 @@ import { useOwnerStore } from '../../store';
 import CityHeavenQuestionNode from './CityHeavenQuestionNode';
 import CityHeavenResultNode from './CityHeavenResultNode';
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
-import { Draggable } from '../../components/dnd/Draggable';
-import { Droppable } from '../../components/dnd/Droppable';
+import Draggable from '../../components/dnd/Draggable';
+import Droppable from '../../components/dnd/Droppable';
 import {
-  ReactFlow, Node, Edge, Connection, useNodes, useEdges, useNodesState, useEdgesState, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
+  ReactFlow, Node, Edge, Connection, useNodes, useEdges, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
   OnNodesChange, applyNodeChanges,
   OnEdgesChange, applyEdgeChanges,
   ConnectionLineType, MarkerType
@@ -32,12 +32,13 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
   const flowTitle = useOwnerStore((state) => state.flowTitle);
   const flowUrl = useOwnerStore((state) => state.flowUrl);
 
-  // const [nodes, setNodes, onEdgesChange] = useNodesState<Node>([]);
-  // const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
   const edgeReconnSuccess = useRef(true);
 
   const { screenToFlowPosition, addNodes, setViewport, getNodes, deleteElements } = useReactFlow();
 
+  // useEffect(() => {
+  //   console.log('ここだ！！')
+  // }, [setRfInstance]);
 
   const nodeTypes = useMemo(() => (
     {
@@ -45,6 +46,15 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
       cityHeavenResultNode: CityHeavenResultNode
     }
   ), []);
+
+  const defaultEdgeOptions = useMemo(() => (
+    {
+      type: 'smoothstep',
+    }
+  ), []);
+
+
+
 
 
   const onNodesChange: OnNodesChange = useCallback(
@@ -59,10 +69,7 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
     [setEdges],
   );
 
-  const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds,)),
-    [setEdges],
-  );
+
 
   const onAddQuestion = (position: { x: number; y: number }) => {
     const newQuestionNo = getUniqueId();
@@ -160,16 +167,33 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
   }, []);
 
 
-  const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
+  const onReconnectEnd = useCallback((edge: Edge) => {
     if (!edgeReconnSuccess.current) {
       setEdges(eds => eds.filter((ed) => ed.id !== edge.id));
     }
     edgeReconnSuccess.current = true;
   }, []);
 
+  // const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
+  //   if (!edgeReconnSuccess.current) {
+  //     setEdges(eds => eds.filter((ed) => ed.id !== edge.id));
+  //   }
+  //   edgeReconnSuccess.current = true;
+  // }, []);
+
+  const onConnect = useCallback((params: Connection | Edge) => {
+    setEdges((eds) => addEdge(params, eds))
+  }, [setEdges]);
+
   const deleteNode = useCallback(() => {
     const selectedNode = getNodes().filter(x => x.selected === true);
     deleteElements({ nodes: [{ id: selectedNode[0].id }] });
+  }, [getNodes]);
+
+
+  const handleUpdateFirstQuestion = useCallback(() => {
+    const selectedNode = getNodes().filter(x => x.selected === true);
+    setFirstNodeId(selectedNode[0].id)
   }, [getNodes]);
 
 
@@ -195,27 +219,19 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
             edges={edges}
             nodeTypes={nodeTypes}
             // edgeTypes={{ smoothstep: SmoothStepEdge }}
-            onEdgesChange={onEdgesChange}
-            onNodesChange={onNodesChange}
+            onEdgesChange={(changes) => onEdgesChange(changes)}
+            onNodesChange={(changes) => onNodesChange(changes)}
             fitView
             fitViewOptions={{ padding: 0.4 }}
             snapToGrid
             edgeTypes={{ smoothstep: SmoothStepEdge }}
             connectionLineType={ConnectionLineType.SmoothStep}
-            onReconnect={onReconnect}
-            onReconnectStart={onReconnectStart}
-            onReconnectEnd={onReconnectEnd}
-            onConnect={onConnect}
+            onReconnect={(oldEdge, newConn) => onReconnect(oldEdge, newConn)}
+            onReconnectStart={() => onReconnectStart()}
+            onReconnectEnd={(_, edge) => onReconnectEnd(edge)}
+            onConnect={(params) => onConnect(params)}
             onInit={setRfInstance}
-            defaultEdgeOptions={{
-              type: 'smoothstep',
-              // markerEnd: {
-              //   type: MarkerType.ArrowClosed,
-              //   width: 10,
-              //   height: 10,
-              //   color: '#FF0072'
-              // }
-            }}
+            defaultEdgeOptions={defaultEdgeOptions}
           >
             <Background
               color='#222'
@@ -228,7 +244,10 @@ const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
       <Toaster position="bottom-right" reverseOrder={false} />
 
       <Menu id={QUESTION_MENU_ID}>
-        <Item onClick={deleteNode}>
+        <Item onClick={() => handleUpdateFirstQuestion()}>
+          1問目に設定
+        </Item>
+        <Item onClick={() => deleteNode()}>
           削除
         </Item>
       </Menu>

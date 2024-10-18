@@ -20,14 +20,34 @@ use Illuminate\Support\Facades\Crypt;
 class ApiController extends Controller
 {
 
-    public function getCityHeavenGirls() {
+    public function getCityHeavenGirls($owner) {
         try {                    
 
-            $cityheaven_credential = DB::table('city_heavens')
-            ->where('user_id', 1)->select('access_key', 'shop_id')->first();
+            $user_record = DB::table('users')
+            ->where('name', $owner)
+            ->select('id')
+            ->first();
 
-            $decrypted_access_key = Crypt::decryptString($cityheaven_credential->access_key);
-            $decrypted_shop_id = Crypt::decryptString($cityheaven_credential->shop_id);
+
+            if (is_null($user_record)) {
+                return response()->json([
+                    'resultArray' => '対象のuserが存在しない'
+                ]);
+            }
+
+            $cityheaven_record = DB::table('city_heavens')
+            ->where('user_id', $user_record->id)
+            ->select('access_key', 'shop_id')->first();
+
+
+            if (is_null($cityheaven_record)) {
+                return response()->json([
+                    'resultArray' => '対象のアクセスキーが存在しない'
+                ]);
+            }
+
+            $decrypted_access_key = Crypt::decryptString($cityheaven_record->access_key);
+            $decrypted_shop_id = Crypt::decryptString($cityheaven_record->shop_id);
 
             $shukkinArray = $this->getShukkinDayForOneWeek(
                 $decrypted_access_key,

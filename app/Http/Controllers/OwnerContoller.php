@@ -31,7 +31,7 @@ class OwnerContoller extends Controller
            
             $flow_records = DB::table('flows')
             ->where('id', $id)
-            ->select('title', 'url')
+            ->select('title', 'url', 'first_question_id')
             ->first();
 
             $question_records = DB::table('questions')
@@ -60,6 +60,7 @@ class OwnerContoller extends Controller
                 'edges' => $edge_datas,
                 'title' => $flow_records->title,
                 'url' => $flow_records->url,
+                'initFirstQuestionId' => $flow_records->first_question_id
             ]);
 
             // return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
@@ -102,31 +103,31 @@ class OwnerContoller extends Controller
     // }
 
 
-    public function getFirstQuestionId(Request $request){
-        try {
-            // $board_id = $this->getBoardIdBySessionUser();
-            $params = $request->only([
-                'flow_id',
-            ]);
+    // public function getFirstQuestionId(Request $request){
+    //     try {
+    //         // $board_id = $this->getBoardIdBySessionUser();
+    //         $params = $request->only([
+    //             'flow_id',
+    //         ]);
            
-            $record = DB::table('flows')
-            ->where('id', $params['flow_id'])
-            ->select('first_question_id')
-            ->first();
+    //         $record = DB::table('flows')
+    //         ->where('id', $params['flow_id'])
+    //         ->select('first_question_id')
+    //         ->first();
 
-            $data = isset($record) ? $record->first_question_id: '';
+    //         $data = isset($record) ? $record->first_question_id: '';
 
-            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
 
-        }
-        catch (\Exception $e) {
+    //     }
+    //     catch (\Exception $e) {
 
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
 
     public function addFlow(Request $request){
@@ -183,96 +184,93 @@ class OwnerContoller extends Controller
         }
     }
 
-    public function getFlows(){
+    public function getFlowList(){
         try {
-            // $board_id = $this->getBoardIdBySessionUser();
             $user_id = Auth::user()->id;
            
             $records = DB::table('flows')
             ->where('user_id', $user_id)
             ->select('id','category', 'title','url', 'first_question_id as firstQuestionId')
             ->get();
-
-
-            $data = isset($records) ? $records: [];
-            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-
+            $datas = isset($records) ? $records: [];
+            
+            return Inertia::render('Owner/board/MainBoard', [
+                'initialFlows' =>  $datas,
+            ]);
         }
         catch (\Exception $e) {
-
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
+            return Inertia::render('Owner/board/MainBoard', [
+                'initialFlows' =>  [],
+            ]);
         }
     }
 
-    public function getEdges(Request $request){
-        try {
-            $params = $request->only(['flow_id']);
+    // public function getEdges(Request $request){
+    //     try {
+    //         $params = $request->only(['flow_id']);
            
-            $records = DB::table('edges')
-            ->where('flow_id', $params['flow_id'])
-            ->select('edge_datas')
-            ->first();
+    //         $records = DB::table('edges')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->select('edge_datas')
+    //         ->first();
 
-            $data = isset($records) ? $records->edge_datas: [];
+    //         $data = isset($records) ? $records->edge_datas: [];
 
-            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-        }
-        catch (\Exception $e) {
+    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
 
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
-    public function getQuestionNodes(Request $request){
-        try {
-            // $flow_id = $this->getBoardIdBySessionUser();
-            $params = $request->only(['flow_id']);
+    // public function getQuestionNodes(Request $request){
+    //     try {
+    //         // $flow_id = $this->getBoardIdBySessionUser();
+    //         $params = $request->only(['flow_id']);
            
-            $records = DB::table('questions')
-            ->where('flow_id', $params['flow_id'])
-            ->select('node_datas')
-            ->first();
+    //         $records = DB::table('questions')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->select('node_datas')
+    //         ->first();
 
-            $data = isset($records) ? $records->node_datas: [];
+    //         $data = isset($records) ? $records->node_datas: [];
 
-            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-        }
-        catch (\Exception $e) {
+    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
 
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
-    public function getResultNodes(Request $request){
-        try {             
-            // $flow_id = $this->getBoardIdBySessionUser();
-            $params = $request->only(['flow_id']);
+    // public function getResultNodes(Request $request){
+    //     try {             
+    //         // $flow_id = $this->getBoardIdBySessionUser();
+    //         $params = $request->only(['flow_id']);
            
-            $records = DB::table('results')
-            ->where('flow_id', $params['flow_id'])
-            ->select('node_datas')
-            ->first();
+    //         $records = DB::table('results')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->select('node_datas')
+    //         ->first();
 
-            $data = isset($records) ? $records->node_datas: [];
+    //         $data = isset($records) ? $records->node_datas: [];
 
-            return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-        }
-        catch (\Exception $e) {
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
+    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
     public function commit(Request $request){
         try {

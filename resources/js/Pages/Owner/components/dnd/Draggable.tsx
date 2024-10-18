@@ -1,12 +1,13 @@
+import { memo } from 'react';
 import { useDraggable } from "@dnd-kit/core";
-import { DraggableBlockSource } from "./DraggableBlockSource";
+// import { DraggableBlockSource } from "./DraggableBlockSource";
 
 type Props = {
   id: string;
   label: string;
 };
 
-export const Draggable = ({ id, label }: Props) => {
+const Draggable = ({ id, label }: Props) => {
   const {
     setNodeRef,
     listeners,
@@ -43,3 +44,5 @@ export const Draggable = ({ id, label }: Props) => {
     </div>
   );
 };
+
+export default memo(Draggable);

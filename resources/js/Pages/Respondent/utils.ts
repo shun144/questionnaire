@@ -2,9 +2,20 @@ import axios from 'axios';
 import { QuestionnarieType, DbQuestionType, DbEdgeType, DbResultType } from './types';
 
 
-export const getCityHeavenGirls = async (flowUrl: string) => {
+export const getCityHeavenGirls = async () => {
   try {
-    const res = await axios.get(`${flowUrl}/cityheaven`);
+    // console.log(flowUrl);
+    const baseUrl = window.location.origin;
+    const [_, owner, flowUrl] = window.location.pathname.split('/');
+
+    const res = await axios.get(`${baseUrl}/${owner}/${flowUrl}/cityheaven`);
+
+
+    // const res = await axios.get(`${flowUrl}/cityheaven`, {
+    //   headers: {
+    //     'Custom-Header': 'shun',
+    //   }
+    // });
     console.log(res.data);
     return res.data;
   } catch (error) {

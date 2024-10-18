@@ -51,15 +51,15 @@ export const getFlowTitleAndUrl = async (flowId: number): Promise<{ title: strin
   }
 }
 
-export const getFlows = async (): Promise<FlowType[]> => {
-  try {
-    const res = await axios.get('/flows');
-    return res.data as FlowType[];
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
-}
+// export const getFlows = async (): Promise<FlowType[]> => {
+//   try {
+//     const res = await axios.get('/flows');
+//     return res.data as FlowType[];
+//   } catch (error) {
+//     console.log(error);
+//     return [];
+//   }
+// }
 
 
 
