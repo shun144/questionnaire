@@ -1,1 +1,0 @@
-import{j as e}from"./app-CLtd0l1O.js";const l=({title:t})=>e.jsx("div",{className:"bg-purple-300 min-h-10 max-h-10 md:min-h-14 md:max-h-14",children:e.jsx("div",{className:"w-full h-full flex justify-center items-center",children:e.jsx("div",{className:"text-white text-xl md:text-3xl",children:t})})});export{l as default};

@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { memo, CSSProperties } from 'react';
 import {
   Handle,
   HandleType,
@@ -30,4 +30,4 @@ const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: Prop
   );
 };
 
-export default ChoiceSourceHandle;
+export default memo(ChoiceSourceHandle);

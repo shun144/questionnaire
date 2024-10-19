@@ -55,7 +55,7 @@ Route::prefix('admin')->name('admin.')->group(function(){
 
 Route::middleware('auth')->group(function () {
 
-    
+
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 
     // Route::get('/dashboard', fn() => Inertia::render('Owner/board/MainBoard'))->name('dashboard');
@@ -76,8 +76,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/flows', [OwnerContoller::class, 'commit']);
     
     // Route::get('/flow-info', [OwnerContoller::class, 'getFlowTitleAndUrl']);
-    Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow']);
+    Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow'])->name('flow.index');
     Route::post('/flow', [OwnerContoller::class, 'addFlow']);
+
     
     Route::delete('/flow', [OwnerContoller::class, 'deleteFlow']);
 

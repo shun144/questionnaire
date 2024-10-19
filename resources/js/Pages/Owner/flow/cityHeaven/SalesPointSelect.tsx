@@ -1,17 +1,19 @@
 
-import React, { useMemo, useState, memo, useEffect } from 'react'
+import { useMemo, useState, memo, useCallback } from 'react'
 import Select, { StylesConfig, components, MenuProps, GroupBase, MultiValue } from "react-select";
-import { ChoiceType, SalsPointType } from '../../types';
+import { ChoiceType, QuestionNodeType, SalsPointType } from '../../types';
 import chroma from 'chroma-js';
 import { salesPoints } from '../../salesPoints';
+import { useReactFlow } from '@xyflow/react';
 
 type Props = {
+  nodeId: string;
   choice: ChoiceType;
-  onChangeSelect: (_choiceId: string, options: SalsPointType[] | null) => void;
 }
 
-const SalesPointSelect = ({ choice, onChangeSelect }: Props) => {
-  const [selectedOptions, setSelectedOptions] = useState<MultiValue<SalsPointType>>([]);
+const SalesPointSelect = ({ nodeId, choice }: Props) => {
+  const [selectedOptions, setSelectedOptions] = useState<MultiValue<SalsPointType>>(choice.salePoints);
+  const { getNode, updateNodeData } = useReactFlow();
 
   const customStyles: StylesConfig<SalsPointType, true> = useMemo(() => (
     {
@@ -100,13 +102,21 @@ const SalesPointSelect = ({ choice, onChangeSelect }: Props) => {
 
     }), []);
 
+  const handleSelectChange = useCallback((_choiceId: string, options: SalsPointType[] | null) => {
+    if (options) {
+      const node = getNode(nodeId);
+      if (node) {
+        const nodeData = node.data as QuestionNodeType;
+        updateNodeData(
+          nodeId, {
+          ...nodeData,
+          choices: nodeData.choices.map(c => c.id === _choiceId ? { ...c, salePoints: options } : c)
+        });
+        setSelectedOptions(options);
+      }
+    }
+  }, [choice]);
 
-  const handleSelectChange = (_choiceId: string, options: SalsPointType[]) => {
-    onChangeSelect(_choiceId, options);
-    setSelectedOptions(options);
-  }
-
-  // console.log('shun')
 
   return (
     <Select
@@ -114,7 +124,6 @@ const SalesPointSelect = ({ choice, onChangeSelect }: Props) => {
       closeMenuOnSelect={false}
       defaultValue={choice.salePoints}
       options={salesPoints}
-      // onChange={(options) => setSelectedOptions(options)}
       onChange={(options) => (options ? handleSelectChange(choice.id, [...options]) : null)}
       noOptionsMessage={() => "セールスポイントが見つかりません"}
       placeholder="セールスポイントを選んでください"

@@ -1,1 +1,0 @@
-import{r as o,j as t}from"./app-CLtd0l1O.js";import{a}from"./core.esm-Chk-jPgP.js";const p=({children:e,id:s})=>{const{setNodeRef:r,isOver:m}=a({id:s});return t.jsx("div",{ref:r,className:"bg-slate-950 w-[90%]",children:e})},f=o.memo(p);export{f as default};

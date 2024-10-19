@@ -4,7 +4,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import StandardFlow from './StandardFlow'
 import { useOwnerStore } from '../../store';
-import { getFlowTitleAndUrl } from '../../utils';
+// import { getFlowTitleAndUrl } from '../../utils';
 
 const FlowLayout = ({ id }: { id: number }) => {
 
@@ -12,14 +12,6 @@ const FlowLayout = ({ id }: { id: number }) => {
   const setFlowTitle = useOwnerStore((state) => state.setFlowTitle);
   const flowUrl = useOwnerStore((state) => state.flowUrl);
   const setFlowUrl = useOwnerStore((state) => state.setFlowUrl);
-
-  useEffect(() => {
-    (async () => {
-      const res = await getFlowTitleAndUrl(id);
-      setFlowTitle(res.title);
-      setFlowUrl(res.url);
-    })()
-  }, [])
 
   return (
     <AuthenticatedLayout
@@ -43,8 +35,6 @@ const FlowLayout = ({ id }: { id: number }) => {
               onChange={(event) => setFlowUrl(event.currentTarget.value)} value={flowUrl}
             />
           </div>
-
-
         </div>
       }
     >

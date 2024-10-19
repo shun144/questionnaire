@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\DB;
 // use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-// use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Redirect;
 use Inertia\Response;
 use App\Models\Flow;
 use App\Models\Question;
@@ -49,9 +49,10 @@ class OwnerContoller extends Controller
             ->select('edge_datas')
             ->first();
 
-            $question_datas = isset($question_records) ? $question_records->node_datas: '[]';
-            $result_datas = isset($result_records) ? $result_records->node_datas: '[]';
-            $edge_datas = isset($edge_records) ? $edge_records->edge_datas: '[]';
+            $question_datas = is_null($question_records->node_datas) ? '[]' : $question_records->node_datas;
+            $result_datas = is_null($result_records->node_datas) ? '[]' : $result_records->node_datas;
+            $edge_datas = is_null($edge_records->edge_datas) ? '[]': $edge_records->edge_datas;
+
 
             return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
                 'id' =>  $id,
@@ -76,6 +77,106 @@ class OwnerContoller extends Controller
             ]);
         }
     }
+
+
+    public function addFlow(Request $request){
+        try {
+            $params = $request->only([ 'category']);
+            $user_id = Auth::user()->id;
+
+            $flow_id = DB::table('flows')->insertGetId([
+                'title' => "",
+                'url' => "",
+                'category' => $params['category'],
+                'user_id' => $user_id
+            ]);
+
+            DB::table('questions')->insert([
+                'flow_id' => $flow_id,
+            ]);
+
+            DB::table('results')->insert([
+                'flow_id' => $flow_id
+            ]);
+
+            DB::table('edges')->insert([
+                'flow_id' => $flow_id
+            ]);
+
+            return Redirect::route('flow.index', ['id' => $flow_id]);
+            // return Redirect::route('dashboard');
+
+
+
+            // return Redirect::route('profile.edit');
+            
+            // return redirect('Owner/board/MainBoard');
+            // return Inertia::render('Owner/board/MainBoard');
+
+
+            
+            // return to_route('dashboard');
+            
+            // return to_route('flow.index', ['id' => $flow_id]);
+            // return redirect()->route('flow.index', ['id' => $flow_id]);
+
+
+
+            // return to_route('flow.index', $flow_id);
+
+     
+         // return to_route('flow.index', [
+            //     'id' =>  $flow_id,
+            //     'quesitions' => '[]',
+            //     'results' => '[]',
+            //     'edges' => '[]',
+            //     'title' => '',
+            //     'url' => '',
+            //     'initFirstQuestionId' => ''
+            // ]);
+
+            // return redirect()->route('/flow/' . $flow_id);
+
+            // return Inertia::location('/flow/' . $flow_id, [
+            //     'id' =>  $flow_id,
+            //     'quesitions' => 'shun',
+            //     'results' => '[]',
+            //     'edges' => '[]',
+            //     'title' => '',
+            //     'url' => '',
+            //     'initFirstQuestionId' => ''
+            // ]);
+
+            // return Inertia::location('/flow/' . $flow_id, [
+            //     'id' =>  $flow_id,
+            //     'quesitions' => '[]',
+            //     'results' => '[]',
+            //     'edges' => '[]',
+            //     'title' => '',
+            //     'url' => '',
+            //     'initFirstQuestionId' => ''
+            // ]);
+
+
+            // return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
+            //     'id' =>  $flow_id,
+            //     'quesitions' => '[]',
+            //     'results' => '[]',
+            //     'edges' => '[]',
+            //     'title' => '',
+            //     'url' => '',
+            //     'initFirstQuestionId' => ''
+            // ]);
+
+        }
+        catch (\Exception $e) {
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
 
     // public function getFlowTitleAndUrl(Request $request){
     //     try {
@@ -130,46 +231,44 @@ class OwnerContoller extends Controller
     // }
 
 
-    public function addFlow(Request $request){
-        try {
-            $params = $request->only([
-                'title',
-                'category',
-                'url',
-            ]);
-            $user_id = Auth::user()->id;
+    // public function addFlow(Request $request){
+    //     try {
+    //         $params = $request->only([
+    //             'title',
+    //             'category',
+    //             'url',
+    //         ]);
+    //         $user_id = Auth::user()->id;
 
 
-            $flow_id = DB::table('flows')->insertGetId([
-                'category' => $params['category'],
-                'user_id' => $user_id
-            ]);
+    //         $flow_id = DB::table('flows')->insertGetId([
+    //             'category' => $params['category'],
+    //             'user_id' => $user_id
+    //         ]);
 
-            DB::table('questions')->insert([
-                'flow_id' => $flow_id,
-            ]);
+    //         DB::table('questions')->insert([
+    //             'flow_id' => $flow_id,
+    //         ]);
 
-            DB::table('results')->insert([
-                'flow_id' => $flow_id
-            ]);
+    //         DB::table('results')->insert([
+    //             'flow_id' => $flow_id
+    //         ]);
 
-            DB::table('edges')->insert([
-                'flow_id' => $flow_id
-            ]);
+    //         DB::table('edges')->insert([
+    //             'flow_id' => $flow_id
+    //         ]);
 
-            return response()->json($flow_id,200,[],JSON_UNESCAPED_UNICODE);
-        }
-        catch (\Exception $e) {
-            // \Log::error('エラー機能:即時実行 【店舗ID:'.$store_id.'】');
-            // \Log::error('エラー箇所:'.$e->getFile().'【'.$e->getLine().'行目】');
-            // \Log::error('エラー内容:'.$e->getMessage());
+    //         return response()->json($flow_id,200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
+
 
     public function deleteFlow(Request $request){
         try {
@@ -284,6 +383,15 @@ class OwnerContoller extends Controller
                 'url'
             ]);
 
+            DB::table('flows')
+            ->where('id', $params['flow_id'])
+            ->update([
+                'first_question_id' => $params['first_question_id'],
+                'title' => $params['title'],
+                'url' => $params['url'],
+            ]);
+
+
             DB::table('questions')
             ->where('flow_id', $params['flow_id'])
             ->update([
@@ -302,21 +410,11 @@ class OwnerContoller extends Controller
                 'edge_datas' => $params['update_edges'],
             ]);
 
-            DB::table('flows')
-            ->where('id', $params['flow_id'])
-            ->update([
-                'first_question_id' => $params['first_question_id'],
-                'title' => $params['title'],
-                'url' => $params['url'],
-            ]);
-
-            return response()->json(['title' => $params['title']],200,[],JSON_UNESCAPED_UNICODE);
+            return response()->json(
+                ['flow_id' =>  $params['flow_id']
+            ],200,[],JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $e) {
-            // \Log::error('エラー機能:即時実行 【店舗ID:'.$store_id.'】');
-            // \Log::error('エラー箇所:'.$e->getFile().'【'.$e->getLine().'行目】');
-            // \Log::error('エラー内容:'.$e->getMessage());
-
             $data = [
                 'err' => $e->getMessage()
             ];

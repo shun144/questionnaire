@@ -156,7 +156,7 @@ const StandardFlow = ({ flowId }: Props) => {
   return (
     <div className='flex h-full'>
       <DndContext onDragEnd={handleDragEnd}>
-        {/* サイドバー */}
+
         <div className='w-[10%] flex items-center flex-col gap-y-3 pt-3 bg-slate-800'>
           <Draggable id="draggable-question" label="質問追加" />
           <Draggable id="draggable-result" label="結果追加" />
@@ -166,7 +166,6 @@ const StandardFlow = ({ flowId }: Props) => {
             onClick={handleCommit}>保存
           </button>
 
-          <div className='text-white'>カスタムフローです</div>
         </div>
 
         {/* ボード */}
