@@ -17,10 +17,7 @@ type Props = {
   firstQuestionId: string;
 }
 
-
 const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuestionId }: Props) => {
-
-  // const { flowUrl } = usePage().props;
 
   const setQuestionnarieDatas = useRespondentStore((state) => state.setQuestionnarieDatas);
   const setCurrentQuestionnarie = useRespondentStore((state) => state.setCurrentQuestionnarie);
@@ -78,7 +75,7 @@ const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuest
 
         <Header title={title} />
 
-        <div className=' bg-slate-100 md:grow'>
+        <div className=' bg-slate-100 grow'>
           {!isLoading && (
             <>
               {currentQuestionnarie.category === 'question' && <CityHeavenQuestion />}

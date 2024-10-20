@@ -21,7 +21,7 @@ const CityHeavenQuestion = () => {
 
   return (
     <>
-      < div className='h-full w-full flex flex-col justify-start items-center py-6 md:py-12 '>
+      < div className='h-full w-full flex flex-col justify-start items-center py-12'>
         <div className='w-full px-2 md:w-6/12'>
 
           <div className="rounded-2xl shadow-md">
