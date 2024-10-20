@@ -1,0 +1,1 @@
+import{j as r,Y as t}from"./app-CBaPd7Dh.js";import{A as e}from"./AdminAuthenticatedLayout-DioeJ0oN.js";import"./ApplicationLogo-B4iDVVlo.js";import"./ResponsiveNavLink-O7_4wHnP.js";import"./transition-4qN199R7.js";const a=()=>r.jsxs(e,{header:!0,children:[r.jsx(t,{title:"Board"}),r.jsx("div",{children:"You’re Admin User!"})]});export{a as default};

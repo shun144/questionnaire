@@ -8,13 +8,15 @@ import {
 
 export type Props = {
   id: string;
-  type: HandleType;
-  position: Position;
+  // type: HandleType;
+  // position: Position;
   connectionLimit: number;
   style: CSSProperties;
 }
 
-const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: Props) => {
+const type: HandleType = "source";
+
+const ChoiceSourceHandle = ({ id, connectionLimit, style }: Props) => {
 
   // コネクション情報
   const connections = useHandleConnections({ id, type });
@@ -23,7 +25,7 @@ const ChoiceSourceHandle = ({ id, type, position, connectionLimit, style }: Prop
     <Handle
       id={id}
       type={type}
-      position={position}
+      position={Position.Right}
       isConnectable={connections.length < connectionLimit}  // コネクション数を制限する
       style={{ ...style, cursor: "pointer" }
       } />

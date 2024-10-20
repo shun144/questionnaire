@@ -12,7 +12,7 @@ const FlowLayout = (
   { id, quesitions, results, edges, title, url, initFirstQuestionId }:
     { id: number, quesitions: string, results: string, edges: string, title: string, url: string, initFirstQuestionId: string }) => {
 
-  console.log(quesitions);
+  // console.log(quesitions);
 
   const flowTitle = useOwnerStore((state) => state.flowTitle);
   const flowUrl = useOwnerStore((state) => state.flowUrl);

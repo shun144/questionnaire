@@ -2,7 +2,7 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import { Link, useForm, usePage, } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import { FormEventHandler } from 'react';
 
@@ -10,11 +10,12 @@ import { FormEventHandler } from 'react';
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }: { mustVerifyEmail: boolean, status?: string, className?: string }) {
     const user = usePage().props.auth.user;
 
+    // console.log(user)
+
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         name: user.name,
+        english_name: user.english_name,
         email: user.email,
-        // english_name: user.english_name,
-        // english_name: ,
     });
 
     const submit: FormEventHandler = (e) => {
@@ -51,7 +52,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                 </div>
 
                 {/* 英語名 */}
-                {/* <div>
+                <div>
                     <InputLabel htmlFor="english_name" value="英語名" />
                     <TextInput
                         id="english_name"
@@ -63,7 +64,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         autoComplete="english_name"
                     />
                     <InputError className="mt-2" message={errors.english_name} />
-                </div> */}
+                </div>
 
                 <div>
                     <InputLabel htmlFor="email" value="メールアドレス" />

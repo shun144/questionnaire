@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef, memo } from 'react';
-import { getUniqueId, getInitialNodes, getInitialEdges, commitCityHeavenFlow, getFirstQuestionId } from '../../utils';
+import { getUniqueId, commitCityHeavenFlow } from '../../utils';
 import { useOwnerStore } from '../../store';
 import CityHeavenQuestionNode from './CityHeavenQuestionNode';
 import CityHeavenResultNode from './CityHeavenResultNode';
@@ -7,7 +7,7 @@ import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import Draggable from '../../components/dnd/Draggable';
 import Droppable from '../../components/dnd/Droppable';
 import {
-  ReactFlow, Node, Edge, Connection, useNodes, useEdges, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
+  ReactFlow, Node, Edge, Connection, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
   ConnectionLineType, MarkerType,
   useNodesState, useEdgesState
 } from '@xyflow/react';
@@ -60,7 +60,7 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
       id: newQuestionNo,
       data: {
         topic: "",
-        choices: [{ id: newChoiceNo, content: "", }]
+        choices: [{ id: newChoiceNo, content: "", salePoints: [] }]
       },
       position,
       type: "cityHeavenQuestionNode",
@@ -120,7 +120,7 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
             flowId, flow.nodes, flow.edges, firstNodeId,
             flowTitle, flowUrl
           );
-          toast.success('Successfully toasted!', { duration: 3000 });
+          toast.success('保存しました', { duration: 4000 });
         } catch (error) {
           toast.error('失敗!')
         }

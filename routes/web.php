@@ -15,10 +15,6 @@ require __DIR__.'/auth.php';
 
 // admin
 Route::prefix('admin')->name('admin.')->group(function(){
-
-    // Route::get('/', fn () => redirect(route('admin.login')));
-
-
     Route::middleware(['auth:admin', 'verified'])->group(function () {
         Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
 
@@ -27,15 +23,6 @@ Route::prefix('admin')->name('admin.')->group(function(){
         Route::delete('/profile', [AdminProfileController::class, 'destroy'])->name('profile.destroy');
     
     });
-
-    // Route::get('/dashboard', function () {
-    //     return Inertia::render('Admin/Dashboard');
-    // })->middleware(['auth:admin', 'verified'])->name('dashboard');
-
-
-    // Route::middleware(['auth:admin', 'verified'])->group(function () {
-    //     Route::get('/dashboard', fn() => Inertia::render('Admin/Dashboard'))->name('dashboard');
-    // });
 
     require __DIR__.'/admin.php';
 });
@@ -58,19 +45,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 
-    // Route::get('/dashboard', fn() => Inertia::render('Owner/board/MainBoard'))->name('dashboard');
-    // Route::get('/flows', [OwnerContoller::class, 'getFlowList']);
-    
-
     Route::get('/setting', fn() => Inertia::render('Owner/Setting/Edit'))->name('setting');
-
     
     Route::put('city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
 
-
-    Route::get('/question-nodes', [OwnerContoller::class, 'getQuestionNodes']);
-    Route::get('/result-nodes', [OwnerContoller::class, 'getResultNodes']);
-    Route::get('/edges', [OwnerContoller::class, 'getEdges']);
+    // Route::get('/question-nodes', [OwnerContoller::class, 'getQuestionNodes']);
+    // Route::get('/result-nodes', [OwnerContoller::class, 'getResultNodes']);
+    // Route::get('/edges', [OwnerContoller::class, 'getEdges']);
     
     
     Route::post('/flows', [OwnerContoller::class, 'commit']);
@@ -78,30 +59,18 @@ Route::middleware('auth')->group(function () {
     // Route::get('/flow-info', [OwnerContoller::class, 'getFlowTitleAndUrl']);
     Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow'])->name('flow.index');
     Route::post('/flow', [OwnerContoller::class, 'addFlow']);
-
-    
     Route::delete('/flow', [OwnerContoller::class, 'deleteFlow']);
 
-    Route::get('/firstQuestionId', [OwnerContoller::class, 'getFirstQuestionId']);
-
+    // Route::get('/firstQuestionId', [OwnerContoller::class, 'getFirstQuestionId']);
 
     Route::get('/profile', [OwnerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [OwnerProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [OwnerProfileController::class, 'destroy'])->name('profile.destroy');
 
-
-    // Route::get('/flow/{category}/{id}', function ($category, $id) {
-        
-    //     if ($category === 'cityheaven') {
-    //         return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [ 'id' => $id, 'shun' => 'TESTやってみた']);
-    //     } else {
-    //         return Inertia::render('Owner/flow/standard/FlowLayout', [ 'id' => $id]);
-    //     }
-    // })->name('flowlayout');
 });
 
 
-Route::redirect('/', '/dashboard');
+Route::redirect('/', '/login');
 
 // アンケート回答
 Route::get('/{owner}/{flowUrl}', [RespondentController::class, 'getQuestionnair'])->name('questionnair');

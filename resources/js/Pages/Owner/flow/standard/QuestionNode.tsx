@@ -125,8 +125,8 @@ const QuestionNode = (
               </button>
               <ChoiceSourceHandle
                 id={choice.id}
-                type="source"
-                position={Position.Right}
+                // type="source"
+                // position={Position.Right}
                 connectionLimit={1}
                 style={{ top: 75 + 51 * index }}
               />

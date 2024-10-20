@@ -7,7 +7,7 @@ import { useReactFlow } from '@xyflow/react';
 const QUESTION_MENU_ID = "cityheaven-qestion-menu-id";
 const { show } = useContextMenu({ id: QUESTION_MENU_ID });
 
-export const showDisplayMenu = (event: TriggerEvent, nodeId: string) => {
+export const showContextMenu = (event: TriggerEvent, nodeId: string) => {
   show({ event, props: { nodeId } });
 }
 
