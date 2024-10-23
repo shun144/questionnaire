@@ -13,15 +13,14 @@ return new class extends Migration
     {
         Schema::create('flows', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->nullable();
+            $table->string('title', 50)->nullable();
             $table->string('category');
-            $table->string('url')->nullable();
+            $table->string('url', 15)->nullable();
             $table->string('first_question_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             // 外部キー設定
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-
         });
     }
 

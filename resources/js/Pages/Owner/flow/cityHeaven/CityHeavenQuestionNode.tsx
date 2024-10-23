@@ -1,14 +1,13 @@
-import React, { useState, useCallback, ChangeEvent, MouseEvent, useEffect, memo, CSSProperties, useMemo } from 'react'
-import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, NodeTypes, } from '@xyflow/react';
-import ChoiceSourceHandle from '../../handles/ChoiceSourceHandle';
+import { useCallback, ChangeEvent, memo } from 'react'
+import { Node, NodeProps, Handle, Position, useReactFlow } from '@xyflow/react';
+import ChoiceSourceHandle from '../../components/handles/ChoiceSourceHandle';
 import { getUniqueId } from '../../utils';
 import { useOwnerStore } from '../../store';
 import { ChoiceType, QuestionNodeType } from '../../types';
 import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
 import SalesPointSelect from './SalesPointSelect';
-import { showContextMenu } from './FlowMenu';
-import { salesPoints } from '../../salesPoints';
+import { showContextMenu } from '../../components/subMenu/QuestionSubMenu';
 
 const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuestionNodeType>>) => {
 
@@ -70,9 +69,16 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
 
 
   return (
-    <div className={`rounded-md w-96 bg-slate-900 shadow-lg ${firstNodeId === nodeId && "border-2 border-orange-300"}`}>
+    <div className={`rounded-md w-96 bg-slate-900 shadow-lg relative ${firstNodeId === nodeId && "border-2 rounded-md border-yellow-300"}`}>
 
-      <div className='h-10 custom-drag-handle rounded-t-md bg-indigo-500 flex justify-end items-center pr-2 transition-all hover:bg-indigo-600'>
+      {firstNodeId === nodeId && (<div className='absolute bg-yellow-600 w-8 h-8 rounded-full -top-4 -left-4 flex justify-center items-center shadow-lg border-2 border-yellow-300'>
+        <div className='text-white text-bold text-md'>1</div>
+      </div>)}
+
+      <div className='h-10 custom-drag-handle rounded-t-md bg-indigo-500 flex justify-end items-center px-2 transition-all hover:bg-indigo-600'>
+        {/* <div className='min-h-full flex justify-center items-center'>
+          {firstNodeId === nodeId && (<div className='text-amber-200 font-bold text-md'>1問目</div>)}
+        </div> */}
         <BsThreeDots
           className='w-6 h-full text-slate-200 text-md cursor-pointer transition-all hover:text-slate-50 hover:bg-indigo-400'
           onClick={(event) => showContextMenu(event, nodeId)} />
@@ -116,7 +122,6 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
               </div>
 
               <SalesPointSelect nodeId={nodeId} choiceId={choice.id} salePoints={choice.salePoints} />
-              {/* <SalesPointSelect nodeId={nodeId} choice={choice} /> */}
 
               <ChoiceSourceHandle
                 id={choice.id}
@@ -130,7 +135,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
         <div className='w-full mt-4'>
           {nodeData.choices.length < 6 && (
             <button
-              className="text-gray-600 border border-gray-600 hover:text-gray-300 hover:border-gray-300 font-bold mt-1 w-full text-[0.8rem] py-1 flex justify-center items-center gap-1 transition-all"
+              className="text-indigo-600 border border-indigo-600 hover:text-indigo-300 hover:border-indigo-300 font-bold mt-1 w-full text-[0.8rem] py-1 flex justify-center items-center gap-1 transition-all"
               onClick={() => handleAddChoice()}
             >
               <FaPlus />

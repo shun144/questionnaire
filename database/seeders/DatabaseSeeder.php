@@ -27,10 +27,10 @@ class DatabaseSeeder extends Seeder
         
         
         $this->call([
-            initFlowSeeder::class,
-            initQuestionSeeder::class,
-            initResultSeeder::class,
-            initEdgeSeeder::class,
+            // initFlowSeeder::class,
+            // initQuestionSeeder::class,
+            // initResultSeeder::class,
+            // initEdgeSeeder::class,
             initCityHeavenSeeder::class,
         ]);
 

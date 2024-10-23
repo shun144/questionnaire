@@ -10,7 +10,6 @@ import { FormEventHandler } from 'react';
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }: { mustVerifyEmail: boolean, status?: string, className?: string }) {
     const user = usePage().props.auth.user;
 
-    // console.log(user)
 
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
         name: user.name,

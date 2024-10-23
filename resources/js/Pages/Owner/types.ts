@@ -45,10 +45,12 @@ export type OwnerState = {
   firstNodeId: string,
   flowTitle: string,
   flowUrl: string,
+  isDirty: boolean,
 
   setFirstNodeId: (by: string) => void,
   setFlowTitle: (by: string) => void,
   setFlowUrl: (by: string) => void,
+  setIsDirty: (by: boolean) => void,
 }
 
 

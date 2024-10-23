@@ -16,32 +16,15 @@ use Carbon\Carbon;
 
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
+use App\Http\Requests\CityHeavenRequest;
 
 class CityHeavenController extends Controller
 {
-    public function update(Request $request): RedirectResponse
+    // public function update(Request $request): RedirectResponse
+    public function update(CityHeavenRequest $request): RedirectResponse
     {
-        // $request->validate([
-        //     'access_key' => 'required|string',
-        //     'shop_id' => 'required|string',
-        // ], [
-        //     'access_key.required' => 'アクセスキーは必須です。',
-        //     'shop_id.required' => '店舗IDは必須です。',
-        // ]);
-
-
 
         $params = $request->only(['access_key', 'shop_id']);
-
-        // $validator = Validator::make($request->only(['access_key', 'shop_id']), [
-        //     'access_key' => 'required|string',
-        //     'shop_id' => 'required|string',
-        // ]);
-
-        // $validator->sometimes([$params['access_key'], $params['shop_id']], 'required', function (Fluent $input) {
-        //     return $input->access_key >= 100;
-        // });
-
 
         $user_id = Auth::user()->id;
         $now = Carbon::now();

@@ -2,7 +2,7 @@ import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEve
 import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, NodeTypes, } from '@xyflow/react';
 import { ChoiceType, QuestionNodeType } from '../../types';
 import { getUniqueId } from '../../utils';
-import ChoiceSourceHandle from '../../handles/ChoiceSourceHandle';
+import ChoiceSourceHandle from '../../components/handles/ChoiceSourceHandle';
 import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
 // import ImageUploader from './components/ImageUploader'
 

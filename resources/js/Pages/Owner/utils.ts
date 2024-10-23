@@ -130,7 +130,11 @@ async function commitFlow(
       title,
       url,
     });
-    console.log(res.data)
+
+    // if (res.data['err']) {
+    //   console.log(res.data['err'])
+    //   return false;
+    // }
 
     return true;
   } catch (error) {

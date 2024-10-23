@@ -21,6 +21,8 @@ use App\Models\Result;
 // use Illuminate\Http\Client\Pool;
 // use Illuminate\Support\Facades\Http;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
+use Illuminate\Database\Query\Builder;
 
 class OwnerContoller extends Controller
 {
@@ -106,68 +108,6 @@ class OwnerContoller extends Controller
             return Redirect::route('flow.index', ['id' => $flow_id]);
             // return Redirect::route('dashboard');
 
-
-
-            // return Redirect::route('profile.edit');
-            
-            // return redirect('Owner/board/MainBoard');
-            // return Inertia::render('Owner/board/MainBoard');
-
-
-            
-            // return to_route('dashboard');
-            
-            // return to_route('flow.index', ['id' => $flow_id]);
-            // return redirect()->route('flow.index', ['id' => $flow_id]);
-
-
-
-            // return to_route('flow.index', $flow_id);
-
-     
-         // return to_route('flow.index', [
-            //     'id' =>  $flow_id,
-            //     'quesitions' => '[]',
-            //     'results' => '[]',
-            //     'edges' => '[]',
-            //     'title' => '',
-            //     'url' => '',
-            //     'initFirstQuestionId' => ''
-            // ]);
-
-            // return redirect()->route('/flow/' . $flow_id);
-
-            // return Inertia::location('/flow/' . $flow_id, [
-            //     'id' =>  $flow_id,
-            //     'quesitions' => 'shun',
-            //     'results' => '[]',
-            //     'edges' => '[]',
-            //     'title' => '',
-            //     'url' => '',
-            //     'initFirstQuestionId' => ''
-            // ]);
-
-            // return Inertia::location('/flow/' . $flow_id, [
-            //     'id' =>  $flow_id,
-            //     'quesitions' => '[]',
-            //     'results' => '[]',
-            //     'edges' => '[]',
-            //     'title' => '',
-            //     'url' => '',
-            //     'initFirstQuestionId' => ''
-            // ]);
-
-
-            // return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
-            //     'id' =>  $flow_id,
-            //     'quesitions' => '[]',
-            //     'results' => '[]',
-            //     'edges' => '[]',
-            //     'title' => '',
-            //     'url' => '',
-            //     'initFirstQuestionId' => ''
-            // ]);
-
         }
         catch (\Exception $e) {
             $data = [
@@ -176,98 +116,6 @@ class OwnerContoller extends Controller
             return response()->json($data);
         }
     }
-
-
-    // public function getFlowTitleAndUrl(Request $request){
-    //     try {
-    //         $params = $request->only(['flow_id']);
-            
-    //         $records = DB::table('flows')
-    //         ->where('id', $params['flow_id'])
-    //         ->select('title', 'url')
-    //         ->first();
-
-    //         $data = isset($records) ? [
-    //             'title' => $records->title,
-    //             'url' => $records->url,
-    //         ]: [];
-    
-    //         return response()->json($records,200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
-
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
-
-
-    // public function getFirstQuestionId(Request $request){
-    //     try {
-    //         // $board_id = $this->getBoardIdBySessionUser();
-    //         $params = $request->only([
-    //             'flow_id',
-    //         ]);
-           
-    //         $record = DB::table('flows')
-    //         ->where('id', $params['flow_id'])
-    //         ->select('first_question_id')
-    //         ->first();
-
-    //         $data = isset($record) ? $record->first_question_id: '';
-
-    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-
-    //     }
-    //     catch (\Exception $e) {
-
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
-
-
-    // public function addFlow(Request $request){
-    //     try {
-    //         $params = $request->only([
-    //             'title',
-    //             'category',
-    //             'url',
-    //         ]);
-    //         $user_id = Auth::user()->id;
-
-
-    //         $flow_id = DB::table('flows')->insertGetId([
-    //             'category' => $params['category'],
-    //             'user_id' => $user_id
-    //         ]);
-
-    //         DB::table('questions')->insert([
-    //             'flow_id' => $flow_id,
-    //         ]);
-
-    //         DB::table('results')->insert([
-    //             'flow_id' => $flow_id
-    //         ]);
-
-    //         DB::table('edges')->insert([
-    //             'flow_id' => $flow_id
-    //         ]);
-
-    //         return response()->json($flow_id,200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
-
 
 
     public function deleteFlow(Request $request){
@@ -302,6 +150,63 @@ class OwnerContoller extends Controller
                 'initialFlows' =>  [],
             ]);
         }
+    }
+
+    public function commit(Request $request, $id)
+    {
+        $user_id = Auth::user()->id;
+
+        $validatedData = $request->validate([
+            'title' => ['required', 'string', 'max:50'],
+
+            'url' => ['required', 'string', 'max:15', 'alpha_num',
+                    Rule::unique('flows')->where(function ($query) use ($user_id) {
+                        return $query->where('user_id', $user_id);
+                    })->ignore($id),
+                ],       
+            'first_question_id' => ['required'],            
+        ]);
+
+        $params = $request->only([
+            'update_questions',
+            'update_results',
+            'update_edges',
+        ]);
+
+        DB::table('flows')
+        ->where('id', $id)
+        ->update([
+            'first_question_id' => $validatedData['first_question_id'],
+            'title' => $validatedData['title'],
+            'url' => $validatedData['url'],
+        ]);
+
+        DB::table('questions')
+        ->where('flow_id',$id)
+        ->update([
+            'node_datas' => $params['update_questions'],
+        ]);
+
+        DB::table('results')
+        ->where('flow_id', $id)
+        ->update([
+            'node_datas' => $params['update_results'],
+        ]);
+
+        DB::table('edges')
+        ->where('flow_id', $id)
+        ->update([
+            'edge_datas' => $params['update_edges'],
+        ]);
+
+        // return to_route('flow.index',22)->with('success', 'ユーザを追加しました');
+
+        return to_route('flow.index', $id);
+
+        // return response()->json(
+        //     ['flow_id' =>  $params['flow_id']
+        // ],200,[],JSON_UNESCAPED_UNICODE);
+
     }
 
     // public function getEdges(Request $request){
@@ -371,55 +276,56 @@ class OwnerContoller extends Controller
     //     }
     // }
 
-    public function commit(Request $request){
-        try {
-            $params = $request->only([
-                'flow_id',
-                'update_questions',
-                'update_results',
-                'update_edges',
-                'first_question_id',
-                'title',
-                'url'
-            ]);
+    // public function commit(Request $request){
+    //     try {
 
-            DB::table('flows')
-            ->where('id', $params['flow_id'])
-            ->update([
-                'first_question_id' => $params['first_question_id'],
-                'title' => $params['title'],
-                'url' => $params['url'],
-            ]);
+    //         // dd($request);
+    //         $params = $request->only([
+    //             'flow_id',
+    //             'update_questions',
+    //             'update_results',
+    //             'update_edges',
+    //             'first_question_id',
+    //             'title',
+    //             'url'
+    //         ]);
+
+    //         DB::table('flows')
+    //         ->where('id', $params['flow_id'])
+    //         ->update([
+    //             'first_question_id' => $params['first_question_id'],
+    //             'title' => $params['title'],
+    //             'url' => $params['url'],
+    //         ]);
 
 
-            DB::table('questions')
-            ->where('flow_id', $params['flow_id'])
-            ->update([
-                'node_datas' => $params['update_questions'],
-            ]);
+    //         DB::table('questions')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->update([
+    //             'node_datas' => $params['update_questions'],
+    //         ]);
 
-            DB::table('results')
-            ->where('flow_id', $params['flow_id'])
-            ->update([
-                'node_datas' => $params['update_results'],
-            ]);
+    //         DB::table('results')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->update([
+    //             'node_datas' => $params['update_results'],
+    //         ]);
 
-            DB::table('edges')
-            ->where('flow_id', $params['flow_id'])
-            ->update([
-                'edge_datas' => $params['update_edges'],
-            ]);
+    //         DB::table('edges')
+    //         ->where('flow_id', $params['flow_id'])
+    //         ->update([
+    //             'edge_datas' => $params['update_edges'],
+    //         ]);
 
-            return response()->json(
-                ['flow_id' =>  $params['flow_id']
-            ],200,[],JSON_UNESCAPED_UNICODE);
-        }
-        catch (\Exception $e) {
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
-    }
-
+    //         return response()->json(
+    //             ['flow_id' =>  $params['flow_id']
+    //         ],200,[],JSON_UNESCAPED_UNICODE);
+    //     }
+    //     catch (\Exception $e) {
+    //         $data = [
+    //             'err' => $e->getMessage()
+    //         ];
+    //         return response()->json($data);
+    //     }
+    // }
 }

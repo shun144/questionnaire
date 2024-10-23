@@ -22,11 +22,12 @@ const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuest
   const setQuestionnarieDatas = useRespondentStore((state) => state.setQuestionnarieDatas);
   const setCurrentQuestionnarie = useRespondentStore((state) => state.setCurrentQuestionnarie);
   const currentQuestionnarie = useRespondentStore((state) => state.currentQuestionnarie);
-  const setIsLoading = useRespondentStore((state) => state.setIsLoading);
-  const isLoading = useRespondentStore((state) => state.isLoading);
-  const setBaseGirlDataList = useRespondentStore((state) => state.setBaseGirlDataList);
-  const setisGirlsLoading = useRespondentStore((state) => state.setisGirlsLoading);
+  // const setIsLoading = useRespondentStore((state) => state.setIsLoading);
+  // const isLoading = useRespondentStore((state) => state.isLoading);
+  // const setBaseGirlDataList = useRespondentStore((state) => state.setBaseGirlDataList);
+  // const setisGirlsLoading = useRespondentStore((state) => state.setisGirlsLoading);s
   const setFirstQuestionId = useRespondentStore((state) => state.setFirstQuestionId);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
 
   useEffect(() => {

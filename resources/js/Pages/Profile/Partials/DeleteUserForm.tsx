@@ -48,25 +48,23 @@ export default function DeleteUserForm({ className = '' }: { className?: string 
     return (
         <section className={`space-y-6 ${className}`}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">Delete Account</h2>
+                <h2 className="text-lg font-medium text-gray-900">アカウントの削除</h2>
 
                 <p className="mt-1 text-sm text-gray-600">
-                    Once your account is deleted, all of its resources and data will be permanently deleted. Before
-                    deleting your account, please download any data or information that you wish to retain.
+                    アカウントを削除すると、そのアカウントのすべてのリソースとデータが完全に削除されます。
                 </p>
             </header>
 
-            <DangerButton onClick={confirmUserDeletion}>Delete Account</DangerButton>
+            <DangerButton onClick={confirmUserDeletion}>アカウント削除</DangerButton>
 
             <Modal show={confirmingUserDeletion} onClose={closeModal}>
                 <form onSubmit={deleteUser} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900">
-                        Are you sure you want to delete your account?
+                        アカウントを削除してよろしいですか？
                     </h2>
 
                     <p className="mt-1 text-sm text-gray-600">
-                        Once your account is deleted, all of its resources and data will be permanently deleted. Please
-                        enter your password to confirm you would like to permanently delete your account.
+                        アカウントを削除すると、そのリソースとデータは復旧できません。<br />アカウント削除のためパスワードを入力してください。
                     </p>
 
                     <div className="mt-6">
@@ -81,7 +79,7 @@ export default function DeleteUserForm({ className = '' }: { className?: string 
                             onChange={(e) => setData('password', e.target.value)}
                             className="mt-1 block w-3/4"
                             isFocused
-                            placeholder="Password"
+                            placeholder="パスワード"
                         />
 
                         <InputError message={errors.password} className="mt-2" />
@@ -91,7 +89,7 @@ export default function DeleteUserForm({ className = '' }: { className?: string 
                         <SecondaryButton onClick={closeModal}>Cancel</SecondaryButton>
 
                         <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
+                            アカウント削除
                         </DangerButton>
                     </div>
                 </form>

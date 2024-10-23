@@ -46,7 +46,7 @@ export type QuestionnaireState = {
   currentQuestionnarie: QuestionnarieType;
   answerHistories: AnswerHistoryType[];
   baseGirlDataList: GirlType[];
-  isGirlsLoading: boolean;
+  // isGirlsLoading: boolean;
   firstQuestionId: string;
 
 
@@ -56,7 +56,7 @@ export type QuestionnaireState = {
   setAnswerHistories: (id: string, question: string, answer: string, salesPoints: SalsPointType[]) => void;
 
   setBaseGirlDataList: (by: GirlType[]) => void;
-  setisGirlsLoading: (by: boolean) => void,
+  // setisGirlsLoading: (by: boolean) => void,
   setFirstQuestionId: (by: string) => void,
 
   reset: () => void;

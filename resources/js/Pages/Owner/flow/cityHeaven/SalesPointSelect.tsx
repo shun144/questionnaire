@@ -1,8 +1,7 @@
 
 import { useMemo, useState, memo, useCallback, useEffect } from 'react'
 import Select, { StylesConfig, components, MenuProps, GroupBase, MultiValue } from "react-select";
-import { ChoiceType, QuestionNodeType, SalsPointType } from '../../types';
-import chroma from 'chroma-js';
+import { QuestionNodeType, SalsPointType } from '../../types';
 import { salesPoints } from '../../salesPoints';
 import { useReactFlow } from '@xyflow/react';
 
@@ -21,15 +20,14 @@ const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
     setSelectedOptions(salePoints)
   }, [salePoints])
 
-
   const customStyles: StylesConfig<SalsPointType, true> = useMemo(() => (
     {
-      control: (styles, state) => ({
+      control: (styles, { isDisabled, isFocused }) => ({
         ...styles,
         width: '100%',
         borderRadius: 'none',
         border: 'none',
-        backgroundColor: 'transparent',
+        backgroundColor: '#0f172a',
         fontSize: "0.7rem",
         textAlign: 'center',
         boxShadow: "none",
@@ -45,69 +43,134 @@ const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
           outline: "none"
         },
       }),
-      option: (styles, { data, isDisabled, isFocused, isSelected }) => {
-        const color = chroma('gray');
-        return {
-          ...styles,
-          backgroundColor: isDisabled
-            ? undefined
-            : isSelected
-              ? 'gray'
-              : isFocused
-                ? color.alpha(0.1).css()
-                : undefined,
-          color: isDisabled
-            ? '#ccc'
-            : isSelected
-              ? chroma.contrast(color, 'white') > 2
-                ? 'white'
-                : 'black'
-              : 'gray',
-          cursor: isDisabled ? 'not-allowed' : 'default',
-
-          ':active': {
-            ...styles[':active'],
-            backgroundColor: !isDisabled
-              ? isSelected
-                ? 'gray'
-                : color.alpha(0.3).css()
-              : undefined,
-          },
-        };
-      },
-      multiValue: (styles, { data }) => {
-        const color = chroma('gray');
-        return {
-          ...styles,
-          backgroundColor: '#4b008226',
-        };
-      },
-      multiValueLabel: (styles, { data }) => ({
+      option: (styles, { isDisabled, isFocused, isSelected }) => ({
         ...styles,
-        color: "white",
+        backgroundColor: isDisabled ? undefined : isSelected ? '#ccc' : isFocused ? '#ccc' : undefined,
+        color: isDisabled ? '#ccc' : 'black',
+        cursor: isDisabled ? 'not-allowed' : 'pointer',
+        ':active': {
+          ...styles[':active'],
+          backgroundColor: !isDisabled ? isSelected ? '#aaa' : '#aaa' : undefined,
+        },
       }),
-      multiValueRemove: (styles, { data }) => ({
+      multiValue: (styles) => ({
+        ...styles,
+        backgroundColor: '#4338ca',
+        borderRadius: "0.75rem",
+      }),
+      multiValueLabel: (styles) => ({
+        ...styles,
+        color: "#eee",
+        paddingRight: "0px"
+      }),
+      multiValueRemove: (styles) => ({
         ...styles,
         color: "grey",
         ':hover': {
-          backgroundColor: "purple",
+          backgroundColor: "#a5b4fc",
           color: 'white',
+          borderTopRightRadius: "0.75rem",
+          borderBottomRightRadius: "0.75rem",
         },
       }),
       menu: (styles) => ({
         ...styles,
         marginTop: 0,
         fontSize: "0.65rem"
-
-        // backgroundColor: 'green',
       }),
-      valueContainer: (provided, state) => ({
+      valueContainer: (provided) => ({
         ...provided,
-        padding: 0,
-        // height: 30
+        padding: 0
       }),
 
     }), []);
+
+
+  // const customStyles: StylesConfig<SalsPointType, true> = useMemo(() => (
+  //   {
+  //     control: (styles, state) => ({
+  //       ...styles,
+  //       width: '100%',
+  //       borderRadius: 'none',
+  //       border: 'none',
+  //       backgroundColor: 'transparent',
+  //       fontSize: "0.7rem",
+  //       textAlign: 'center',
+  //       boxShadow: "none",
+  //       '&:hover': {
+  //         border: 'none',
+  //         cursor: 'pointer',
+  //       },
+  //     }),
+  //     input: (styles) => ({
+  //       ...styles,
+  //       "input:focus": {
+  //         boxShadow: "none",
+  //         outline: "none"
+  //       },
+  //     }),
+  //     option: (styles, { data, isDisabled, isFocused, isSelected }) => {
+  //       const color = chroma('gray');
+  //       return {
+  //         ...styles,
+  //         backgroundColor: isDisabled
+  //           ? undefined
+  //           : isSelected
+  //             ? 'gray'
+  //             : isFocused
+  //               ? color.alpha(0.1).css()
+  //               : undefined,
+  //         color: isDisabled
+  //           ? '#ccc'
+  //           : isSelected
+  //             ? chroma.contrast(color, 'white') > 2
+  //               ? 'white'
+  //               : 'black'
+  //             : 'gray',
+  //         cursor: isDisabled ? 'not-allowed' : 'default',
+  //         ':active': {
+  //           ...styles[':active'],
+  //           backgroundColor: !isDisabled
+  //             ? isSelected
+  //               ? 'gray'
+  //               : color.alpha(0.3).css()
+  //             : undefined,
+  //         },
+  //       };
+  //     },
+  //     multiValue: (styles, { data }) => {
+  //       const color = chroma('gray');
+  //       return {
+  //         ...styles,
+  //         backgroundColor: '#4b008226',
+  //       };
+  //     },
+  //     multiValueLabel: (styles, { data }) => ({
+  //       ...styles,
+  //       color: "white",
+  //     }),
+  //     multiValueRemove: (styles, { data }) => ({
+  //       ...styles,
+  //       color: "grey",
+  //       ':hover': {
+  //         backgroundColor: "purple",
+  //         color: 'white',
+  //       },
+  //     }),
+  //     menu: (styles) => ({
+  //       ...styles,
+  //       marginTop: 0,
+  //       fontSize: "0.65rem"
+
+  //       // backgroundColor: 'green',
+  //     }),
+  //     valueContainer: (provided, state) => ({
+  //       ...provided,
+  //       padding: 0,
+  //       // height: 30
+  //     }),
+
+  //   }), []);
 
   const handleSelectChange = useCallback((options: SalsPointType[] | null) => {
 
@@ -134,7 +197,7 @@ const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
       options={salesPoints}
       onChange={(options) => (options ? handleSelectChange([...options]) : null)}
       noOptionsMessage={() => "セールスポイントが見つかりません"}
-      placeholder="セールスポイントを選んでください"
+      placeholder="ここをクリックするとセールスポイントを選べます"
       isSearchable={true}
       isMulti
       components={{

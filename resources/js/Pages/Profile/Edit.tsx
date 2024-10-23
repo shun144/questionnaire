@@ -8,7 +8,12 @@ import { PageProps } from '@/types';
 export default function Edit({ mustVerifyEmail, status }: PageProps<{ mustVerifyEmail: boolean, status?: string }>) {
     return (
         <AuthenticatedLayout
-            header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>}
+            header={
+                // <h2 className="font-semibold text-xl text-gray-800 leading-tight">Profile</h2>
+                <div className='flex justify-between items-center py-3'>
+                    <h2 className="font-semibold text-xl text-gray-800 leading-tight">プロフィール</h2>
+                </div>
+            }
         >
             <Head title="Profile" />
 

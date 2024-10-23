@@ -18,6 +18,7 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
     const updatePassword: FormEventHandler = (e) => {
         e.preventDefault();
 
+   
         put(route('cityheaven.update'), {
             preserveScroll: true,
             onSuccess: () => reset(),
@@ -54,7 +55,7 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
                         ref={accessKeyInput}
                         value={data.access_key}
                         onChange={(e) => setData('access_key', e.target.value)}
-                        type="password"
+                        // type="password"
                         className="mt-1 block w-full"
                         autoComplete="access-key"
                     />
@@ -69,7 +70,7 @@ export default function UpdateCityHeavenApiForm({ className = '' }: { className?
                         ref={shopIdInput}
                         value={data.shop_id}
                         onChange={(e) => setData('shop_id', e.target.value)}
-                        type="password"
+                        // type="password"
                         className="mt-1 block w-full"
                         autoComplete="shop-id"
                     />

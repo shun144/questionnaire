@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 
 import { GirlType } from '../../types';
 import { useRespondentStore } from '../../store';
@@ -17,7 +17,15 @@ import './cityHeavenResult.css';
 const CityHeavenResult = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [viewGirlList, setViewGirlList] = useState<GirlType[]>([]);
+  const [currentItems, setCurrentItems] = useState<GirlType[]>([]);
   const [totalPages, setTotalPages] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+
+  const answerHistories = useRespondentStore((state) => state.answerHistories);
+  const reset = useRespondentStore((state) => state.reset);
+  const baseGirlDataList = useRespondentStore((state) => state.baseGirlDataList);
+  const setBaseGirlDataList = useRespondentStore((state) => state.setBaseGirlDataList);
 
   const paginationVariants = useMemo(() => ({
     hidden: { opacity: 0, y: 200, },
@@ -33,60 +41,30 @@ const CityHeavenResult = () => {
     }
   }), [])
 
-
   const peoplePerPage = 10; // 1ページあたりの人数
 
+  useEffect(() => {
+    setCurrentItems(viewGirlList.slice((currentPage - 1) * peoplePerPage, currentPage * peoplePerPage));
+  }, [viewGirlList, currentPage])
 
-  // 現在のページに表示する人を取得
-  const currentItems = viewGirlList.slice((currentPage - 1) * peoplePerPage, currentPage * peoplePerPage);
-
-
-
-
-
-  // const itemsPerPage = 10;
-  // const endOffset = itemOffset + itemsPerPage;
-  // const currentItems = viewGirlList.slice(itemOffset, endOffset);
-  // const pageCount = Math.ceil(viewGirlList.length / itemsPerPage);
-
-
-  const isGirlsLoading = useRespondentStore((state) => state.isGirlsLoading);
-  const setisGirlsLoading = useRespondentStore((state) => state.setisGirlsLoading);
-
-  const answerHistories = useRespondentStore((state) => state.answerHistories);
-  const reset = useRespondentStore((state) => state.reset);
-  const baseGirlDataList = useRespondentStore((state) => state.baseGirlDataList);
-  const setBaseGirlDataList = useRespondentStore((state) => state.setBaseGirlDataList);
-
-
-  // useEffect(() => {
-  //   setCurrentItems(viewGirlList.slice(itemOffset, endOffset));
-  // }, []);
-
-  // const itemsPerPage = 10;
-  // const endOffset = itemOffset + itemsPerPage;
-  // const currentItems = viewGirlList.slice(itemOffset, endOffset);
-  // const pageCount = Math.ceil(viewGirlList.length / itemsPerPage);
 
   useEffect(() => {
-
     const dummy = getDummyGirlsList();
     setBaseGirlDataList(dummy);
-    setisGirlsLoading(false);
 
     // (async () => {
     //   try {
     //     const res = await getCityHeavenGirls();
     //     setBaseGirlDataList(res.resultArray);
-    //     setisGirlsLoading(false);
     //   } catch (error) {
-    //     setisGirlsLoading(true);
+    //     // setisGirlsLoading(true);
     //   }
     // })();
   }, []);
 
   useEffect(() => {
-    if (isGirlsLoading) {
+
+    if (baseGirlDataList.length < 0) {
       return;
     }
 
@@ -148,25 +126,109 @@ const CityHeavenResult = () => {
     })
 
     setViewGirlList(girlDataListWithPoint);
-    setTotalPages(Math.ceil(girlDataListWithPoint.length / peoplePerPage))
-  }, [isGirlsLoading])
+    setTotalPages(Math.ceil(girlDataListWithPoint.length / peoplePerPage));
+    setIsLoading(false);
+  }, [baseGirlDataList])
 
-  // const handlePageClick = (event: { selected: number; }) => {
-  //   const newOffset = (event.selected * itemsPerPage) % viewGirlList.length;
-  //   setItemOffset(newOffset);
-  // };
+  const handlePageChange = useCallback((page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({
+      top: 0,
+      behavior: "instant",
+    });
+  }, [setCurrentPage])
 
-
-  if (isGirlsLoading) {
-    return <div>Loading...</div>;
-  }
-
-
+  {/* <div className='bg-white h-10 w-32 cursor-pointer'
+            onClick={() => { handlePageChange(4) }}>
+            ←</div> */}
 
   return (
     <>
-      <div className='h-full w-full flex flex-col justify-start items-center '>
+      {isLoading ?
+        <Skelton />
+        :
+        <div className='h-full w-full flex flex-col justify-start items-center'>
+          <div className='w-full h-12 flex flex-col justify-center items-center my-2 px-2 md:min-h-20 md:max-h-20' >
+            <div className=' text-slate-700 font-bold text-md md:text-3xl'>
+              あなたにピッタリな女の子たちをおススメ順に紹介します！
+            </div>
+          </div>
 
+          <div className='w-full px-1 md:w-11/12'>
+            <div className='grid mb-4 grid-cols-2 gap-x-3 gap-y-4
+          md:mb-10 md:grid-cols-5 md:gap-x-6 md:gap-y-8'>
+              {
+                currentItems &&
+                currentItems.map(({ id, name, catchphrase, w_shukkin, diary_flg, review_flg, earn_point, today_work_flg, picture_url, mypage_url, bwh }, idx) => (
+
+                  <div
+                    key={id}
+                    className="flex flex-col items-center bg-white border  border-gray-200 rounded-lg shadow relative 
+                  pt-2 px-1
+                  md:max-w-xl md:pt-4 md:px-2"
+                  >
+                    <div className='absolute -top-2 -left-1 md:-top-3 md:-left-3'>
+                      <div className={`${idx + 1 + (currentPage - 1) * 10 <= 3 ? "bg-amber-400" : "bg-violet-300"} rounded-full shadow flex justify-center items-center border-2 md:border-4 border-slate-100 w-6 h-6 md:w-10 md:h-10`}>
+                        <div className='text-white text-sm md:text-xl md:font-semibold'>{idx + 1 + (currentPage - 1) * 10}</div>
+                      </div>
+                    </div>
+
+                    <div className='rounded-lg pb-2'>
+                      <img className={`${idx + 1 + (currentPage - 1) * 10 <= 3 ? "border-yellow-200" : "border-violet-100"}  rounded-lg border-4 shadow-xl object-cover h-36 md:h-60`}
+                        src={picture_url} alt={name} />
+                    </div>
+
+                    <div className="w-full flex flex-col justify-between leading-normal">
+                      <div className="font-bold tracking-tight text-gray-900 text-md md:text-xl">
+                        {name}
+                      </div>
+                      <div className="font-normal text-gray-700 pb-1 min-h-8 md:pb-2 md:min-h-12 ">
+                        <div className='text-sm md:text-lg'>{catchphrase}</div>
+                        <div className='text-sm md:text-md'>{`(B:${bwh[0]} W:${bwh[1]} H:${bwh[2]})`}</div>
+                      </div>
+
+                      <div className="w-full flex justify-end items-center md:min-h-7">
+                        <a className="block px-2 py-2 underline text-end text-violet-500 text-sm md:text-md md:cursor-pointer md:trainstion-all md:duration-200 hover:text-violet-300"
+                          target="_blank"
+                          href={mypage_url}>女の子のマイページ
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              }
+            </div>
+
+
+
+            <div className='w-full flex justify-center items-start h-14 mb-3 md:h-20 md:mb-4'>
+              <motion.div
+                variants={paginationVariants}
+                initial="hidden"
+                animate="visible">
+                <ResponsivePagination
+                  current={currentPage}
+                  total={totalPages}
+                  onPageChange={handlePageChange}
+                  maxWidth={350}
+                  className="pagination select-none md:flex md:space-x-2"
+                />
+              </motion.div>
+            </div>
+
+            <div className="w-full flex justify-center items-center mb-4 md:mb-10">
+              <button
+                className='bg-violet-500 hover:bg-violet-600 text-white font-bold rounded flex justify-center items-center gap-1 shadow-2xl trasiton-all duration-200  text-sm py-2 px-2 md:text-xl md:px-3'
+                onClick={() => reset()} >
+                <MdOutlineRestartAlt className='text-2xl' />
+                <p>もう一度最初から始める</p>
+              </button>
+            </div>
+          </div>
+        </div >
+      }
+
+      {/* <div className='h-full w-full flex flex-col justify-start items-center'>
         <div className='w-full h-12 flex flex-col justify-center items-center my-2 px-2 md:min-h-20 md:max-h-20' >
           <div className=' text-slate-700 font-bold text-md md:text-3xl'>
             あなたにピッタリな女の子たちをおススメ順に紹介します！
@@ -218,13 +280,11 @@ const CityHeavenResult = () => {
             }
           </div>
 
-
           <div className='w-full flex justify-center items-start h-14 mb-3 md:h-20 md:mb-4'>
             <motion.div
               variants={paginationVariants}
               initial="hidden"
               animate="visible">
-
               <ResponsivePagination
                 current={currentPage}
                 total={totalPages}
@@ -235,30 +295,6 @@ const CityHeavenResult = () => {
             </motion.div>
           </div>
 
-
-
-          {/* <div className='w-full flex justify-center items-start h-14 mb-3 md:h-20 md:mb-4'>
-            <motion.div
-              variants={paginationVariants}
-              initial="hidden"
-              animate="visible">
-              <ReactPaginate
-                breakLabel="..."
-                nextLabel=">"
-                previousLabel="<"
-                pageCount={pageCount}
-                onPageChange={(event) => handlePageClick(event)}
-                containerClassName="flex justify-center space-x-2 mt-4 select-none"
-                pageClassName="inline-block"
-                pageLinkClassName="px-4 py-2 bg-gray-200 rounded hover:bg-violet-300 focus:outline-none"
-                previousLinkClassName="px-4 py-2 bg-gray-200 rounded hover:bg-violet-300 focus:outline-none"
-                nextLinkClassName="px-4 py-2 bg-gray-200 rounded hover:bg-violet-300 focus:outline-none"
-                activeLinkClassName="bg-violet-500 text-white"
-                disabledLinkClassName="opacity-50 cursor-not-allowed"
-              />
-            </motion.div>
-          </div> */}
-
           <div className="w-full flex justify-center items-center mb-4 md:mb-10">
             <button
               className='bg-violet-500 hover:bg-violet-600 text-white font-bold rounded flex justify-center items-center gap-1 shadow-2xl trasiton-all duration-200  text-sm py-2 px-2 md:text-xl md:px-3'
@@ -268,12 +304,29 @@ const CityHeavenResult = () => {
             </button>
           </div>
         </div>
-
-
-      </div >
+      </div > */}
     </>
   );
 }
 export default memo(CityHeavenResult);
 
+
+const Skelton = () => {
+  return (
+
+    <div className="h-full w-full flex flex-col justify-start items-center animate-pulse">
+
+      <div className='w-full flex flex-col justify-center items-center my-2 px-2 gap-y-4 mb-4 md:min-h-20 md:max-h-20' >
+        <div className=' text-slate-700 font-bold text-md md:text-3xl'>
+          診断結果集計中...
+        </div>
+      </div>
+      <div role="status" className=' grid mb-4 grid-cols-2 gap-x-3 gap-y-4  md:mb-10 md:grid-cols-5 md:gap-x-6 md:gap-y-8'>
+        {[...Array(10)].map(() => (
+          <div className=" bg-slate-300 rounded-md w-36 h-44 md:w-64 md:h-80" />
+        ))}
+      </div>
+    </div>
+  );
+}
 

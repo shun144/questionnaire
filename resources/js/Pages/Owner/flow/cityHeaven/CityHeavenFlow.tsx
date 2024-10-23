@@ -9,29 +9,33 @@ import Droppable from '../../components/dnd/Droppable';
 import {
   ReactFlow, Node, Edge, Connection, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
   ConnectionLineType, MarkerType,
-  useNodesState, useEdgesState
+  useNodesState, useEdgesState,
+  OnNodesChange, OnEdgesChange,
+  applyNodeChanges, applyEdgeChanges,
+  SelectionMode,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import '../../../../../css/owner/flow.css'
-import { GiConsoleController } from 'react-icons/gi';
-import toast from 'react-hot-toast';
 import "react-contexify/dist/ReactContexify.css";
+import CommitFlowButton from '../../components/button/CommitFlowButton'
+import { router } from '@inertiajs/react';
 
-const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number, initialNodes: Node[], initialEdges: Edge[] }) => {
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
+type Props = {
+  initialNodes: Node[];
+  initialEdges: Edge[];
+}
 
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+const CityHeavenFlow = ({ initialNodes, initialEdges }: Props) => {
 
-  const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
-  const firstNodeId = useOwnerStore((state) => state.firstNodeId);
-  const flowTitle = useOwnerStore((state) => state.flowTitle);
-  const flowUrl = useOwnerStore((state) => state.flowUrl);
-
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
   const edgeReconnSuccess = useRef(true);
 
-  const { screenToFlowPosition, addNodes, setViewport, getNodes, deleteElements } = useReactFlow();
+  const isDirty = useOwnerStore((state) => state.isDirty);
+  const setIsDirty = useOwnerStore((state) => state.setIsDirty);
+  const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
+  const { screenToFlowPosition, addNodes, setViewport, getNodes } = useReactFlow();
 
   const nodeTypes = useMemo(() => (
     {
@@ -40,12 +44,36 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
     }
   ), []);
 
-  const defaultEdgeOptions = useMemo(() => (
-    {
-      type: 'smoothstep',
+  useEffect(() => {
+    const beforeUnloadConfirm = router.on('before', (event) => {
+      console.log(isDirty)
+      if (isDirty) {
+        return confirm('変更が保存されていませんがページを離れてもよろしいですか？');
+      } else {
+        return true;
+      }
+    });
+    return () => {
+      beforeUnloadConfirm();
     }
-  ), []);
+  }, [isDirty])
 
+
+  const onNodesChange: OnNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+      setIsDirty(true);
+    },
+    [setNodes, setIsDirty],
+  );
+
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changes) => {
+      setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
+      setIsDirty(true);
+    },
+    [setEdges, setIsDirty],
+  );
 
   const onAddQuestion = (position: { x: number; y: number }) => {
     const newQuestionNo = getUniqueId();
@@ -81,12 +109,10 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
   };
 
   const handleDragEnd = useCallback(({ active, over, delta, activatorEvent }: DragEndEvent) => {
-
     // フロー作成エリア以外にドロップしたら何もしない
-    if (over == null || over.id != 'droppableA') {
+    if (over == null || over.id != 'droppableArea') {
       return;
     }
-
     // activatorEventがMouseEventの場合に処理を進める
     // イベントが他の入力デバイス（例えばタッチデバイス）でも安全に動作すする
     if (activatorEvent instanceof MouseEvent) {
@@ -110,26 +136,6 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
   }, [])
 
 
-  // コミット
-  const handleCommit = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      (async () => {
-        try {
-          const res = await commitCityHeavenFlow(
-            flowId, flow.nodes, flow.edges, firstNodeId,
-            flowTitle, flowUrl
-          );
-          toast.success('保存しました', { duration: 4000 });
-        } catch (error) {
-          toast.error('失敗!')
-        }
-      })();
-    }
-  }, [rfInstance, firstNodeId, flowTitle, flowUrl]);
-
-
-
   // edgeの再接続時イベント
   const onReconnect = useCallback((oldEdge: Edge, newConn: Connection) => {
     edgeReconnSuccess.current = true;
@@ -150,25 +156,43 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
   }, []);
 
   const onConnect = useCallback((params: Connection | Edge) => {
-    setEdges((eds) => addEdge(params, eds))
+    setEdges((eds) => addEdge({ ...params, type: 'smoothstep' }, eds))
   }, [setEdges]);
 
-  return (
-    <div className='h-full flex' >
+  const handleEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    setEdges(eds => eds.map(e => {
+      if (e.id === edge.id) {
+        return {
+          ...e,
+          animated: true,
+          style: { stroke: "gold", strokeWidth: 3, zIndex: 1000 }
+        }
+      } else {
+        return {
+          ...e,
+          animated: false,
+          style: { zIndex: 0 }
+        }
+      }
+    }))
+  }, [setEdges])
 
+  const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
+    event.preventDefault();
+    setEdges(eds => eds.filter(e => e.id !== edge.id))
+  }, [setEdges])
+
+
+  return (
+    <div className='grow w-full flex'>
       <DndContext onDragEnd={(event) => handleDragEnd(event)}>
-        <div className='w-[10%] flex items-center flex-col gap-y-3 py-3 bg-slate-800'>
+        <div className='h-full w-[10%] flex items-center flex-col gap-y-3 py-3 bg-slate-800'>
           <Draggable id="draggable-question" label="質問" />
           <Draggable id="draggable-result" label="アンケート終了" />
-          <button
-            className='bg-purple-700 border rounded w-[120px] h-[80px] text-white'
-            onClick={() => handleCommit()}
-          >
-            保存
-          </button>
-
+          {/* <CommitFlowButton flowId={flowId} /> */}
         </div>
-        <Droppable id="droppableA">
+
+        <Droppable id="droppableArea">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -176,16 +200,21 @@ const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             fitView
-            fitViewOptions={{ padding: 0.2 }}
+            fitViewOptions={{ padding: 0.4 }}
             snapToGrid
-            edgeTypes={{ smoothstep: SmoothStepEdge }}
             connectionLineType={ConnectionLineType.SmoothStep}
-            onReconnect={(oldEdge, newConn) => onReconnect(oldEdge, newConn)}
-            onReconnectStart={() => onReconnectStart()}
+            onReconnect={onReconnect}
+            onReconnectStart={onReconnectStart}
             onReconnectEnd={(_, edge) => onReconnectEnd(edge)}
-            onConnect={(params) => onConnect(params)}
-            onInit={setRfInstance}
-            defaultEdgeOptions={defaultEdgeOptions}
+            onConnect={onConnect}
+            onEdgeClick={handleEdgeClick}
+            onEdgeContextMenu={handleEdgeContextMenu}
+            elevateEdgesOnSelect={true}
+
+            panOnScroll
+            selectionOnDrag
+            panOnDrag={[1, 2]}
+            selectionMode={SelectionMode.Partial}
           >
             <Background
               color='#222'
@@ -206,7 +235,7 @@ export default memo(CityHeavenFlow);
 
 
 // import { useState, useCallback, useEffect, useMemo, useRef, memo } from 'react';
-// import { getUniqueId, getInitialNodes, getInitialEdges, commitCityHeavenFlow, getFirstQuestionId } from '../../utils';
+// import { getUniqueId, commitCityHeavenFlow } from '../../utils';
 // import { useOwnerStore } from '../../store';
 // import CityHeavenQuestionNode from './CityHeavenQuestionNode';
 // import CityHeavenResultNode from './CityHeavenResultNode';
@@ -214,33 +243,50 @@ export default memo(CityHeavenFlow);
 // import Draggable from '../../components/dnd/Draggable';
 // import Droppable from '../../components/dnd/Droppable';
 // import {
-//   ReactFlow, Node, Edge, Connection, useNodes, useEdges, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
-//   OnNodesChange, applyNodeChanges,
-//   OnEdgesChange, applyEdgeChanges,
-//   ConnectionLineType, MarkerType
+//   ReactFlow, Node, Edge, Connection, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
+//   ConnectionLineType, MarkerType,
+//   useNodesState, useEdgesState,
+//   OnNodesChange, OnEdgesChange,
+//   applyNodeChanges, applyEdgeChanges,
+//   SelectionMode,
 // } from '@xyflow/react';
 // import '@xyflow/react/dist/style.css';
 // import '../../../../../css/owner/flow.css'
-// import { GiConsoleController } from 'react-icons/gi';
-// import toast, { Toaster } from 'react-hot-toast';
-// import { Menu, Item, TriggerEvent, Separator, Submenu, ItemParams, useContextMenu } from "react-contexify";
 // import "react-contexify/dist/ReactContexify.css";
+// import CommitFlowButton from '../../components/button/CommitFlowButton'
+// import { router } from '@inertiajs/react';
 
-// const QUESTION_MENU_ID = "cityheaven-qestion-menu-id";
 
-// const CityHeavenFlow = ({ flowId }: { flowId: number }) => {
-//   const [nodes, setNodes] = useState<Node[]>(useNodes());
-//   const [edges, setEdges] = useState<Edge[]>(useEdges());
-//   const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+// const CityHeavenFlow = ({ flowId, initialNodes, initialEdges }: { flowId: number, initialNodes: Node[], initialEdges: Edge[] }) => {
 
+//   const [nodes, setNodes] = useState<Node[]>(initialNodes);
+//   const [edges, setEdges] = useState<Edge[]>(initialEdges);
+//   // const [isDirty, setIsDirty] = useState(false);
+
+//   const isDirty = useOwnerStore((state) => state.isDirty);
+//   const setIsDirty = useOwnerStore((state) => state.setIsDirty);
 //   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
-//   const firstNodeId = useOwnerStore((state) => state.firstNodeId);
-//   const flowTitle = useOwnerStore((state) => state.flowTitle);
-//   const flowUrl = useOwnerStore((state) => state.flowUrl);
+
+//   useEffect(() => {
+//     const beforeConfirm = router.on('before', (event) => {
+
+//       if (isDirty) {
+//         return confirm('変更が保存されていませんがページを離れてもよろしいですか？');
+//       } else {
+//         return true;
+//       }
+//     });
+//     return () => {
+//       beforeConfirm();
+//     }
+//   }, [isDirty])
+
+
 
 //   const edgeReconnSuccess = useRef(true);
 
-//   const { screenToFlowPosition, addNodes, setViewport, getNodes, deleteElements } = useReactFlow();
+//   const { screenToFlowPosition, addNodes, setViewport, getNodes } = useReactFlow();
+
 
 //   const nodeTypes = useMemo(() => (
 //     {
@@ -249,25 +295,23 @@ export default memo(CityHeavenFlow);
 //     }
 //   ), []);
 
-//   const defaultEdgeOptions = useMemo(() => (
-//     {
-//       type: 'smoothstep',
-//     }
-//   ), []);
-
 
 //   const onNodesChange: OnNodesChange = useCallback(
 //     (changes) => {
-//       // console.log(('呼ばれた'))
-//       setNodes((oldNodes) => applyNodeChanges(changes, oldNodes));
-//     }, [setNodes]);
-
-//   const onEdgesChange: OnEdgesChange = useCallback(
-//     (changes) => setEdges((eds) => applyEdgeChanges(changes, eds)),
-//     [setEdges],
+//       // console.log('ノード変更')
+//       setNodes((nds) => applyNodeChanges(changes, nds));
+//       setIsDirty(true);
+//     },
+//     [setNodes, setIsDirty],
 //   );
 
-
+//   const onEdgesChange: OnEdgesChange = useCallback(
+//     (changes) => {
+//       setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
+//       setIsDirty(true);
+//     },
+//     [setEdges, setIsDirty],
+//   );
 
 //   const onAddQuestion = (position: { x: number; y: number }) => {
 //     const newQuestionNo = getUniqueId();
@@ -282,7 +326,7 @@ export default memo(CityHeavenFlow);
 //       id: newQuestionNo,
 //       data: {
 //         topic: "",
-//         choices: [{ id: newChoiceNo, content: "", }]
+//         choices: [{ id: newChoiceNo, content: "", salePoints: [] }]
 //       },
 //       position,
 //       type: "cityHeavenQuestionNode",
@@ -302,14 +346,11 @@ export default memo(CityHeavenFlow);
 //     });
 //   };
 
-
 //   const handleDragEnd = useCallback(({ active, over, delta, activatorEvent }: DragEndEvent) => {
-
 //     // フロー作成エリア以外にドロップしたら何もしない
-//     if (over == null || over.id != 'droppableA') {
+//     if (over == null || over.id != 'droppableArea') {
 //       return;
 //     }
-
 //     // activatorEventがMouseEventの場合に処理を進める
 //     // イベントが他の入力デバイス（例えばタッチデバイス）でも安全に動作すする
 //     if (activatorEvent instanceof MouseEvent) {
@@ -333,26 +374,6 @@ export default memo(CityHeavenFlow);
 //   }, [])
 
 
-//   // コミット
-//   const handleCommit = useCallback(() => {
-//     if (rfInstance) {
-//       const flow = rfInstance.toObject();
-//       (async () => {
-//         try {
-//           const res = await commitCityHeavenFlow(
-//             flowId, flow.nodes, flow.edges, firstNodeId,
-//             flowTitle, flowUrl
-//           );
-//           toast.success('Successfully toasted!', { duration: 3000 });
-//         } catch (error) {
-//           toast.error('失敗!')
-//         }
-//       })();
-//     }
-//   }, [rfInstance, firstNodeId, flowTitle, flowUrl]);
-
-
-
 //   // edgeの再接続時イベント
 //   const onReconnect = useCallback((oldEdge: Edge, newConn: Connection) => {
 //     edgeReconnSuccess.current = true;
@@ -372,63 +393,68 @@ export default memo(CityHeavenFlow);
 //     edgeReconnSuccess.current = true;
 //   }, []);
 
-//   // const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
-//   //   if (!edgeReconnSuccess.current) {
-//   //     setEdges(eds => eds.filter((ed) => ed.id !== edge.id));
-//   //   }
-//   //   edgeReconnSuccess.current = true;
-//   // }, []);
-
 //   const onConnect = useCallback((params: Connection | Edge) => {
-//     setEdges((eds) => addEdge(params, eds))
+//     setEdges((eds) => addEdge({ ...params, type: 'smoothstep' }, eds))
 //   }, [setEdges]);
 
-//   const deleteNode = useCallback(() => {
-//     const selectedNode = getNodes().filter(x => x.selected === true);
-//     deleteElements({ nodes: [{ id: selectedNode[0].id }] });
-//   }, [getNodes]);
+//   const handleEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+//     setEdges(eds => eds.map(e => {
+//       if (e.id === edge.id) {
+//         return {
+//           ...e,
+//           animated: true,
+//           style: { stroke: "gold", strokeWidth: 3, zIndex: 1000 }
+//         }
+//       } else {
+//         return {
+//           ...e,
+//           animated: false,
+//           style: { zIndex: 0 }
+//         }
+//       }
+//     }))
+//   }, [setEdges])
+
+//   const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
+//     event.preventDefault();
+//     setEdges(eds => eds.filter(e => e.id !== edge.id))
+//   }, [setEdges])
 
 
-//   const handleUpdateFirstQuestion = useCallback(() => {
-//     const selectedNode = getNodes().filter(x => x.selected === true);
-//     setFirstNodeId(selectedNode[0].id)
-//   }, [getNodes]);
 
 //   return (
 //     <div className='h-full flex' >
-//       <DndContext onDragEnd={(event) => handleDragEnd(event)}>
 
+//       <DndContext onDragEnd={(event) => handleDragEnd(event)}>
 //         <div className='w-[10%] flex items-center flex-col gap-y-3 py-3 bg-slate-800'>
 //           <Draggable id="draggable-question" label="質問" />
 //           <Draggable id="draggable-result" label="アンケート終了" />
-//           <button
-//             className='bg-purple-700 border rounded w-[120px] h-[80px] text-white'
-//             onClick={() => handleCommit()}
-//           >
-//             保存
-//           </button>
-
+//           <CommitFlowButton flowId={flowId} />
 //         </div>
 
-//         <Droppable id="droppableA">
+//         <Droppable id="droppableArea">
 //           <ReactFlow
 //             nodes={nodes}
 //             edges={edges}
 //             nodeTypes={nodeTypes}
-//             // edgeTypes={{ smoothstep: SmoothStepEdge }}
-//             onEdgesChange={(changes) => onEdgesChange(changes)}
-//             onNodesChange={(changes) => onNodesChange(changes)}
+//             onNodesChange={onNodesChange}
+//             onEdgesChange={onEdgesChange}
 //             fitView
 //             fitViewOptions={{ padding: 0.4 }}
 //             snapToGrid
-//             edgeTypes={{ smoothstep: SmoothStepEdge }}
 //             connectionLineType={ConnectionLineType.SmoothStep}
-//             onReconnect={(oldEdge, newConn) => onReconnect(oldEdge, newConn)}
-//             onReconnectStart={() => onReconnectStart()}
+//             onReconnect={onReconnect}
+//             onReconnectStart={onReconnectStart}
 //             onReconnectEnd={(_, edge) => onReconnectEnd(edge)}
-//             onConnect={(params) => onConnect(params)}
-//             onInit={setRfInstance}
-//             defaultEdgeOptions={defaultEdgeOptions}
+//             onConnect={onConnect}
+//             onEdgeClick={handleEdgeClick}
+//             onEdgeContextMenu={handleEdgeContextMenu}
+//             elevateEdgesOnSelect={true}
+
+//             panOnScroll
+//             selectionOnDrag
+//             panOnDrag={[1, 2]}
+//             selectionMode={SelectionMode.Partial}
 //           >
 //             <Background
 //               color='#222'
@@ -438,21 +464,10 @@ export default memo(CityHeavenFlow);
 //           </ReactFlow>
 //         </Droppable>
 //       </DndContext>
-
-
-//       <Toaster position="bottom-right" reverseOrder={false} />
-
-//       <Menu id={QUESTION_MENU_ID}>
-//         <Item onClick={() => handleUpdateFirstQuestion()}>
-//           1問目に設定
-//         </Item>
-//         <Item onClick={() => deleteNode()}>
-//           削除
-//         </Item>
-//       </Menu>
 //     </div>
 //   )
 // };
 
 // export default memo(CityHeavenFlow);
+
 

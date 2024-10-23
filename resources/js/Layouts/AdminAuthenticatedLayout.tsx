@@ -11,15 +11,8 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
     const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
 
     return (
-        // <div className="min-h-screen bg-gray-100">
-        // <div className="min-h-screen bg-gray-100 flex flex-col">
-        <div className="min-h-screen bg-gray-100">
-            {/* <nav className="bg-white border-b border-gray-100"> */}
-
-            {/* 基本的に5vhを維持するように可変する。最低の高さはh-20 
-            親要素を100vhに指定した場合、子要素に%をつけるとデザインが崩れる
-            */}
-            <nav className="bg-white border-gray-100 h-[7vh]">
+        <div className="flex flex-col min-h-screen h-screen bg-gray-100">
+            <nav className="bg-white border-b border-gray-100">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex justify-between h-16">
                         <div className="flex">
@@ -34,7 +27,7 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                                     href={route('admin.dashboard')}
                                     active={route().current('admin.dashboard')}
                                 >
-                                    Dashboard
+                                    ユーザ一覧
                                 </NavLink>
 
                             </div>
@@ -106,7 +99,7 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                 <div className={(showingNavigationDropdown ? 'block' : 'hidden') + ' sm:hidden'}>
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
-                            Dashboard
+                            ユーザ一覧
                         </ResponsiveNavLink>
                     </div>
 
@@ -128,34 +121,13 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                 </div>
             </nav>
 
-            {header && (
-                <header className="bg-white shadow">
-                    <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                </header>
+            <header className="bg-white shadow">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
+            </header>
 
-                // <header className="bg-white shadow">
-                //     <div className="max-w-7xl mx-auto py-3 px-4 sm:px-6 lg:px-8">{header}</div>
-                // </header>
-
-                // <header className="h-[5vh] min-h-[5vh] max-h-[5vh] ">
-                //     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                //         {header}
-                //     </div>
-                // </header>
-
-                // <header className="bg-white h-[3vh]">
-                //     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
-                // </header>
-                // <header className="bg-white shadow">
-                //     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
-                // </header>
-            )}
-
-            {/* このmain要素の親要素のflexに対してflex-grow:1を指定することで
-            nav要素やheader要素など、他のheight:autoな子要素の残りの高さを自動で割り当てる
-            */}
-            {/* <main className={` ${header ? 'h-[88vh]' : 'h-[93vh]'} min-h-40`}>{children}</main> */}
-            <main>{children}</main>
+            <main className="grow overflow-scroll">
+                {children}
+            </main>
         </div>
     );
 }

@@ -27,6 +27,7 @@
         "@dnd-kit/core": "^6.1.0",
         "@types/chroma-js": "^2.4.4",
         "@types/uuid": "^10.0.0",
+        "@types/ziggy-js": "^1.3.3",
         "@xyflow/react": "^12.3.0",
         "chroma-js": "^3.1.2",
         "framer-motion": "^11.9.0",

@@ -1,14 +1,15 @@
 import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, memo } from 'react'
-import { Node, NodeProps, Handle, Position, useReactFlow, useNodes } from '@xyflow/react';
+import { Node, NodeProps, Handle, Position, useReactFlow } from '@xyflow/react';
 import { RecommendNodeType } from '../../types';
-import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
+import { showContextMenu } from '../../components/subMenu/ResultSubMenu';
+import { BsThreeDots } from "react-icons/bs";
 
 
 const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<RecommendNodeType>>) => {
 
-  const { updateNodeData, deleteElements } = useReactFlow();
+  const { updateNodeData } = useReactFlow();
 
-  const handleUpdateMessage = (evt: ChangeEvent<HTMLInputElement>) => {
+  const handleUpdateMessage = (evt: ChangeEvent<HTMLTextAreaElement>) => {
     updateNodeData(
       nodeId, {
       ...nodeData,
@@ -16,44 +17,31 @@ const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Rec
     });
   }
 
-  const onDeleteResult = () => {
-    deleteElements({ nodes: [{ id: nodeId }] })
-  }
-
   return (
-    <>
-      <div className="rounded-t-md min-w-64 px-2">
-        <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer" }} />
+    <div className="rounded-md w-80 bg-slate-900 shadow-lg">
+      <div className='h-10 custom-drag-handle rounded-t-md bg-orange-500 flex justify-end items-center px-2 transition-all hover:bg-orange-600'>
+        <BsThreeDots
+          className='w-6 h-full text-slate-200 text-md cursor-pointer transition-all hover:text-slate-50 hover:bg-orange-400'
+          onClick={(event) => showContextMenu(event, nodeId)} />
+      </div>
 
-
-        <div className='flex flex-col custom-drag-handle'>
-          <button
-            className="text-white hover:text-red-300 font-bold mb-1 rounded w-fit self-end text-sm"
-            type="button"
-            onClick={onDeleteResult}>
-            <FaRegTrashAlt />
-          </button>
-
-          <div className="rounded-t-md p-1 text-center bg-orange-500 text-white w-full">
-            API結果判定
-          </div>
-        </div>
-
-        <div className='flex flex-col justify-around items-center p-1 text-white bg-slate-800'>
-
-          {/* メッセージ入力 */}
-          <div className='w-full'>
-            <input
-              className=" border-blue-100 focus:border-blue-400 focus:ring-0 bg-transparent text-white w-full"
-              value={nodeData.message}
-              placeholder="メッセージを入力してください"
-              onChange={(evt) => handleUpdateMessage(evt)}
-            />
-          </div>
+      <div className='flex flex-col justify-center items-center cursor-default pt-3 pb-6 px-3'>
+        <div className='w-full flex flex-col justify-center items-center relative'>
+          <label htmlFor="message" className="self-start block text-md font-semibold text-orange-400">結果メッセージ</label>
+          <textarea
+            id="message"
+            rows={3}
+            className="block resize-none p-2.5 w-full text-md text-slate-200 placeholder-slate-500 bg-slate-800 rounded-sm border-1 ring-0 border-slate-400 focus:ring-0 focus:border-slate-200"
+            value={nodeData.message}
+            onChange={(event) => handleUpdateMessage(event)}
+            placeholder="メッセージを入力してください">
+          </textarea>
+          <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer", top: 18, left: -25, }} />
         </div>
       </div>
-    </>
+    </div >
   )
+
 }
 
 export default memo(CityHeavenResultNode);

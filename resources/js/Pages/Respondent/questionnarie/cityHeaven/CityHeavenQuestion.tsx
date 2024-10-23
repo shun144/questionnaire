@@ -13,7 +13,6 @@ const CityHeavenQuestion = () => {
   const backStep = useRespondentStore((state) => state.backStep);
 
 
-
   const handleClick = useCallback((currentQuestion: QuestionType, answer: string, salesPoints: SalsPointType[], nextId?: string) => {
     setAnswerHistories(currentQuestion.id, currentQuestion.topic, answer, salesPoints);
     setCurrentQuestionnarie(nextId);
@@ -87,7 +86,6 @@ const CityHeavenQuestion = () => {
           )}
 
         </div >
-
 
       </div >
     </>

@@ -124,7 +124,8 @@ class ApiController extends Controller
         $client = new Client();
 
         // 週間出勤情報取得API
-        $API_SHUKKIN_LIST = "http://api.cityheaven.net/ApiShukkinList.php";
+        $API_SHUKKIN_LIST = env('CITY_HEAVEN_API_SHUKKIN_LIST', "");
+        // $API_SHUKKIN_LIST = "http://api.cityheaven.net/ApiShukkinList.php";
         $resApiShukkin = $client->post($API_SHUKKIN_LIST,
             [
                 'form_params' => [
@@ -177,7 +178,8 @@ class ApiController extends Controller
         $client = new Client();
 
         // 在籍女の子一覧API
-        $API_GIRLS_LIST = "http://api.cityheaven.net/ApiGirlsList.php";
+        // $API_GIRLS_LIST = "http://api.cityheaven.net/ApiGirlsList.php";
+        $API_GIRLS_LIST = env('CITY_HEAVEN_API_GIRLS_LIST', "");
         $resApiGirls = $client->post($API_GIRLS_LIST,
             [
                 'form_params' => [

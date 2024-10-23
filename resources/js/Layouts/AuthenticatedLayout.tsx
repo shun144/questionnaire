@@ -139,8 +139,9 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
             </nav>
 
             <header className="bg-white shadow">
-                <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{header}</div>
             </header>
+
             {/* {header && (
                 <header className="bg-white shadow">
                     <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">{header}</div>
@@ -152,7 +153,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
             */}
             {/* <main className={` ${header ? 'h-[88vh]' : 'h-[93vh]'} min-h-40`}>{children}</main> */}
             {/* <main>{children}</main> */}
-            <main className="grow">{children}</main>
+            <main className="grow overflow-scroll">{children}</main>
         </div>
     );
 }

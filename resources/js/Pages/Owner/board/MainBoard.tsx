@@ -41,7 +41,7 @@ const MainBoard = ({ initialFlows }: Props) => {
   return (
     <AuthenticatedLayout
       header={
-        <div className='flex justify-between items-center'>
+        <div className='flex justify-between items-center py-3'>
           <h2 className="font-semibold text-xl text-gray-800 leading-tight">アンケート一覧</h2>
           <AddFlowButton />
         </div>
@@ -71,6 +71,7 @@ const MainBoard = ({ initialFlows }: Props) => {
                       as="button"
                       type="button"
                       onContextMenu={(event) => displayMenu(event, id)}
+                    // onBefore={() => confirm('aaa!!')}
                     >
                       {title}
                     </Link>
