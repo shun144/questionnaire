@@ -18,8 +18,8 @@ const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Rec
   }
 
   return (
-    <div className="rounded-md w-80 bg-slate-900 shadow-lg">
-      <div className='h-10 custom-drag-handle rounded-t-md bg-orange-500 flex justify-end items-center px-2 transition-all hover:bg-orange-600'>
+    <div className="rounded-md w-80 bg-slate-900 shadow-lg border-slate-300 border-2">
+      <div className='h-10 dhandle rounded-t-md bg-orange-500 flex justify-end items-center px-2 transition-all hover:bg-orange-600'>
         <BsThreeDots
           className='w-6 h-full text-slate-200 text-md cursor-pointer transition-all hover:text-slate-50 hover:bg-orange-400'
           onClick={(event) => showContextMenu(event, nodeId)} />
@@ -34,7 +34,8 @@ const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Rec
             className="block resize-none p-2.5 w-full text-md text-slate-200 placeholder-slate-500 bg-slate-800 rounded-sm border-1 ring-0 border-slate-400 focus:ring-0 focus:border-slate-200"
             value={nodeData.message}
             onChange={(event) => handleUpdateMessage(event)}
-            placeholder="メッセージを入力してください">
+            placeholder="メッセージを入力してください"
+            maxLength={100}>
           </textarea>
           <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer", top: 18, left: -25, }} />
         </div>

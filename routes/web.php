@@ -39,21 +39,7 @@ Route::prefix('admin')->name('admin.')->group(function(){
     require __DIR__.'/admin.php';
 });
 
-
-
-
-
-
-// Route::middleware(['auth', 'verified'])->group(function () {
-//     Route::get('/dashboard', fn() => Inertia::render('Owner/board/MainBoard'))->name('dashboard');
-
-//     Route::get('/setting', fn() => Inertia::render('Owner/Setting/Edit'))->name('setting');
-
-//     // Route::get('/flows', [OwnerContoller::class, 'getFlows']);
-// });
-
 Route::middleware('auth')->group(function () {
-
 
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 
@@ -67,23 +53,21 @@ Route::middleware('auth')->group(function () {
     Route::post('/flow', [OwnerContoller::class, 'addFlow']);
     Route::delete('/flow', [OwnerContoller::class, 'deleteFlow']);
 
-
-
     Route::get('/profile', [OwnerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [OwnerProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [OwnerProfileController::class, 'destroy'])->name('profile.destroy');
 
 });
 
-
 Route::redirect('/', '/login');
 
-// // アンケート回答
-// Route::get('/{owner}/{flowUrl}', [RespondentController::class, 'getQuestionnair'])->name('questionnair');
 
-// Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'getQuestionnair']);
-// Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
+// アンケート回答
+Route::get('/{owner}/{flowUrl}', [RespondentController::class, 'getQuestionnair'])->name('questionnair');
 
-// Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
+Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'getQuestionnair']);
+Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
+
+Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
 
 

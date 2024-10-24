@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef, memo } from 'react';
-import { getUniqueId, getInitialNodes, getInitialEdges, commitStandardFlow, } from '../../utils';
+import { getNewId, getInitialNodes, getInitialEdges, } from '../../utils';
 import { useOwnerStore } from '../../store';
 import QuestionNode from './QuestionNode';
 import ResultNode from './ResultNode';
@@ -51,8 +51,8 @@ const StandardFlow = ({ flowId }: Props) => {
 
   // 質問ノード追加
   const onAddQuestion = (position: { x: number; y: number }) => {
-    const newQuestionNo = getUniqueId();
-    const newChoiceNo = getUniqueId();
+    const newQuestionNo = getNewId();
+    const newChoiceNo = getNewId();
     addNodes({
       id: newQuestionNo,
       data: {
@@ -72,7 +72,7 @@ const StandardFlow = ({ flowId }: Props) => {
 
   // 結果ノード追加
   const onAddResult = (position: { x: number; y: number }) => {
-    const newId = getUniqueId();
+    const newId = getNewId();
     addNodes({
       id: newId,
       data: {
@@ -118,17 +118,17 @@ const StandardFlow = ({ flowId }: Props) => {
   const handleCommit = useCallback(() => {
     if (rfInstance) {
       const flow = rfInstance.toObject();
-      (async () => {
-        try {
-          const res = await commitStandardFlow(
-            flowId, flow.nodes, flow.edges, firstNodeId,
-            flowTitle, flowUrl
-          );
-          toast.success('Successfully toasted!', { duration: 3000 });
-        } catch (error) {
-          toast.error('失敗!')
-        }
-      })();
+      // (async () => {
+      //   try {
+      //     const res = await commitStandardFlow(
+      //       flowId, flow.nodes, flow.edges, firstNodeId,
+      //       flowTitle, flowUrl
+      //     );
+      //     toast.success('Successfully toasted!', { duration: 3000 });
+      //   } catch (error) {
+      //     toast.error('失敗!')
+      //   }
+      // })();
     }
   }, [rfInstance, firstNodeId, flowTitle, flowUrl]);
 

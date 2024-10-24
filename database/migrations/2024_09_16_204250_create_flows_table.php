@@ -17,6 +17,9 @@ return new class extends Migration
             $table->string('category');
             $table->string('url', 15)->nullable();
             $table->string('first_question_id')->nullable();
+            $table->float('x', 8, 2)->default(0);
+            $table->float('y', 8, 2)->default(0);
+            $table->float('zoom', 8, 2)->default(1);
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             // 外部キー設定

@@ -1,7 +1,7 @@
 import React, { useState, ChangeEventHandler, useCallback, ChangeEvent, MouseEvent, useEffect, memo } from 'react'
 import { Node, NodeProps, Handle, Position, useReactFlow, useNodes, NodeTypes, } from '@xyflow/react';
 import { ChoiceType, QuestionNodeType } from '../../types';
-import { getUniqueId } from '../../utils';
+import { getNewId } from '../../utils';
 import ChoiceSourceHandle from '../../components/handles/ChoiceSourceHandle';
 import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
 // import ImageUploader from './components/ImageUploader'
@@ -24,7 +24,7 @@ const QuestionNode = (
 
   // 選択肢追加
   const handleAddChoice = () => {
-    const newChoiceNo = getUniqueId();
+    const newChoiceNo = getNewId();
     updateNodeData(
       nodeId, {
       ...nodeData,

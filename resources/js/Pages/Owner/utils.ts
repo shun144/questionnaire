@@ -92,56 +92,55 @@ export const getFlowTitleAndUrl = async (flowId: number): Promise<{ title: strin
 //   }
 // }
 
-export const commitStandardFlow = async (
-  flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
-  title: string, url: string
-) => {
-  const res = commitFlow(flowId, nodes, edges, firstNodeId, 'questionNode', 'resultNode', title, url);
-  return res;
-}
+// export const commitStandardFlow = async (
+//   flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
+//   title: string, url: string
+// ) => {
+//   const res = commitFlow(flowId, nodes, edges, firstNodeId, 'questionNode', 'resultNode', title, url);
+//   return res;
+// }
 
 
 
-export const commitCityHeavenFlow = async (
-  flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
-  title: string, url: string
-) => {
-  const res = commitFlow(flowId, nodes, edges, firstNodeId, 'cityHeavenQuestionNode', 'cityHeavenResultNode', title, url);
-  return res;
-}
+// export const commitCityHeavenFlow = async (
+//   flowId: number, nodes: Node[], edges: Edge[], firstNodeId: string,
+//   title: string, url: string
+// ) => {
+//   const res = commitFlow(flowId, nodes, edges, firstNodeId, 'cityHeavenQuestionNode', 'cityHeavenResultNode', title, url);
+//   return res;
+// }
 
 
 
-async function commitFlow(
-  flowId: number, nodes: Node[], edges: Edge[],
-  firstNodeId: string, questionNodeTypeName: string, resultNodeTypeName: string,
-  title: string, url: string
-) {
-  const questionNodes = nodes.filter(x => x.type === questionNodeTypeName);
-  const resultNodes = nodes.filter(x => x.type === resultNodeTypeName);
+// async function commitFlow(
+//   flowId: number, nodes: Node[], edges: Edge[],
+//   firstNodeId: string, questionNodeTypeName: string, resultNodeTypeName: string,
+//   title: string, url: string
+// ) {
+//   const questionNodes = nodes.filter(x => x.type === questionNodeTypeName);
+//   const resultNodes = nodes.filter(x => x.type === resultNodeTypeName);
 
-  try {
-    const res = await axios.post('/flows', {
-      flow_id: flowId,
-      update_questions: JSON.stringify(questionNodes),
-      update_results: JSON.stringify(resultNodes),
-      update_edges: JSON.stringify(edges),
-      first_question_id: firstNodeId,
-      title,
-      url,
-    });
+//   try {
+//     const res = await axios.post('/flows', {
+//       flow_id: flowId,
+//       update_questions: JSON.stringify(questionNodes),
+//       update_results: JSON.stringify(resultNodes),
+//       update_edges: JSON.stringify(edges),
+//       first_question_id: firstNodeId,
+//       title,
+//       url,
+//     });
 
-    // if (res.data['err']) {
-    //   console.log(res.data['err'])
-    //   return false;
-    // }
+//     // if (res.data['err']) {
+//     //   console.log(res.data['err'])
+//     //   return false;
+//     // }
 
-    return true;
-  } catch (error) {
-    console.log(error);
-    return false;
-  }
-}
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// }
 
 
 // export const commitCityHeavenFlow = async (
@@ -200,10 +199,13 @@ export const getInitialEdges = async (flowId: number) => {
   return initialEdges;
 }
 
-export const getUniqueId = () => {
-  const uniqueId = uuidv4();
-  return uniqueId;
-}
+// export const getUniqueId = () => {
+//   const uniqueId = uuidv4();
+//   return uniqueId;
+// }
+
+// export const getNewId = () => String(new Date().getTime());
+export const getNewId = () => Math.random().toString(32).substring(2);
 
 
 

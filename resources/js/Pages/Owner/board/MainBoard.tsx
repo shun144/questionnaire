@@ -71,7 +71,6 @@ const MainBoard = ({ initialFlows }: Props) => {
                       as="button"
                       type="button"
                       onContextMenu={(event) => displayMenu(event, id)}
-                    // onBefore={() => confirm('aaa!!')}
                     >
                       {title}
                     </Link>

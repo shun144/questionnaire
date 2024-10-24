@@ -153,7 +153,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
             */}
             {/* <main className={` ${header ? 'h-[88vh]' : 'h-[93vh]'} min-h-40`}>{children}</main> */}
             {/* <main>{children}</main> */}
-            <main className="grow overflow-scroll">{children}</main>
+            <main className="grow overflow-y-scroll">{children}</main>
         </div>
     );
 }

@@ -33,14 +33,15 @@ class OwnerContoller extends Controller
            
             $flow_records = DB::table('flows')
             ->where('id', $id)
-            ->select('title', 'url', 'first_question_id')
+            ->select('title', 'url', 'first_question_id', 'x', 'y', 'zoom')
             ->first();
+
 
             $question_records = DB::table('questions')
             ->where('flow_id', $id)
             ->select('node_datas')
             ->first();
-
+            
             $result_records = DB::table('results')
             ->where('flow_id', $id)
             ->select('node_datas')
@@ -51,9 +52,26 @@ class OwnerContoller extends Controller
             ->select('edge_datas')
             ->first();
 
+
+            // dd([
+            //     'question_records' => $question_records, 
+            //     'result_records' => $result_records, 
+            //     'edge_records' => $edge_records, 
+            // ]);
+
+
             $question_datas = is_null($question_records->node_datas) ? '[]' : $question_records->node_datas;
             $result_datas = is_null($result_records->node_datas) ? '[]' : $result_records->node_datas;
             $edge_datas = is_null($edge_records->edge_datas) ? '[]': $edge_records->edge_datas;
+
+
+            // dd([
+            //     'question_records' => $question_records, 
+            //     'is_null($question_records)' => is_null($question_records), 
+            //     'question_datas' => $question_datas,
+            //     'result_datas' => $result_datas,
+            //     'edge_datas' => $edge_datas,
+            // ]);
 
 
             return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
@@ -63,6 +81,9 @@ class OwnerContoller extends Controller
                 'edges' => $edge_datas,
                 'title' => $flow_records->title,
                 'url' => $flow_records->url,
+                'x' => $flow_records->x,
+                'y' => $flow_records->y,
+                'zoom' => $flow_records->zoom,
                 'initFirstQuestionId' => $flow_records->first_question_id
             ]);
 
@@ -171,6 +192,9 @@ class OwnerContoller extends Controller
             'update_questions',
             'update_results',
             'update_edges',
+            'x',
+            'y',
+            'zoom'
         ]);
 
         DB::table('flows')
@@ -179,6 +203,9 @@ class OwnerContoller extends Controller
             'first_question_id' => $validatedData['first_question_id'],
             'title' => $validatedData['title'],
             'url' => $validatedData['url'],
+            'x' =>  $params['x'],
+            'y' =>  $params['y'],
+            'zoom' =>  $params['zoom'],
         ]);
 
         DB::table('questions')

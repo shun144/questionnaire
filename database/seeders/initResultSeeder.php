@@ -13,28 +13,7 @@ class initResultSeeder extends Seeder
         DB::table('results')->insert([
             [
                 'flow_id' => 1,
-                'node_datas' => json_encode([
-                    [
-                        "id"=> "aac009b7-9203-456d-8135-e237f65cb64a",
-                        "position"=> [
-                            "x"=> -405,
-                            "y"=> 180
-                        ],
-                        "data"=> [
-                            "result"=> "あなたのタイプはAさんです",
-                            "message" => "あなたは真面目なタイプです",
-                            "url" => "",
-                            "img" => "",
-                        ],
-                        "type"=> "resultNode",
-                        "dragHandle"=> ".custom-drag-handle",
-                        "measured"=> [
-                            "width"=> 256,
-                            "height"=> 136
-                        ]
-                    ],
-                    
-                ], JSON_UNESCAPED_UNICODE),
+                'node_datas' => json_encode([], JSON_UNESCAPED_UNICODE),
             ]
         ]);
     }

@@ -8,7 +8,6 @@ import { Toaster } from 'react-hot-toast';
 import QuestionSubMenu from '../../components/subMenu/QuestionSubMenu';
 import ResultSubMenu from '../../components/subMenu/ResultSubMenu';
 import FlowHeader from './FlowHeader';
-// import { usePage } from '@inertiajs/react';
 
 type Props = {
   id: number,
@@ -18,9 +17,12 @@ type Props = {
   title: string,
   url: string,
   initFirstQuestionId: string
+  x: number,
+  y: number,
+  zoom: number,
 }
 
-const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuestionId }: Props) => {
+const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuestionId, x, y, zoom }: Props) => {
 
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
 
@@ -33,7 +35,6 @@ const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuest
       <Head title="Board" />
 
       <ReactFlowProvider>
-
         <div className='h-full w-full flex flex-col'>
           <FlowHeader
             id={id}
@@ -43,6 +44,7 @@ const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuest
           <CityHeavenFlow
             initialNodes={[...JSON.parse(quesitions), ...JSON.parse(results)]}
             initialEdges={JSON.parse(edges)}
+            defaultViewport={{ x, y, zoom }}
           />
         </div>
 

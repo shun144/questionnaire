@@ -13,16 +13,7 @@ class initEdgeSeeder extends Seeder
         DB::table('edges')->insert([
             [
                 'flow_id' => 1,
-                'edge_datas' => json_encode([
-                    [
-                        "id"=> "e-1",
-                        "type"=> "smoothstep",
-                        "source"=> "q-1",
-                        "sourceHandle"=> "q-1_1",
-                        "target"=> "r-1",
-                        "targetHandle"=> "r-1",
-                    ],
-                ],JSON_UNESCAPED_UNICODE)
+                'edge_datas' => json_encode([], JSON_UNESCAPED_UNICODE),
             ]
         ]);
 

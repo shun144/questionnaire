@@ -11,10 +11,7 @@ const Droppable: FC<DroppableProp> = ({ children, id }) => {
     id
   });
   return (
-    <div
-      ref={setNodeRef}
-      className='bg-slate-950 w-[90%]'
-    >
+    <div ref={setNodeRef} className='bg-slate-950 w-[95%]' >
       {children}
     </div>
   );
