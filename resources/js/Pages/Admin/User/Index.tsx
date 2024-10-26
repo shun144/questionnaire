@@ -6,8 +6,13 @@ import 'react-responsive-pagination/themes/classic.css';
 import { Toaster } from 'react-hot-toast';
 import UserTable from './Table';
 
+type UserForAdmin = User & {
+  first_password: string
+}
+
+
 type Props = {
-  initialUsers: User[];
+  initialUsers: UserForAdmin[];
   success?: string;
 }
 
@@ -16,7 +21,7 @@ const Index = ({ initialUsers, success }: Props) => {
   return (
     <AdminAuthenticatedLayout
       header={
-        <div className='w-full flex justify-end items-center'>
+        <div className='w-full flex justify-end items-center my-2'>
           <Link
             href={route("admin.user.create")}
             className='bg-emerald-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-emerald-600'
@@ -32,7 +37,6 @@ const Index = ({ initialUsers, success }: Props) => {
     </AdminAuthenticatedLayout >
   )
 }
-
 
 export default Index;
 

@@ -1,0 +1,5 @@
+:root {
+  /* indigo-500 = rgb(99 102 241) */
+  --pagination-color: rgb(139 92 246);
+  --pagination-hover-color: rgb(139 92 246);
+}

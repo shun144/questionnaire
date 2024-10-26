@@ -1,0 +1,1 @@
+import{c as e}from"./react-Csa2F1B_.js";const l=e(t=>({firstNodeId:"",flowTitle:"",flowUrl:"",isDirty:!1,setFirstNodeId:r=>t({firstNodeId:r}),setFlowTitle:r=>t({flowTitle:r}),setFlowUrl:r=>t({flowUrl:r}),setIsDirty:r=>t({isDirty:r})}));export{l as u};

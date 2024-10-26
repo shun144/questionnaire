@@ -5,19 +5,33 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 // import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateCityHeavenApiForm from './Partials/UpdateCityHeavenApiForm'
 
-const Edit = () => {
+type Props = {
+  masking_access_key: string;
+  masking_shop_id: string;
+}
+
+const Edit = ({ masking_access_key, masking_shop_id }: Props) => {
   return (
     <AuthenticatedLayout
-      header
+      header={
+        <div className='flex justify-between items-center py-5'>
+          <h2 className="font-bold text-xl text-slate-600 leading-tight">シティヘブンAPI資格情報</h2>
+        </div >
+      }
     >
 
       <Head title="Setting" />
       <div className="py-12">
-        <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
+        <div className="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
 
           <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <UpdateCityHeavenApiForm className="max-w-xl" />
+            <UpdateCityHeavenApiForm
+              className={"max-w-full"}
+              masking_access_key={masking_access_key}
+              masking_shop_id={masking_shop_id} />
           </div>
+
+
 
           {/* <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
             <UpdatePasswordForm className="max-w-xl" />

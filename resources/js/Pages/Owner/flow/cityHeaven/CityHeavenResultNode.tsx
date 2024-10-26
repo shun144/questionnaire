@@ -19,15 +19,15 @@ const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Rec
 
   return (
     <div className="rounded-md w-80 bg-slate-900 shadow-lg border-slate-300 border-2">
-      <div className='h-10 dhandle rounded-t-md bg-orange-500 flex justify-end items-center px-2 transition-all hover:bg-orange-600'>
+      <div className='h-10 dhandle rounded-t-md bg-rose-500 flex justify-end items-center px-2 transition-all hover:bg-rose-600'>
         <BsThreeDots
-          className='w-6 h-full text-slate-200 text-md cursor-pointer transition-all hover:text-slate-50 hover:bg-orange-400'
+          className='w-6 h-full text-slate-200 text-md cursor-pointer transition-all hover:text-slate-50 hover:bg-rose-400'
           onClick={(event) => showContextMenu(event, nodeId)} />
       </div>
 
       <div className='flex flex-col justify-center items-center cursor-default pt-3 pb-6 px-3'>
         <div className='w-full flex flex-col justify-center items-center relative'>
-          <label htmlFor="message" className="self-start block text-md font-semibold text-orange-400">結果メッセージ</label>
+          <label htmlFor="message" className="self-start block text-md font-semibold text-rose-400">メッセージ</label>
           <textarea
             id="message"
             rows={3}

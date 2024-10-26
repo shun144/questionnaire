@@ -16,7 +16,6 @@ use App\Models\Flow;
 use App\Models\Question;
 use App\Models\Choice;
 use App\Models\Result;
-// use App\Models\Quize;
 // use GuzzleHttp\Client;
 // use Illuminate\Http\Client\Pool;
 // use Illuminate\Support\Facades\Http;
@@ -29,12 +28,15 @@ class OwnerContoller extends Controller
 
     public function getFlow($id) {
         try {
-            // $params = $request->only(['flow_id']);
-           
+
             $flow_records = DB::table('flows')
             ->where('id', $id)
-            ->select('title', 'url', 'first_question_id', 'x', 'y', 'zoom')
+            ->select('title', 'url', 'first_question_id', 'x', 'y', 'zoom', 'category')
             ->first();
+
+            $category = $flow_records->category;
+
+            unset($flow_records->category); 
 
 
             $question_records = DB::table('questions')
@@ -52,14 +54,6 @@ class OwnerContoller extends Controller
             ->select('edge_datas')
             ->first();
 
-
-            // dd([
-            //     'question_records' => $question_records, 
-            //     'result_records' => $result_records, 
-            //     'edge_records' => $edge_records, 
-            // ]);
-
-
             $question_datas = is_null($question_records->node_datas) ? '[]' : $question_records->node_datas;
             $result_datas = is_null($result_records->node_datas) ? '[]' : $result_records->node_datas;
             $edge_datas = is_null($edge_records->edge_datas) ? '[]': $edge_records->edge_datas;
@@ -74,7 +68,7 @@ class OwnerContoller extends Controller
             // ]);
 
 
-            return Inertia::render('Owner/flow/cityHeaven/FlowLayout', [
+            return Inertia::render('Owner/flow/'.$category.'/FlowLayout', [
                 'id' =>  $id,
                 'quesitions' => $question_datas,
                 'results' => $result_datas,
@@ -86,8 +80,6 @@ class OwnerContoller extends Controller
                 'zoom' => $flow_records->zoom,
                 'initFirstQuestionId' => $flow_records->first_question_id
             ]);
-
-            // return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
         }
         catch (\Exception $e) {
 
@@ -103,41 +95,42 @@ class OwnerContoller extends Controller
 
 
     public function addFlow(Request $request){
-        try {
-            $params = $request->only([ 'category']);
-            $user_id = Auth::user()->id;
+        $user_id = Auth::user()->id;
 
-            $flow_id = DB::table('flows')->insertGetId([
-                'title' => "",
-                'url' => "",
-                'category' => $params['category'],
-                'user_id' => $user_id
-            ]);
+        $validatedData = $request->validate([
+            'initialTitle' => ['required', 'string', 'max:50'],
+            'initialUrl' => ['required', 'string', 'max:15', 'alpha_num:ascii',
+                            Rule::unique('flows', 'url') // 'url' をカラムとして指定
+                            ->where(function ($query) use ($user_id) {
+                                return $query->where('user_id', $user_id); // user_id スコープを追加
+                            })],
+            'initialCategory' => ['required'],
+        ]);
 
-            DB::table('questions')->insert([
-                'flow_id' => $flow_id,
-            ]);
+        $params = $request->only(['category']);
+        $user_id = Auth::user()->id;
 
-            DB::table('results')->insert([
-                'flow_id' => $flow_id
-            ]);
+        $flow_id = DB::table('flows')->insertGetId([
+            'title' => $validatedData['initialTitle'],
+            'url' => $validatedData['initialUrl'],
+            'category' => $validatedData['initialCategory'],
+            'user_id' => $user_id
+        ]);
 
-            DB::table('edges')->insert([
-                'flow_id' => $flow_id
-            ]);
+        DB::table('questions')->insert([
+            'flow_id' => $flow_id,
+        ]);
 
-            return Redirect::route('flow.index', ['id' => $flow_id]);
-            // return Redirect::route('dashboard');
+        DB::table('results')->insert([
+            'flow_id' => $flow_id
+        ]);
 
-        }
-        catch (\Exception $e) {
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
-        }
+        DB::table('edges')->insert([
+            'flow_id' => $flow_id
+        ]);
+
+        return Redirect::route('flow.index', ['id' => $flow_id]);
     }
-
 
     public function deleteFlow(Request $request){
         try {
@@ -156,19 +149,31 @@ class OwnerContoller extends Controller
         try {
             $user_id = Auth::user()->id;
            
-            $records = DB::table('flows')
+
+            $isRegisteredApiCredential = DB::table('city_heavens')
+                                            ->where('user_id', $user_id)->exists();
+
+            // $city_heavens_records = DB::table('city_heavens')
+            // ->where('user_id', $user_id)
+            // ->select('id')
+            // ->get();
+
+            $flow_records = DB::table('flows')
             ->where('user_id', $user_id)
             ->select('id','category', 'title','url', 'first_question_id as firstQuestionId')
             ->get();
-            $datas = isset($records) ? $records: [];
+
+            $datas = isset($flow_records) ? $flow_records: [];
             
             return Inertia::render('Owner/board/MainBoard', [
                 'initialFlows' =>  $datas,
+                'isRegisteredApiCredential' => $isRegisteredApiCredential,
             ]);
         }
         catch (\Exception $e) {
             return Inertia::render('Owner/board/MainBoard', [
                 'initialFlows' =>  [],
+                'isRegisteredApiCredential' => false,
             ]);
         }
     }
@@ -180,7 +185,7 @@ class OwnerContoller extends Controller
         $validatedData = $request->validate([
             'title' => ['required', 'string', 'max:50'],
 
-            'url' => ['required', 'string', 'max:15', 'alpha_num',
+            'url' => ['required', 'string', 'max:15', 'alpha_num:ascii',
                     Rule::unique('flows')->where(function ($query) use ($user_id) {
                         return $query->where('user_id', $user_id);
                     })->ignore($id),
@@ -236,123 +241,37 @@ class OwnerContoller extends Controller
 
     }
 
-    // public function getEdges(Request $request){
-    //     try {
-    //         $params = $request->only(['flow_id']);
-           
-    //         $records = DB::table('edges')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->select('edge_datas')
-    //         ->first();
+    public function getApiCredential() {
+        try {
 
-    //         $data = isset($records) ? $records->edge_datas: [];
+            $user_id = Auth::user()->id;
 
-    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
+            $api_records = DB::table('city_heavens')
+            ->where('user_id', $user_id)
+            ->select('masking_access_key', 'masking_shop_id')
+            ->first();
 
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
+            $masking_access_key = "";
+            $masking_shop_id = "";
 
-    // public function getQuestionNodes(Request $request){
-    //     try {
-    //         // $flow_id = $this->getBoardIdBySessionUser();
-    //         $params = $request->only(['flow_id']);
-           
-    //         $records = DB::table('questions')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->select('node_datas')
-    //         ->first();
+            if (isset($api_records)) {
+                $masking_access_key = $api_records->masking_access_key;
+                $masking_shop_id = $api_records->masking_shop_id;
+            }
 
-    //         $data = isset($records) ? $records->node_datas: [];
+            return Inertia::render('Owner/Setting/Edit', [
+                'masking_access_key' =>  $masking_access_key,
+                'masking_shop_id' => $masking_shop_id,
+            ]);
 
-    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
 
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
+            return Inertia::render('Owner/Setting/Edit', [
+                'masking_access_key' =>  "",
+                'masking_shop_id' => "",
+            ]);
+        }
+    }
 
-    // public function getResultNodes(Request $request){
-    //     try {             
-    //         // $flow_id = $this->getBoardIdBySessionUser();
-    //         $params = $request->only(['flow_id']);
-           
-    //         $records = DB::table('results')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->select('node_datas')
-    //         ->first();
-
-    //         $data = isset($records) ? $records->node_datas: [];
-
-    //         return response()->json($data,200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
-
-    // public function commit(Request $request){
-    //     try {
-
-    //         // dd($request);
-    //         $params = $request->only([
-    //             'flow_id',
-    //             'update_questions',
-    //             'update_results',
-    //             'update_edges',
-    //             'first_question_id',
-    //             'title',
-    //             'url'
-    //         ]);
-
-    //         DB::table('flows')
-    //         ->where('id', $params['flow_id'])
-    //         ->update([
-    //             'first_question_id' => $params['first_question_id'],
-    //             'title' => $params['title'],
-    //             'url' => $params['url'],
-    //         ]);
-
-
-    //         DB::table('questions')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->update([
-    //             'node_datas' => $params['update_questions'],
-    //         ]);
-
-    //         DB::table('results')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->update([
-    //             'node_datas' => $params['update_results'],
-    //         ]);
-
-    //         DB::table('edges')
-    //         ->where('flow_id', $params['flow_id'])
-    //         ->update([
-    //             'edge_datas' => $params['update_edges'],
-    //         ]);
-
-    //         return response()->json(
-    //             ['flow_id' =>  $params['flow_id']
-    //         ],200,[],JSON_UNESCAPED_UNICODE);
-    //     }
-    //     catch (\Exception $e) {
-    //         $data = [
-    //             'err' => $e->getMessage()
-    //         ];
-    //         return response()->json($data);
-    //     }
-    // }
 }

@@ -20,7 +20,7 @@ const CityHeavenQuestion = () => {
 
   return (
     <>
-      < div className='h-full w-full flex flex-col justify-start items-center py-12'>
+      <div className='h-full w-full flex flex-col justify-start items-center pt-10 pb-6 md:py-12'>
         <div className='w-full px-2 md:w-6/12'>
 
           <div className="rounded-2xl shadow-md">
@@ -42,7 +42,7 @@ const CityHeavenQuestion = () => {
                       className="w-11/12 border-4 border-gray-300 
                       flex justify-center items-center rounded-full hover:opacity-40 transiton-all duration-300
                       min-h-16 h-16 max-h-16
-                      md:min-h-28 md:h-28 md:max-h-28"
+                      md:min-h-24 md:h-24 md:max-h-24"
                       onClick={() => handleClick(currentQuestionnarie as QuestionType, content, salesPoints, nextId)}
                     >
                       <div className="w-2/12 md:w-1/12 md:pl-4">

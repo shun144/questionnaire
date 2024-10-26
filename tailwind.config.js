@@ -15,6 +15,24 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            keyframes: {
+                appear: {
+                    "0%": { opacity: 0 },
+                    "100%": { opacity: 1 },
+                },
+                slide: {
+                    "0%": {
+                        transform: "translateX(-25%)"
+                    },
+                    "100%": {
+                        transform: "translateX(25%)"
+                    }
+                }
+            },
+            animation: {
+                appear: "appear 1.5s ease 2s 1 forwards",
+                slide: "slide 40s ease-in-out infinite alternate",
+            },
         },
         screens: {
             'xs': '375px',

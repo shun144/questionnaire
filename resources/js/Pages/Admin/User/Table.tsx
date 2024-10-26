@@ -6,19 +6,22 @@ import ResponsivePagination from 'react-responsive-pagination';
 import toast from 'react-hot-toast';
 import TextInput from '@/Components/TextInput';
 
+type UserForAdmin = User & {
+  first_password: string
+}
+
+
 type Props = {
-  initialUsers: User[];
+  initialUsers: UserForAdmin[];
   success?: string
 }
 
 const Table = ({ initialUsers, success }: Props) => {
 
-
-
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<UserForAdmin[]>(initialUsers);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
-  const [currentItems, setCurrentItems] = useState<User[]>([]);
+  const [currentItems, setCurrentItems] = useState<UserForAdmin[]>([]);
 
   const peoplePerPage = 10; // 1ページあたりの人数
 
@@ -42,15 +45,22 @@ const Table = ({ initialUsers, success }: Props) => {
     setCurrentPage(page);
   }, [setCurrentPage])
 
-  const handleDelete = (event: MouseEvent, userId: number, userName: string) => {
+  const handleClickEdit = (event: MouseEvent, userId: number, userName: string) => {
+    event.preventDefault();
+    router.get(`/admin/user/${userId}`)
+  }
+
+
+  const handleClickDelete = (event: MouseEvent, userId: number, userName: string) => {
     event.preventDefault();
     router.delete(`/admin/user/${userId}`, {
-      onBefore: () => confirm('Are you sure you want to delete this user?'),
+      onBefore: () => confirm(`${userName}さんを削除してよろしいですか？`),
     })
   }
 
-  return (
 
+
+  return (
     <>
       <div className='max-w-7xl mx-auto sm:px-6 lg:py-8'>
         <div className='bg-white overflow-hidden shadow-sm'>
@@ -63,6 +73,7 @@ const Table = ({ initialUsers, success }: Props) => {
                   <th className='px-3 py-3'>ユーザ名</th>
                   <th className='px-3 py-3'>店舗URL名</th>
                   <th className='px-3 py-3'>メールアドレス</th>
+                  <th className='px-3 py-3'>初回パスワード</th>
                   <th className='px-3 py-3 text-center'>action</th>
                 </tr>
               </thead>
@@ -76,18 +87,25 @@ const Table = ({ initialUsers, success }: Props) => {
                     <td className='px-3 py-2'>{user.name}</td>
                     <td className='px-3 py-2'>{user.english_name}</td>
                     <td className='px-3 py-2'>{user.email}</td>
+                    <td className='px-3 py-2'>{user.first_password}</td>
                     <td className='px-3 py-2 text-center'>
+
+                      <button
+                        className='font-medium text-blue-600 hover:bg-blue-500 hover:text-white mx-1 transiton-all duration-150 p-1 rounded'
+                        onClick={(event) => handleClickEdit(event, user.id, user.name)}
+                      >
+                        編集
+                      </button>
+
                       <button
                         className='font-medium text-red-600 hover:bg-red-500 hover:text-white mx-1 transiton-all duration-150 p-1 rounded'
-                        onClick={(event) => handleDelete(event, user.id, user.name)}
+                        onClick={(event) => handleClickDelete(event, user.id, user.name)}
                       >
                         削除
                       </button>
                     </td>
                   </tr>
                 ))}
-
-
               </tbody>
             </table>
 

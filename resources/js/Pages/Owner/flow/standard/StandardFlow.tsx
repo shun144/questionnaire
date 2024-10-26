@@ -1,72 +1,105 @@
 import { useState, useCallback, useEffect, useMemo, useRef, memo } from 'react';
-import { getNewId, getInitialNodes, getInitialEdges, } from '../../utils';
+import { getNewId } from '../../utils';
 import { useOwnerStore } from '../../store';
-import QuestionNode from './QuestionNode';
-import ResultNode from './ResultNode';
+import StandardQuestionNode from './StandardQuestionNode';
+import StandardResultNode from './StandardResultNode';
 import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import Draggable from '../../components/dnd/Draggable';
 import Droppable from '../../components/dnd/Droppable';
-import { ReactFlow, Node, Edge, Connection, useNodesState, useEdgesState, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant } from '@xyflow/react';
+import {
+  ReactFlow, Node, Edge, Connection, addEdge, reconnectEdge, useReactFlow, Panel, ReactFlowInstance, Controls, Background, SmoothStepEdge, BackgroundVariant,
+  ConnectionLineType, MarkerType,
+  OnNodesChange, OnEdgesChange,
+  applyNodeChanges, applyEdgeChanges,
+  SelectionMode, type Viewport
+} from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
 import '../../../../../css/owner/flow.css'
-import { GiConsoleController } from 'react-icons/gi';
-import toast, { Toaster } from 'react-hot-toast';
+import "react-contexify/dist/ReactContexify.css";
+import { router, usePage } from '@inertiajs/react';
 
 
 type Props = {
-  flowId: number;
+  initialNodes: Node[];
+  initialEdges: Edge[];
+  defaultViewport: Viewport;
 }
 
-const StandardFlow = ({ flowId }: Props) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
-  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
-  const { screenToFlowPosition, addNodes, setViewport } = useReactFlow();
-  const [rfInstance, setRfInstance] = useState<ReactFlowInstance>();
+const StandardFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) => {
 
+  const [nodes, setNodes] = useState<Node[]>(initialNodes);
+  const [edges, setEdges] = useState<Edge[]>(initialEdges);
+  const edgeReconnSuccess = useRef(true);
+
+  const isDirty = useOwnerStore((state) => state.isDirty);
+  const setIsDirty = useOwnerStore((state) => state.setIsDirty);
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
-  const firstNodeId = useOwnerStore((state) => state.firstNodeId);
-  const flowTitle = useOwnerStore((state) => state.flowTitle);
-  const flowUrl = useOwnerStore((state) => state.flowUrl);
+  const { screenToFlowPosition, addNodes, setViewport, getNodes } = useReactFlow();
+  const { url: currentUrl } = usePage()
 
   const nodeTypes = useMemo(() => (
     {
-      questionNode: QuestionNode,
-      resultNode: ResultNode
+      qNode: StandardQuestionNode,
+      rNode: StandardResultNode
     }
   ), []);
 
   useEffect(() => {
-    (async () => {
-      const initialNodes = await getInitialNodes(flowId);
-      const initialEdges = await getInitialEdges(flowId);
-      setNodes(initialNodes);
-      setEdges(initialEdges);
-    })();
-  }, [])
+    const beforeUnloadConfirm = router.on('before', (event) => {
+      const vist = event.detail.visit;
 
-  const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
+      // 保存のリクエストは現在のクエリパラメータでpost送信する
+      // 保存を行う際に確認メッセージを出さないようにする
+      if (vist.url.pathname === currentUrl && vist.method === 'post') {
+        return true;
+      }
+
+      if (isDirty) {
+        return confirm('変更が保存されていませんがページを離れてもよろしいですか？');
+      } else {
+        return true;
+      }
+    });
+    return () => {
+      beforeUnloadConfirm();
+    }
+  }, [isDirty])
+
+
+  const onNodesChange: OnNodesChange = useCallback(
+    (changes) => {
+      setNodes((nds) => applyNodeChanges(changes, nds));
+      setIsDirty(true);
+    },
+    [setNodes, setIsDirty],
   );
 
-  // 質問ノード追加
+  const onEdgesChange: OnEdgesChange = useCallback(
+    (changes) => {
+      setEdges((oldEdges) => applyEdgeChanges(changes, oldEdges));
+      setIsDirty(true);
+    },
+    [setEdges, setIsDirty],
+  );
+
   const onAddQuestion = (position: { x: number; y: number }) => {
     const newQuestionNo = getNewId();
     const newChoiceNo = getNewId();
+
+    // 既存の質問ノードが0個の場合、追加した質問ノードをアンケートの最初の質問にする
+    if (getNodes().length === 0) {
+      setFirstNodeId(newQuestionNo);
+    }
+
     addNodes({
       id: newQuestionNo,
       data: {
         topic: "",
-        choices: [
-          {
-            id: newChoiceNo,
-            content: "",
-          }
-        ]
+        choices: [{ id: newChoiceNo, content: "" }]
       },
       position,
-      type: "questionNode",
-      dragHandle: '.custom-drag-handle',
+      type: "qNode",
+      dragHandle: '.dhandle',
     });
   };
 
@@ -75,23 +108,18 @@ const StandardFlow = ({ flowId }: Props) => {
     const newId = getNewId();
     addNodes({
       id: newId,
-      data: {
-        result: ""
-      },
+      data: { result: "" },
       position,
-      type: "resultNode",
-      dragHandle: '.custom-drag-handle',
+      type: "rNode",
+      dragHandle: '.dhandle',
     });
   };
 
-
   const handleDragEnd = useCallback(({ active, over, delta, activatorEvent }: DragEndEvent) => {
-
     // フロー作成エリア以外にドロップしたら何もしない
-    if (over == null || over.id != 'droppableA') {
+    if (over == null || over.id != 'droppableArea') {
       return;
     }
-
     // activatorEventがMouseEventの場合に処理を進める
     // イベントが他の入力デバイス（例えばタッチデバイス）でも安全に動作すする
     if (activatorEvent instanceof MouseEvent) {
@@ -114,25 +142,6 @@ const StandardFlow = ({ flowId }: Props) => {
     }
   }, [])
 
-  // コミット
-  const handleCommit = useCallback(() => {
-    if (rfInstance) {
-      const flow = rfInstance.toObject();
-      // (async () => {
-      //   try {
-      //     const res = await commitStandardFlow(
-      //       flowId, flow.nodes, flow.edges, firstNodeId,
-      //       flowTitle, flowUrl
-      //     );
-      //     toast.success('Successfully toasted!', { duration: 3000 });
-      //   } catch (error) {
-      //     toast.error('失敗!')
-      //   }
-      // })();
-    }
-  }, [rfInstance, firstNodeId, flowTitle, flowUrl]);
-
-  const edgeReconnSuccess = useRef(true);
 
   // edgeの再接続時イベント
   const onReconnect = useCallback((oldEdge: Edge, newConn: Connection) => {
@@ -146,45 +155,74 @@ const StandardFlow = ({ flowId }: Props) => {
   }, []);
 
 
-  const onReconnectEnd = useCallback((_: MouseEvent | TouchEvent, edge: Edge) => {
+  const onReconnectEnd = useCallback((edge: Edge) => {
     if (!edgeReconnSuccess.current) {
       setEdges(eds => eds.filter((ed) => ed.id !== edge.id));
     }
     edgeReconnSuccess.current = true;
   }, []);
 
+  const onConnect = useCallback((params: Connection | Edge) => {
+    setEdges((eds) => addEdge({ ...params, type: 'smoothstep' }, eds))
+  }, [setEdges]);
+
+  const handleEdgeClick = useCallback((event: React.MouseEvent, edge: Edge) => {
+    setEdges(eds => eds.map(e => {
+      if (e.id === edge.id) {
+        return {
+          ...e,
+          animated: !e.animated,
+          style: e.animated ? { stroke: "gray", strokeWidth: 2 } : { stroke: "gold", strokeWidth: 3, }
+        }
+      } else {
+        return {
+          ...e,
+          animated: false,
+          style: {}
+        }
+      }
+    }))
+  }, [setEdges])
+
+  const handleEdgeContextMenu = useCallback((event: React.MouseEvent, edge: Edge) => {
+    event.preventDefault();
+    setEdges(eds => eds.filter(e => e.id !== edge.id))
+  }, [setEdges])
+
+
   return (
-    <div className='flex h-full'>
+    <div className='grow w-full flex'>
       <DndContext onDragEnd={handleDragEnd}>
-
-        <div className='w-[10%] flex items-center flex-col gap-y-3 pt-3 bg-slate-800'>
-          <Draggable id="draggable-question" label="質問追加" />
-          <Draggable id="draggable-result" label="結果追加" />
-
-          <button
-            className='bg-purple-700 border rounded w-[120px] h-[80px] text-white'
-            onClick={handleCommit}>保存
-          </button>
-
+        <div className='h-full w-[5%] flex items-center flex-col gap-y-6 pt-12 bg-slate-800'>
+          <Draggable id="draggable-question" label="質問" btnColor='indigo' />
+          <Draggable id="draggable-result" label="結果" btnColor='orange' />
         </div>
 
-        {/* ボード */}
-        <Droppable id="droppableA">
+        <Droppable id="droppableArea">
           <ReactFlow
             nodes={nodes}
             edges={edges}
             nodeTypes={nodeTypes}
-            edgeTypes={{ smoothstep: SmoothStepEdge }}
-            onEdgesChange={onEdgesChange}
             onNodesChange={onNodesChange}
-            fitView
-            fitViewOptions={{ padding: 0.2 }}
+            onEdgesChange={onEdgesChange}
+            // fitView
+            // fitViewOptions={{ padding: 0.4 }}
             snapToGrid
+            connectionLineType={ConnectionLineType.SmoothStep}
             onReconnect={onReconnect}
             onReconnectStart={onReconnectStart}
-            onReconnectEnd={onReconnectEnd}
+            onReconnectEnd={(_, edge) => onReconnectEnd(edge)}
             onConnect={onConnect}
-            onInit={setRfInstance}
+            onEdgeClick={handleEdgeClick}
+            onEdgeContextMenu={handleEdgeContextMenu}
+            elevateEdgesOnSelect={true}
+            defaultViewport={defaultViewport}
+            panOnScroll
+            elementsSelectable
+            // selectionOnDrag
+            // panOnDrag={[1, 2]}
+            // panOnDrag={true}
+            selectionMode={SelectionMode.Partial}
           >
             <Background
               color='#222'
@@ -194,12 +232,12 @@ const StandardFlow = ({ flowId }: Props) => {
           </ReactFlow>
         </Droppable>
       </DndContext>
-      <Toaster position="bottom-right" reverseOrder={false} />
     </div>
   )
+
 };
 
-
 export default memo(StandardFlow);
+
 
 

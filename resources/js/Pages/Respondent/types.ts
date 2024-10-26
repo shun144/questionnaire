@@ -1,6 +1,5 @@
 import { SalsPointType } from '../Owner/types';
 
-
 export type AnswerHistoryType = {
   id: string;
   question: string;
@@ -15,12 +14,6 @@ type ChoiceType = {
   salesPoints: SalsPointType[];
   nextId?: string;
 }
-
-// type ChoiceType = {
-//   id: string;
-//   content: string;
-//   nextId?: string;
-// }
 
 export type QuestionType = {
   id: string;

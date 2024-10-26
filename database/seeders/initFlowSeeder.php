@@ -24,7 +24,7 @@ class initFlowSeeder extends Seeder
             [
                 'user_id'   => 1,
                 'title'     => 'シティヘブン診断',
-                'category'  => 'cityheaven',
+                'category'  => 'cityHeaven',
                 'url'       => 'cityHeavenUrl',
                 'first_question_id' => '1'
             ],

@@ -1,4 +1,4 @@
-export type FlowCategoryType = 'standard' | 'cityheaven';
+export type FlowCategoryType = 'standard' | 'cityHeaven';
 
 export type FlowType = {
   id: number;

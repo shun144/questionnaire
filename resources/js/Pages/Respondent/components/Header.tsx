@@ -1,7 +1,7 @@
 import React from 'react'
 
 type Props = {
-  title: string;
+  title?: string;
 }
 
 const Header = ({ title }: Props) => {
@@ -15,5 +15,4 @@ const Header = ({ title }: Props) => {
     </div>
   )
 }
-
 export default Header

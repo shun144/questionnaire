@@ -52,7 +52,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
 
                 {/* 英語名 */}
                 <div>
-                    <InputLabel htmlFor="english_name" value="英語名" />
+                    <InputLabel htmlFor="english_name" value="店舗URL" />
                     <TextInput
                         id="english_name"
                         className="mt-1 block w-full"

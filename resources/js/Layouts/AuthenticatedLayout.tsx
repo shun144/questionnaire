@@ -32,13 +32,13 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    Dashboard
+                                    診断一覧
                                 </NavLink>
                                 <NavLink
                                     href={route('setting')}
                                     active={route().current('setting')}
                                 >
-                                    Setting
+                                    API資格情報
                                 </NavLink>
 
                                 {/* <NavLink href={route('dashboard', { id: 1 })} active={route().current('dashboard')}>
@@ -77,7 +77,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                     <Dropdown.Content>
                                         <Dropdown.Link href={route('profile.edit')}>Profile</Dropdown.Link>
                                         <Dropdown.Link href={route('logout')} method="post" as="button">
-                                            Log Out
+                                            ログアウト
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -116,7 +116,10 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                             Dashboard
                         </ResponsiveNavLink> */}
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            Dashboard
+                            診断一覧
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('setting')} active={route().current('setting')}>
+                            API資格情報
                         </ResponsiveNavLink>
                     </div>
 
@@ -131,7 +134,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>Profile</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('logout')} as="button">
-                                Log Out
+                                ログアウト
                             </ResponsiveNavLink>
                         </div>
                     </div>

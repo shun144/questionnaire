@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->text('access_key')->nullable();
             $table->text('shop_id')->nullable();
+            $table->text('masking_access_key')->nullable();
+            $table->text('masking_shop_id')->nullable();
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
             // 外部キー設定

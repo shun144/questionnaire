@@ -23,7 +23,6 @@ class CityHeavenController extends Controller
     // public function update(Request $request): RedirectResponse
     public function update(CityHeavenRequest $request): RedirectResponse
     {
-
         $params = $request->only(['access_key', 'shop_id']);
 
         $user_id = Auth::user()->id;
@@ -32,6 +31,9 @@ class CityHeavenController extends Controller
         $encrypted_access_key = Crypt::encryptString($params['access_key']);
         $encrypted_shop_id =  Crypt::encryptString($params['shop_id']);
 
+        $masked_access_key = $this->maskString($params['access_key'],2);
+        $masked_shop_id =  $this->maskString($params['shop_id'], 2);
+
         if (DB::table('city_heavens')->where('user_id', $user_id)->exists()) {
 
             DB::table('city_heavens')
@@ -39,12 +41,16 @@ class CityHeavenController extends Controller
             ->update([
                 'access_key' => $encrypted_access_key,
                 'shop_id' => $encrypted_shop_id,
+                'masking_access_key' => $masked_access_key,
+                'masking_shop_id' => $masked_shop_id,
                 'updated_at' => $now,
             ]);
         } else {
             DB::table('city_heavens')->insert([
                 'access_key' => $encrypted_access_key,
                 'shop_id' => $encrypted_shop_id,
+                'masking_access_key' => $masked_access_key,
+                'masking_shop_id' => $masked_shop_id,
                 'user_id' => $user_id,
                 'created_at' => $now,
                 'updated_at' => $now,
@@ -53,18 +59,32 @@ class CityHeavenController extends Controller
         return Redirect::route('setting');
     }
 
+    private function maskString($string, $keepLength=3):string {
+        return "..." . substr($string, -1 * ($keepLength));
+    }
 
+    // private function maskString($string, $keepLength=3):string {
 
-    // public function update(ProfileUpdateRequest $request): RedirectResponse
-    // {
-    //     // $request->user()->fill($request->validated());
+    //     $replaceChar = '.';
 
-    //     // if ($request->user()->isDirty('email')) {
-    //     //     $request->user()->email_verified_at = null;
-    //     // }
+    //     // 文字列の長さを取得
+    //     $strLength = strlen($string);
 
-    //     // $request->user()->save();
+    //     // 残す部分の長さが文字列の長さを超える場合、全体をそのまま返す
+    //     if ($keepLength >= $strLength) {
+    //         return $string;
+    //     }
 
-    //     // return Redirect::route('profile.edit');
+    //     // 置換する部分の長さ
+    //     $replaceLength = $strLength - $keepLength;
+
+    //     // 置換する文字列を生成
+    //     $replacement = str_repeat($replaceChar, $replaceLength);
+
+    //     // 残す部分の文字列（末尾から指定した文字数分）
+    //     $remaining = substr($string, -$keepLength);
+
+    //     // 結果の文字列を返す
+    //     return $replacement . $remaining;
     // }
 }

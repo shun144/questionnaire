@@ -195,9 +195,8 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
       <DndContext onDragEnd={handleDragEnd}>
         <div className='h-full w-[5%] flex items-center flex-col gap-y-6 pt-12 bg-slate-800'>
           <Draggable id="draggable-question" label="質問" btnColor='indigo' />
-          <Draggable id="draggable-result" label="結果" btnColor='orange' />
+          <Draggable id="draggable-result" label="結果" btnColor='rose' />
         </div>
-
         <Droppable id="droppableArea">
           <ReactFlow
             nodes={nodes}
