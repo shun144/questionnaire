@@ -1,0 +1,1 @@
+import{G as t}from"./iconBase-CU--X7uj.js";function n(o){return t({tag:"svg",attr:{viewBox:"0 0 512 512"},child:[{tag:"path",attr:{fill:"none",strokeLinecap:"round",strokeLinejoin:"round",strokeWidth:"48",d:"M244 400 100 256l144-144M120 256h292"},child:[]}]})(o)}export{n as I};
