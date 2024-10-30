@@ -48,6 +48,8 @@ Route::middleware('auth')->group(function () {
 
 
     Route::get('/setting', [OwnerContoller::class, 'getApiCredential'])->name('setting');
+    Route::get('/totalling', [OwnerContoller::class, 'getTotalling'])->name('totalling');
+    Route::get('/totalling/{id}', [OwnerContoller::class, 'getGraphData'])->name('graph');
     // Route::get('/setting', fn() => Inertia::render('Owner/Setting/Edit'))->name('setting');
     
     Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
@@ -68,10 +70,13 @@ Route::redirect('/', '/login');
 
 // アンケート回答
 Route::get('/{owner}/{flowUrl}', [RespondentController::class, 'getQuestionnair'])->name('questionnair');
+Route::post('/{owner}/{flowUrl}', [RespondentController::class, 'addAchievement'])->name('achievement');
 
 Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'getQuestionnair']);
 Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
 
 Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
+
+
 
 

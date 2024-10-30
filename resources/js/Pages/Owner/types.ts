@@ -53,6 +53,10 @@ export type OwnerState = {
   setIsDirty: (by: boolean) => void,
 }
 
+export type Graph = {
+  labels: string[];
+  datas: number[];
+}
 
 
 

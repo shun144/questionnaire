@@ -5,13 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
 use Illuminate\Support\Facades\Http;
+use Carbon\Carbon;
 
 class RespondentController extends Controller
 {
@@ -87,6 +87,55 @@ class RespondentController extends Controller
             //     'edges' => $edges,
             //     'firstQuestionId' => $first_question_id,
             // ]);
+        }
+        catch (\Exception $e) {
+
+            $data = [
+                'err' => $e->getMessage()
+            ];
+            return response()->json($data);
+        }
+    }
+
+    public function addAchievement($owner, $flowUrl, Request $request){
+        try {
+
+            $user_record = DB::table('users')
+            ->where('english_name', $owner)
+            ->select('id', 'name')
+            ->first();
+
+
+            // オーナーが存在しないなら修了
+            if (is_null($user_record)) {
+                return;
+            }
+
+            $flow_record = DB::table('flows')
+            ->where([
+                ['user_id', $user_record->id],
+                ['url', $flowUrl],
+            ])
+            ->select('id')
+            ->first();
+
+            // アンケートが存在しないなら修了
+            if (is_null($flow_record)) {
+                return;
+            }
+
+            $params = $request->only([
+                'result'
+            ]);
+
+            $now = Carbon::now();
+            DB::table('achievements')->insert([
+                'flow_id' => $flow_record->id,
+                'result' =>  $params['result'],
+                'created_at' => $now,
+            ]);
+
+  
         }
         catch (\Exception $e) {
 

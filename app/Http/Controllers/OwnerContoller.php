@@ -59,15 +59,6 @@ class OwnerContoller extends Controller
             $edge_datas = is_null($edge_records->edge_datas) ? '[]': $edge_records->edge_datas;
 
 
-            // dd([
-            //     'question_records' => $question_records, 
-            //     'is_null($question_records)' => is_null($question_records), 
-            //     'question_datas' => $question_datas,
-            //     'result_datas' => $result_datas,
-            //     'edge_datas' => $edge_datas,
-            // ]);
-
-
             return Inertia::render('Owner/flow/'.$category.'/FlowLayout', [
                 'id' =>  $id,
                 'quesitions' => $question_datas,
@@ -149,14 +140,8 @@ class OwnerContoller extends Controller
         try {
             $user_id = Auth::user()->id;
            
-
             $isRegisteredApiCredential = DB::table('city_heavens')
                                             ->where('user_id', $user_id)->exists();
-
-            // $city_heavens_records = DB::table('city_heavens')
-            // ->where('user_id', $user_id)
-            // ->select('id')
-            // ->get();
 
             $flow_records = DB::table('flows')
             ->where('user_id', $user_id)
@@ -268,6 +253,70 @@ class OwnerContoller extends Controller
         catch (\Exception $e) {
 
             return Inertia::render('Owner/Setting/Edit', [
+                'masking_access_key' =>  "",
+                'masking_shop_id' => "",
+            ]);
+        }
+    }
+
+
+    public function getTotalling() {
+        try {
+            $user_id = Auth::user()->id;
+            $flow_records = DB::table('flows')
+            ->leftJoin('achievements', 'flows.id', '=', 'achievements.flow_id')
+            ->select(
+                'flows.id',
+                'flows.title',
+                'flows.category',
+                DB::raw('COUNT(achievements.id) as total'))
+            ->where('flows.user_id', $user_id)
+            ->groupBy('flows.id', 'flows.title','flows.category' )
+            ->get();
+
+            $flows = isset($flow_records)? $flow_records : [];
+
+            return Inertia::render('Owner/Totalling/Index', [
+                'flows' => $flows
+            ]);
+        
+        }
+        catch (\Exception $e) {
+
+            return Inertia::render('Owner/Totalling/Index', [
+                'masking_access_key' =>  "",
+                'masking_shop_id' => "",
+            ]);
+        }
+    }
+
+    public function getGraphData($id) {
+        try {
+            // $user_id = Auth::user()->id;
+
+
+
+            $achievement_records = DB::table('achievements')
+            ->select(
+                'result',
+                DB::raw('COUNT(result) as total'))
+            ->where('flow_id', $id)
+            ->groupBy('result')
+            ->get();
+
+            $labels = $achievement_records->isNotEmpty() ? $achievement_records->pluck('result')->toArray() : [];
+            $datas = $achievement_records->isNotEmpty() ? $achievement_records->pluck('total')->toArray() : [];
+
+
+
+            return response()->json([
+                    'labels' =>  $labels,
+                    'datas' => $datas,
+                ],200,[],JSON_UNESCAPED_UNICODE);
+        }
+        catch (\Exception $e) {
+
+            return Inertia::render('Owner/Totalling/Index', [
                 'masking_access_key' =>  "",
                 'masking_shop_id' => "",
             ]);

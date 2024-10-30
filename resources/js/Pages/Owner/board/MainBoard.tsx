@@ -98,15 +98,13 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
           </div>
         }
 
-
-
-
       </div>
 
       <CreateFlowModal
         isOpenModal={isOpenModal}
         setIsOpenModal={setIsOpenModal}
-        isRegisteredApiCredential={isRegisteredApiCredential} />
+        isRegisteredApiCredential={isRegisteredApiCredential}
+      />
 
       <Menu id={MENU_ID}>
         <Item

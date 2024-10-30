@@ -1,22 +1,21 @@
-import { QuestionNodeType, ResultNodeType, ChoiceType, } from "./types"
+// import { QuestionNodeType, ResultNodeType, ChoiceType, } from "./types"
 import { Node, Edge } from '@xyflow/react';
 import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import { FlowCategoryType } from './types';
+import { Graph } from './types';
+// import { v4 as uuidv4 } from 'uuid';
+// import { FlowCategoryType } from './types';
 
 
-// export const addFlow = async (category: FlowCategoryType): Promise<number> => {
-//   try {
-//     const res = await axios.post('/flow', {
-//       category
-//     });
-//     return res.data;
 
-//   } catch (error) {
-//     console.log(error);
-//     return -999;
-//   }
-// }
+export const fetchGraphResource = async (id: number): Promise<Graph> => {
+  try {
+    console.log(id)
+    const res = await axios.get(`totalling/${id}`);
+    return res.data
+  } catch (error) {
+    return { labels: [], datas: [] };
+  }
+};
 
 export const deleteFlow = async (flowId: number): Promise<boolean> => {
 
@@ -50,6 +49,8 @@ export const getFlowTitleAndUrl = async (flowId: number): Promise<{ title: strin
     };
   }
 }
+
+
 
 // export const getFlows = async (): Promise<FlowType[]> => {
 //   try {

@@ -72,8 +72,6 @@ const CreateFlowModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredentia
             <InputError message={errors.initialUrl} className="mt-2" />
           </div>
 
-
-
           <div className="mt-10 w-fit">
             <InputLabel htmlFor="standard" value="診断タイプ" />
             <div className="mx-auto max-w-md min-w-[320px]">
@@ -90,7 +88,7 @@ const CreateFlowModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredentia
                   />
                   <label
                     htmlFor="standard"
-                    className={`text-sm flex items-center justify-center w-full h-12 text-gray-400 bg-white cursor-pointer border-r-2 border-white transition duration-300 select-none ${data.initialCategory === 'standard' ? 'bg-emerald-400 text-white font-medium' : ''}`}
+                    className={`text-sm flex items-center justify-center w-full h-12 text-gray-400 cursor-pointer border-r-2 border-white transition duration-300 select-none ${data.initialCategory === 'standard' ? 'bg-emerald-400 text-white font-medium' : ''}`}
                   >
                     標準診断
                   </label>
@@ -109,7 +107,7 @@ const CreateFlowModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredentia
                   />
                   <label
                     htmlFor="cityHeaven"
-                    className={`text-sm  flex items-center justify-center w-full h-12 text-gray-400 bg-white  transition duration-300 select-none 
+                    className={`text-sm  flex items-center justify-center w-full h-12 text-gray-400 transition duration-300 select-none 
                     ${data.initialCategory === 'cityHeaven' ? 'bg-pink-500 text-white font-medium' : ''}
                     ${isRegisteredApiCredential ? "cursor-pointer" : "cursor-not-allowed"}
                   `}

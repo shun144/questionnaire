@@ -1,1 +1,0 @@
-import{r,j as c}from"./app-Bo7i6JCS.js";import{a,H as i,P as l}from"./index-BlTeKDJp.js";const e="source",p=({id:o,connectionLimit:s,style:t})=>{const n=a({id:o,type:e});return c.jsx(i,{id:o,type:e,position:l.Right,isConnectable:n.length<s,style:{...t,cursor:"pointer"}})},x=r.memo(p);export{x as default};

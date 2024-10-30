@@ -25,8 +25,6 @@ export const fetchGirls = async (answerHistories: AnswerHistoryType[]): Promise<
       });
     })
 
-
-
     const scoreKeys = Object.entries(score);
 
     const girlsDataWithPoint: GirlType[] = [];
@@ -74,6 +72,11 @@ export const fetchGirls = async (answerHistories: AnswerHistoryType[]): Promise<
   }
 }
 
+export const countUpAchievement = async (pathname: string, result: string): Promise<void> => {
+  (async () => {
+    await axios.post(pathname, { result });
+  })();
+}
 
 // export const fetchGirls = () => {
 //   const baseUrl = window.location.origin;
@@ -132,51 +135,51 @@ export const fetchGirls = async (answerHistories: AnswerHistoryType[]): Promise<
 // }
 
 
-export const getQuestionnairByUrl = async (flowUrl: string): Promise<QuestionnarieType[]> => {
-  try {
-    const res = await axios.get(`${flowUrl}/questionnaire`, {
-      params: {
-        flow_url: flowUrl
-      }
-    });
+// export const getQuestionnairByUrl = async (flowUrl: string): Promise<QuestionnarieType[]> => {
+//   try {
+//     const res = await axios.get(`${flowUrl}/questionnaire`, {
+//       params: {
+//         flow_url: flowUrl
+//       }
+//     });
 
-    const questions: DbQuestionType[] = JSON.parse(res.data.questions);
-    const results: DbResultType[] = JSON.parse(res.data.results);
-    const edges: DbEdgeType[] = JSON.parse(res.data.edges);
-
-
-    const formattedQuestions: QuestionnarieType[] = questions.map((x) => {
-      return {
-        id: x.id,
-        topic: x.data.topic,
-        choices: x.data.choices.map(choice => {
-          return {
-            id: choice.id,
-            content: choice.content,
-            salesPoints: choice.salePoints,
-            nextId: edges.find(edge => edge.sourceHandle === choice.id)?.targetHandle
-          }
-        }),
-        category: 'question',
-      }
-    })
-
-    const formattedResults: QuestionnarieType[] = results.map((x) => {
-      return {
-        id: x.id,
-        result: x.data.result,
-        message: x.data.message,
-        img: x.data.img,
-        url: x.data.url,
-        category: 'result',
-      }
-    })
-
-    return [...formattedQuestions, ...formattedResults];
+//     const questions: DbQuestionType[] = JSON.parse(res.data.questions);
+//     const results: DbResultType[] = JSON.parse(res.data.results);
+//     const edges: DbEdgeType[] = JSON.parse(res.data.edges);
 
 
-  } catch (error) {
-    console.log(error)
-    return [];
-  }
-}
+//     const formattedQuestions: QuestionnarieType[] = questions.map((x) => {
+//       return {
+//         id: x.id,
+//         topic: x.data.topic,
+//         choices: x.data.choices.map(choice => {
+//           return {
+//             id: choice.id,
+//             content: choice.content,
+//             salesPoints: choice.salePoints,
+//             nextId: edges.find(edge => edge.sourceHandle === choice.id)?.targetHandle
+//           }
+//         }),
+//         category: 'question',
+//       }
+//     })
+
+//     const formattedResults: QuestionnarieType[] = results.map((x) => {
+//       return {
+//         id: x.id,
+//         result: x.data.result,
+//         message: x.data.message,
+//         img: x.data.img,
+//         url: x.data.url,
+//         category: 'result',
+//       }
+//     })
+
+//     return [...formattedQuestions, ...formattedResults];
+
+
+//   } catch (error) {
+//     console.log(error)
+//     return [];
+//   }
+// }

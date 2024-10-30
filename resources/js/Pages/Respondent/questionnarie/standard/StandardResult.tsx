@@ -1,15 +1,22 @@
-import { memo } from 'react'
+import { memo, useEffect } from 'react'
 import { ResultType } from '../../types';
+import { countUpAchievement } from '../../utils';
 import { useRespondentStore } from '../../store';
 import { MdOutlineRestartAlt } from "react-icons/md";
 import 'react-responsive-pagination/themes/classic.css';
 import './standardResult.css';
 
-
 const StandardResult = () => {
-  const answerHistories = useRespondentStore((state) => state.answerHistories);
+  // const answerHistories = useRespondentStore((state) => state.answerHistories);
   const reset = useRespondentStore((state) => state.reset);
   const currentQuestionnarie = useRespondentStore((state) => state.currentQuestionnarie);
+
+  useEffect(() => {
+    const currentUrl = window.location.pathname;
+    const result = (currentQuestionnarie as ResultType).result;
+    countUpAchievement(currentUrl, result);
+  }, [])
+
 
   return (
     <>

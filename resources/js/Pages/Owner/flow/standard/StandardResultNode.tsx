@@ -16,6 +16,7 @@ const StandardResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Resul
     updateNodeData(nodeId, { ...nodeData, message: evt.currentTarget.value });
   }
 
+
   return (
     <div className="rounded-md w-96 bg-slate-900 shadow-lg border-slate-300 border-2">
       <div className='h-10 dhandle rounded-t-md bg-orange-500 flex justify-end items-center px-2 transition-all hover:bg-orange-600'>
@@ -34,7 +35,7 @@ const StandardResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Resul
             value={nodeData.result}
             onChange={(event) => handleUpdateResult(event)}
             placeholder="診断結果を入力してください"
-            maxLength={100}>
+            maxLength={80}>
           </textarea>
           <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer", top: 18, left: -25, }} />
         </div>
@@ -50,7 +51,7 @@ const StandardResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Resul
             value={nodeData.message}
             onChange={(event) => handleUpdateMessage(event)}
             placeholder="メッセージを入力してください"
-            maxLength={100}>
+            maxLength={150}>
           </textarea>
         </div>
       </div>
