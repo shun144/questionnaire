@@ -15,24 +15,25 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+
 
         Admin::factory()->create([
             'name' => 'admin',
             'email' => 'admin@example.com',
         ]);
         
-        
-        $this->call([
-            initFlowSeeder::class,
-            initQuestionSeeder::class,
-            initResultSeeder::class,
-            initEdgeSeeder::class,
-            initCityHeavenSeeder::class,
-        ]);
+        // User::factory()->create([
+        //     'name' => 'Test User',
+        //     'email' => 'test@example.com',
+        // ]);
+
+        // $this->call([
+        //     initFlowSeeder::class,
+        //     initQuestionSeeder::class,
+        //     initResultSeeder::class,
+        //     initEdgeSeeder::class,
+        //     initCityHeavenSeeder::class,
+        // ]);
 
     }
 }
