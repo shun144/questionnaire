@@ -1,17 +1,26 @@
 import { create } from "zustand";
-import { QuestionnaireState, QuestionnarieType, GirlType, } from '../Respondent/types';
 import { OwnerState } from "./types";
 
 
-export const useOwnerStore = create<OwnerState>(set => ({
+export const useOwnerStore = create<OwnerState>((set) => ({
   firstNodeId: "",
   flowTitle: "",
   flowUrl: "",
   isDirty: false,
+  qNodeNum: 0,
+  rNodeNum: 0,
 
   setFirstNodeId: (by: string) => set({ firstNodeId: by }),
   setFlowTitle: (by: string) => set({ flowTitle: by }),
   setFlowUrl: (by: string) => set({ flowUrl: by }),
   setIsDirty: (by: boolean) => set({ isDirty: by }),
+
+  setQnodeNum: (by: number) => set({ qNodeNum: by }),
+  addQnodeNum: (by: number) => set(state => ({ qNodeNum: state.qNodeNum + (by) })),
+
+  setRnodeNum: (by: number) => set({ rNodeNum: by }),
+  addRnodeNum: (by: number) => set(state => ({ rNodeNum: state.rNodeNum + (by) })),
+
+  // setQnodeNum: (by: number) => set({ qNodeNum: by }),
 
 }))

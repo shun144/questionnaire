@@ -11,10 +11,11 @@ const StandardResult = () => {
   const reset = useRespondentStore((state) => state.reset);
   const currentQuestionnarie = useRespondentStore((state) => state.currentQuestionnarie);
 
+  // 回答実績登録
   useEffect(() => {
-    const currentUrl = window.location.pathname;
+    const currentPathname = window.location.pathname;
     const result = (currentQuestionnarie as ResultType).result;
-    countUpAchievement(currentUrl, result);
+    countUpAchievement(currentPathname, result);
   }, [])
 
 

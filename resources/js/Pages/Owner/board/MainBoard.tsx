@@ -4,10 +4,13 @@ import { Head, usePage, Link, useForm } from '@inertiajs/react';
 import { useCallback, useEffect, useState, useRef } from 'react';
 import { deleteFlow } from '../utils';
 import { FlowType } from '../types';
-import CreateFlowModal from './CreateFlowModal';
+import CreateModal from './CreateModal';
+import { Toaster, toast } from 'react-hot-toast';
+
 
 import { Menu, Item, TriggerEvent, Separator, Submenu, ItemParams, useContextMenu, } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
+import EditModal from './EditModal';
 
 type Props = {
   initialFlows: FlowType[];
@@ -18,8 +21,14 @@ const MENU_ID = "menu-id";
 
 const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
   const [flows, setFlows] = useState<FlowType[]>(initialFlows);
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
+  const [isOpenEditModal, setIsOpenEditModal] = useState(false);
 
+  const [editTitle, setEditTitle] = useState("");
+  const [editUrl, setEditUrl] = useState("");
+  const [editId, setEditId] = useState(0);
+
+  const { props } = usePage();
 
   useEffect(() => {
     setFlows(initialFlows);
@@ -38,8 +47,30 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
     setFlows(prev => prev.filter(x => x.id != flowId));
   }, [setFlows])
 
-  const displayMenu = (event: TriggerEvent, flowId: number) => {
-    show({ event, props: { flowId } });
+
+  const handleOpenEditModal = useCallback(({ props }: ItemParams) => {
+
+    setEditTitle(props.title)
+    setEditUrl(props.url)
+    setEditId(props.flowId)
+    setIsOpenEditModal(true);
+
+  }, [setEditTitle, setEditUrl])
+
+  const handleCopy = async (params: ItemParams) => {
+    try {
+
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/${props.auth.user.english_name}/${params.props.url}`
+      );
+      toast.success('URLをクリップボードにコピーしました', { duration: 3000 });
+    } catch (error) {
+      toast.error('URLのコピーに失敗しました', { duration: 3000 });
+    }
+  };
+
+  const displayMenu = (event: TriggerEvent, flowId: number, title: string, url: string) => {
+    show({ event, props: { flowId, title, url } });
   }
 
   return (
@@ -48,7 +79,7 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
         <div className='flex justify-between items-center py-3'>
           <h2 className="font-bold text-xl text-slate-600 leading-tight">診 断 一 覧</h2>
           <button className="bg-indigo-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-indigo-600"
-            onClick={() => setIsOpenModal(true)}>
+            onClick={() => setIsOpenCreateModal(true)}>
             診 断 作 成
           </button>
         </div >
@@ -64,28 +95,34 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
             <>
               {
                 flows.map(({ id, category, title, url }) => (
+                  <Link
+                    key={id}
+                    onContextMenu={(event) => displayMenu(event, id, title, url)}
+                    href={`flow/${id}`}
+                    as="button"
+                    type="button"
+                    className="w-56 h-44 rounded-lg shadow border inline-block bg-white overflow-hidden select-none
+                    hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all duration-300 py-2">
 
-                  <div
-                    key={id} className="w-56 h-40 rounded-lg shadow border inline-block bg-white overflow-hidden hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all
-                ">
-                    <div className={`w-full h-full relative
-                  ${category === 'standard'
-                        ? "before:content-['標準'] before:bg-emerald-100 before:text-emerald-500"
-                        : "before:content-['シティヘブン'] before:bg-rose-100 before:text-pink-500"
-                      }
-                  before:absolute before:left-1 before:top-1 before:text-xs  before:font-medium  before:me-2  before:px-2.5  before:py-0.5 before:rounded-md`}
-                    >
-                      <Link
-                        className="w-full h-full"
-                        href={`flow/${id}`}
-                        as="button"
-                        type="button"
-                        onContextMenu={(event) => displayMenu(event, id)}
-                      >
-                        {title}
-                      </Link>
+                    <div className="w-full h-full flex flex-col justify-center items-center">
+                      <div className='w-full h-1/6 pl-2 flex justify-start items-center'>
+                        <div className={`${category === 'standard' ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-pink-500"} 
+                        inline-flex rounded-md h-full justify-center items-center text-xs  px-2.5 py-0.5`}>
+                          {category === 'standard' ? "標準" : "シティヘブン"}
+                        </div>
+                      </div>
+
+                      <div className='w-full h-4/6 '>
+                        <div className='px-2 h-full flex flex-col justify-start pt-4'>
+                          <p className='text-slate-700 text-lg break-all leading-tight text-start'>{title}</p>
+                        </div>
+                      </div>
+
+                      <div className='w-full h-1/6'>
+                        <p className='px-2  text-slate-400 text-[11px] break-all leading-tight text-start'>{window.location.origin}/{props.auth.user.english_name}/{url}</p>
+                      </div>
                     </div>
-                  </div>
+                  </Link>
                 ))
               }
             </>
@@ -100,13 +137,32 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
 
       </div>
 
-      <CreateFlowModal
-        isOpenModal={isOpenModal}
-        setIsOpenModal={setIsOpenModal}
+      <CreateModal
+        isOpenModal={isOpenCreateModal}
+        setIsOpenModal={setIsOpenCreateModal}
         isRegisteredApiCredential={isRegisteredApiCredential}
       />
 
+      <EditModal
+        isOpenModal={isOpenEditModal}
+        setIsOpenModal={setIsOpenEditModal}
+        editTitle={editTitle}
+        editUrl={editUrl}
+        flowId={editId}
+      />
+
+      <Toaster position="bottom-right" reverseOrder={false} />
       <Menu id={MENU_ID}>
+        <Item
+          closeOnClick={true}
+          onClick={(params) => handleOpenEditModal(params)}>
+          タイトル/URLの変更
+        </Item>
+        <Item
+          closeOnClick={true}
+          onClick={(params) => handleCopy(params)}>
+          URLのコピー
+        </Item>
         <Item
           closeOnClick={true}
           onClick={(params) => handleFlowDelete(params)}>

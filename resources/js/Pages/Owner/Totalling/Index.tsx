@@ -13,13 +13,6 @@ type Props = {
   }[]
 }
 
-// type Props = {
-//   id: number,
-//   title: string;
-//   category: string;
-//   total: number
-// }[]
-
 const queryClient = new QueryClient()
 
 const Index = ({ flows }: Props) => {

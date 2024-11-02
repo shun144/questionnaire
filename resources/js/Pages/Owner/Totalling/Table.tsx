@@ -11,7 +11,6 @@ import {
   flexRender,
   createColumnHelper,
   getSortedRowModel,
-  SortingFn,
   SortingState,
 } from "@tanstack/react-table";
 
@@ -27,13 +26,6 @@ type Props = {
 }
 
 const columnHelper = createColumnHelper<Flow>();
-
-// const sortTotalFn: SortingFn<Flow> = (rowA, rowB, _columnId) => {
-//   const totalA = rowA.original.total
-//   const totalB = rowB.original.total
-//   return totalA - totalB;
-// }
-
 const Table = ({ flows }: Props) => {
   const [expandedRows, setExpandedRows] = useState<Record<number, boolean>>({});
 
@@ -98,8 +90,9 @@ const Table = ({ flows }: Props) => {
       <div className='max-w-full w-11/12 mx-auto sm:px-6 lg:py-8'>
         <div className='bg-white overflow-hidden shadow-sm'>
           <div className='pb-3 px-6'>
-            <div className='flex justify-start items-center h-24'>
 
+            {/* 検索 */}
+            <div className='flex justify-start items-center h-24'>
               <div className="h-12 bg-slate-600 px-2 rounded-l">
                 <IoSearchOutline className='h-full block text-white' />
               </div>
@@ -114,11 +107,10 @@ const Table = ({ flows }: Props) => {
               </div>
             </div>
 
+            {/* テーブル */}
             <table className="w-full text-sm text-left rtl:text-right text-gray-500">
               <thead className="text-sm text-gray-700 uppercase bg-gray-200 ">
                 {table.getHeaderGroups().map((headerGroup) => (
-
-
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => {
                       return (
@@ -157,23 +149,6 @@ const Table = ({ flows }: Props) => {
                     })}
                   </tr>
 
-                  // <tr key={headerGroup.id}>
-                  //   {headerGroup.headers.map((header) => {
-                  //     return (
-                  //       <th key={header.id} scope="col" className="px-3 py-3"
-                  //         style={{ width: `${header.column.getSize()}px` }}>
-                  //         {header.isPlaceholder
-                  //           ? null
-                  //           : flexRender(
-                  //             header.column.columnDef.header,
-                  //             header.getContext()
-                  //           )}
-                  //       </th>
-                  //     );
-                  //   })}
-                  // </tr>
-
-
                 ))}
               </thead>
               <tbody>
@@ -196,6 +171,7 @@ const Table = ({ flows }: Props) => {
                         ))}
                       </tr>
 
+                      {/* グラフ表示 */}
                       {expandedRows[row.index] && (
                         <tr
                         >
@@ -217,7 +193,7 @@ const Table = ({ flows }: Props) => {
             </table>
 
 
-            {/* Pagination */}
+            {/* ページネーション */}
             <div className="flex items-center justify-center mt-4 gap-8">
               <div className='w-12 flex justify-center gap-2'>
                 <button

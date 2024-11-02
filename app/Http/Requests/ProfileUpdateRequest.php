@@ -17,9 +17,33 @@ class ProfileUpdateRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'max:255'],
-            'english_name' => ['required', 'string', 'max:15', 'alpha_num:ascii',
-                                Rule::unique(User::class)->ignore($this->user()->id)],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'english_name' => [
+                'required', 
+                'string', 
+                'max:15',
+                'alpha_num:ascii',
+                Rule::unique(User::class)->ignore($this->user()->id),
+                function ($attribute, $value, $fail) {
+                    $prohibitedNames = ['admin', 'login'];
+                    if (in_array(strtolower($value), array_map('strtolower', $prohibitedNames))) {
+                        $fail('入力された文字は登録できません。');
+                    }
+                },
+            ],
+            'email' => [
+                'required', 
+                'string', 
+                'lowercase', 
+                'email', 
+                'max:255', 
+                Rule::unique(User::class)->ignore($this->user()->id)],
         ];
     }
+
+    // public function messages(): array
+    // {
+    //     return [
+    //         'english_name.not_in' => '入力された文字は登録できません。', // english_nameフィールドのカスタムエラーメッセージ
+    //     ];
+    // }
 }

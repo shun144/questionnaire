@@ -71,8 +71,8 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
   return (
     <div className={`rounded-md w-96 bg-slate-900 shadow-cyan-100/50 relative  ${firstNodeId === nodeId ? " border-yellow-300 border-4" : " border-slate-300 border-2"}`}>
 
-      {firstNodeId === nodeId && (<div className='absolute bg-amber-500 w-8 h-8 rounded-full -top-4 -left-4 flex justify-center items-center shadow-lg border-2 border-yellow-300'>
-        <div className='text-white font-bold text-md'>1</div>
+      {firstNodeId === nodeId && (<div className='absolute bg-amber-500 w-12 h-8 rounded-full -top-4 -left-6 flex justify-center items-center shadow-lg border-2 border-yellow-300'>
+        <div className='text-white font-bold text-md'>1st</div>
       </div>)}
 
       <div className='h-10 dhandle rounded-t-md bg-indigo-500 flex justify-end items-center px-2 transition-all hover:bg-indigo-600'>

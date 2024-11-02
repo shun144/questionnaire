@@ -123,6 +123,36 @@ class OwnerContoller extends Controller
         return Redirect::route('flow.index', ['id' => $flow_id]);
     }
 
+
+    public function updateFlow(Request $request, $id){
+        $user_id = Auth::user()->id;
+
+        $validatedData = $request->validate([
+            'editTitle' => ['required', 'string', 'max:50'],
+            'editUrl' => [
+                'required', 
+                'string', 
+                'max:15', 
+                'alpha_num:ascii',
+                Rule::unique('flows', 'url')
+                ->where(function ($query) use ($user_id) {
+                    return $query->where('user_id', $user_id);
+                })
+                ->ignore($id)
+            ],
+        ]);
+
+        DB::table('flows')
+        ->where('id', $id)
+        ->update([
+            'title' => $validatedData['editTitle'],
+            'url' => $validatedData['editUrl'],
+        ]);
+
+        return redirect()->route('dashboard');
+    }
+
+
     public function deleteFlow(Request $request){
         try {
             $params = $request->only(['flowId']);
@@ -170,10 +200,21 @@ class OwnerContoller extends Controller
         $validatedData = $request->validate([
             'title' => ['required', 'string', 'max:50'],
 
-            'url' => ['required', 'string', 'max:15', 'alpha_num:ascii',
-                    Rule::unique('flows')->where(function ($query) use ($user_id) {
-                        return $query->where('user_id', $user_id);
-                    })->ignore($id),
+            'url' => [
+                'required', 
+                'string', 
+                'max:15', 
+                'alpha_num:ascii',
+                // 'not_in:admin,login',
+                function ($attribute, $value, $fail) {
+                    $prohibitedNames = ['admin', 'login'];
+                    if (in_array(strtolower($value), array_map('strtolower', $prohibitedNames))) {
+                        $fail('入力された文字は登録できません');
+                    }
+                },
+                Rule::unique('flows')->where(function ($query) use ($user_id) {
+                    return $query->where('user_id', $user_id);
+                })->ignore($id),
                 ],       
             'first_question_id' => ['required'],            
         ]);

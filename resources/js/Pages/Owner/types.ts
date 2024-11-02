@@ -47,10 +47,19 @@ export type OwnerState = {
   flowUrl: string,
   isDirty: boolean,
 
+  qNodeNum: number,
+  rNodeNum: number,
+
   setFirstNodeId: (by: string) => void,
   setFlowTitle: (by: string) => void,
   setFlowUrl: (by: string) => void,
   setIsDirty: (by: boolean) => void,
+
+  setQnodeNum: (by: number) => void
+  addQnodeNum: (by: number) => void,
+
+  setRnodeNum: (by: number) => void
+  addRnodeNum: (by: number) => void,
 }
 
 export type Graph = {

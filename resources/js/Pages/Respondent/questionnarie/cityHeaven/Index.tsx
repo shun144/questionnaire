@@ -1,12 +1,12 @@
 import { Head, usePage } from '@inertiajs/react'
-import { useEffect, useRef, useState, memo, useCallback, Suspense } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import NotFinished from '../components/NotFinished';
 import CityHeavenQuestion from './CityHeavenQuestion';
 import CityHeavenResult from './CityHeavenResult';
 import { Header, Footer } from '../../components/Index';
 import { useRespondentStore } from '../../store';
 import { QuestionnarieType, DbQuestionType, DbResultType, DbEdgeType } from '../../types';
-
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
 type Props = {
   ownerName: string;
@@ -17,6 +17,8 @@ type Props = {
   firstQuestionId: string;
 }
 
+const queryClient = new QueryClient();
+
 const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuestionId }: Props) => {
 
   const setQuestionnarieDatas = useRespondentStore((state) => state.setQuestionnarieDatas);
@@ -24,8 +26,6 @@ const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuest
   const currentQuestionnarie = useRespondentStore((state) => state.currentQuestionnarie);
   const setFirstQuestionId = useRespondentStore((state) => state.setFirstQuestionId);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-
-
 
   useEffect(() => {
 
@@ -76,9 +76,15 @@ const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuest
         <div className=' bg-slate-100 grow'>
           {!isLoading && (
             <>
-              {currentQuestionnarie.category === 'question' && <CityHeavenQuestion />}
+              <QueryClientProvider client={queryClient}>
+                {currentQuestionnarie.category === 'question' && <CityHeavenQuestion />}
+                {currentQuestionnarie.category === 'result' && <CityHeavenResult />}
+                {currentQuestionnarie.category === 'none' && <NotFinished />}
+              </QueryClientProvider>
+
+              {/* {currentQuestionnarie.category === 'question' && <CityHeavenQuestion />}
               {currentQuestionnarie.category === 'result' && <CityHeavenResult />}
-              {currentQuestionnarie.category === 'none' && <NotFinished />}
+              {currentQuestionnarie.category === 'none' && <NotFinished />} */}
             </>
           )}
         </div>
@@ -94,17 +100,15 @@ export default memo(Questionnaire);
 
 
 
-
-
 // import { Head, usePage } from '@inertiajs/react'
-// import { useEffect, useRef, useState, memo, useCallback } from 'react';
+// import { useEffect, useRef, useState, memo, useCallback, Suspense } from 'react';
 // import NotFinished from '../components/NotFinished';
 // import CityHeavenQuestion from './CityHeavenQuestion';
 // import CityHeavenResult from './CityHeavenResult';
 // import { Header, Footer } from '../../components/Index';
 // import { useRespondentStore } from '../../store';
 // import { QuestionnarieType, DbQuestionType, DbResultType, DbEdgeType } from '../../types';
-// // import { getQuestionnairByUrl, getFirstQuestionIdByUrl, getCityHeavenGirls, } from '../../utils';
+
 
 // type Props = {
 //   ownerName: string;
@@ -122,6 +126,8 @@ export default memo(Questionnaire);
 //   const currentQuestionnarie = useRespondentStore((state) => state.currentQuestionnarie);
 //   const setFirstQuestionId = useRespondentStore((state) => state.setFirstQuestionId);
 //   const [isLoading, setIsLoading] = useState<boolean>(true);
+
+
 
 //   useEffect(() => {
 
@@ -186,7 +192,4 @@ export default memo(Questionnaire);
 // }
 
 // export default memo(Questionnaire);
-
-
-
 

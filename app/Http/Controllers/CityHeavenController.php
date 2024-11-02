@@ -63,28 +63,4 @@ class CityHeavenController extends Controller
         return "..." . substr($string, -1 * ($keepLength));
     }
 
-    // private function maskString($string, $keepLength=3):string {
-
-    //     $replaceChar = '.';
-
-    //     // 文字列の長さを取得
-    //     $strLength = strlen($string);
-
-    //     // 残す部分の長さが文字列の長さを超える場合、全体をそのまま返す
-    //     if ($keepLength >= $strLength) {
-    //         return $string;
-    //     }
-
-    //     // 置換する部分の長さ
-    //     $replaceLength = $strLength - $keepLength;
-
-    //     // 置換する文字列を生成
-    //     $replacement = str_repeat($replaceChar, $replaceLength);
-
-    //     // 残す部分の文字列（末尾から指定した文字数分）
-    //     $remaining = substr($string, -$keepLength);
-
-    //     // 結果の文字列を返す
-    //     return $replacement . $remaining;
-    // }
 }

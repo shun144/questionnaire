@@ -1,76 +1,76 @@
 import axios, { AxiosResponse, AxiosRequestConfig } from 'axios';
-import { QuestionnarieType, DbQuestionType, DbEdgeType, DbResultType, GirlType, AnswerHistoryType } from './types';
+// import { QuestionnarieType, DbQuestionType, DbEdgeType, DbResultType, GirlType, AnswerHistoryType } from './types';
 
-interface GirlsResponse {
-  girlsData: GirlType[];
-}
+// interface GirlsResponse {
+//   girlsData: GirlType[];
+// }
 
 
-export const fetchGirls = async (answerHistories: AnswerHistoryType[]): Promise<GirlType[]> => {
-  try {
-    const baseUrl = window.location.origin;
-    const [_, owner, flowUrl] = window.location.pathname.split('/');
-    const res: AxiosResponse<GirlsResponse> = await axios.get(`${baseUrl}/${owner}/${flowUrl}/cityheaven`);
-    const girlsData: GirlType[] = res.data.girlsData;
+// export const fetchGirls = async (answerHistories: AnswerHistoryType[]): Promise<GirlType[]> => {
+//   try {
+//     const baseUrl = window.location.origin;
+//     const [_, owner, flowUrl] = window.location.pathname.split('/');
+//     const res: AxiosResponse<GirlsResponse> = await axios.get(`${baseUrl}/${owner}/${flowUrl}/cityheaven`);
+//     const girlsData: GirlType[] = res.data.girlsData;
 
-    // 各選択肢に設定されているセールスポイントの集計
-    const score: { [key: string]: number } = {};
-    answerHistories.map(x => x.salesPointNos).forEach(x => {
-      x.forEach(item => {
-        if (score[item]) {
-          score[item]++;
-        } else {
-          score[item] = 1;
-        }
-      });
-    })
+//     // 各選択肢に設定されているセールスポイントの集計
+//     const score: { [key: string]: number } = {};
+//     answerHistories.map(x => x.salesPointNos).forEach(x => {
+//       x.forEach(item => {
+//         if (score[item]) {
+//           score[item]++;
+//         } else {
+//           score[item] = 1;
+//         }
+//       });
+//     })
 
-    const scoreKeys = Object.entries(score);
+//     const scoreKeys = Object.entries(score);
 
-    const girlsDataWithPoint: GirlType[] = [];
-    girlsData.forEach(girl => {
-      girlsDataWithPoint.push(countEarnPoint(girl))
-    })
+//     const girlsDataWithPoint: GirlType[] = [];
+//     girlsData.forEach(girl => {
+//       girlsDataWithPoint.push(countEarnPoint(girl))
+//     })
 
-    function countEarnPoint(girl: GirlType) {
-      let point = 0;
-      scoreKeys.forEach((kv) => {
-        point += girl.salespoint_ids.includes(kv[0]) ? kv[1] : 0;
-      });
-      return { ...girl, earn_point: point };
-    };
+//     function countEarnPoint(girl: GirlType) {
+//       let point = 0;
+//       scoreKeys.forEach((kv) => {
+//         point += girl.salespoint_ids.includes(kv[0]) ? kv[1] : 0;
+//       });
+//       return { ...girl, earn_point: point };
+//     };
 
-    girlsDataWithPoint.sort((a, b) => {
+//     girlsDataWithPoint.sort((a, b) => {
 
-      // ①当日出勤している
-      if (b.today_work_flg !== a.today_work_flg) {
-        return b.today_work_flg ? 1 : -1;
-      }
+//       // ①当日出勤している
+//       if (b.today_work_flg !== a.today_work_flg) {
+//         return b.today_work_flg ? 1 : -1;
+//       }
 
-      // ②チェック項目に一致している数が多い
-      if (b.earn_point !== a.earn_point) {
-        return b.earn_point - a.earn_point;
-      }
+//       // ②チェック項目に一致している数が多い
+//       if (b.earn_point !== a.earn_point) {
+//         return b.earn_point - a.earn_point;
+//       }
 
-      // ③写メ日記がある
-      if (b.diary_flg !== a.diary_flg) {
-        return b.diary_flg ? 1 : -1;
-      }
+//       // ③写メ日記がある
+//       if (b.diary_flg !== a.diary_flg) {
+//         return b.diary_flg ? 1 : -1;
+//       }
 
-      // ④口コミがある
-      if (b.review_flg !== a.review_flg) {
-        return b.review_flg ? 1 : -1;
-      }
+//       // ④口コミがある
+//       if (b.review_flg !== a.review_flg) {
+//         return b.review_flg ? 1 : -1;
+//       }
 
-      // ⑤直近1週間以内に出勤予定がある。
-      return b.w_shukkin.filter(x => x !== null).length - a.w_shukkin.filter(x => x !== null).length;
-    })
+//       // ⑤直近1週間以内に出勤予定がある。
+//       return b.w_shukkin.filter(x => x !== null).length - a.w_shukkin.filter(x => x !== null).length;
+//     })
 
-    return girlsDataWithPoint;
-  } catch (error) {
-    return [];
-  }
-}
+//     return girlsDataWithPoint;
+//   } catch (error) {
+//     return [];
+//   }
+// }
 
 export const countUpAchievement = async (pathname: string, result: string): Promise<void> => {
   (async () => {

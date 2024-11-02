@@ -34,6 +34,15 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
   const isDirty = useOwnerStore((state) => state.isDirty);
   const setIsDirty = useOwnerStore((state) => state.setIsDirty);
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
+
+  const qNodeNum = useOwnerStore((state) => state.qNodeNum);
+  const setQnodeNum = useOwnerStore((state) => state.setQnodeNum);
+  const addQnodeNum = useOwnerStore((state) => state.addQnodeNum);
+
+  const rNodeNum = useOwnerStore((state) => state.rNodeNum);
+  const setRnodeNum = useOwnerStore((state) => state.setRnodeNum);
+  const addRnodeNum = useOwnerStore((state) => state.addRnodeNum);
+
   const { screenToFlowPosition, addNodes, setViewport, getNodes } = useReactFlow();
   const { url: currentUrl } = usePage()
 
@@ -43,6 +52,11 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
       rNode: CityHeavenResultNode
     }
   ), []);
+
+  useEffect(() => {
+    setQnodeNum(initialNodes.filter(x => x.type === 'qNode').length);
+    setRnodeNum(initialNodes.filter(x => x.type === 'rNode').length);
+  }, [])
 
   useEffect(() => {
     const beforeUnloadConfirm = router.on('before', (event) => {
@@ -101,6 +115,8 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
       type: "qNode",
       dragHandle: '.dhandle',
     });
+
+    addQnodeNum(1);
   };
 
   // 結果ノード追加
@@ -113,6 +129,7 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
       type: "rNode",
       dragHandle: '.dhandle',
     });
+    addRnodeNum(1);
   };
 
   const handleDragEnd = useCallback(({ active, over, delta, activatorEvent }: DragEndEvent) => {
@@ -189,13 +206,12 @@ const CityHeavenFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) 
     setEdges(eds => eds.filter(e => e.id !== edge.id))
   }, [setEdges])
 
-
   return (
     <div className='grow w-full flex'>
       <DndContext onDragEnd={handleDragEnd}>
-        <div className='h-full w-[5%] flex items-center flex-col gap-y-6 pt-12 bg-slate-800'>
-          <Draggable id="draggable-question" label="質問" btnColor='indigo' />
-          <Draggable id="draggable-result" label="結果" btnColor='rose' />
+        <div className='h-full w-[5%] flex items-center flex-col gap-y-10 pt-12 bg-slate-800'>
+          <Draggable id="draggable-question" label="質問" color='indigo' nodeNum={qNodeNum} maxNodeNum={15} />
+          <Draggable id="draggable-result" label="結果" color='rose' nodeNum={rNodeNum} maxNodeNum={10} />
         </div>
         <Droppable id="droppableArea">
           <ReactFlow

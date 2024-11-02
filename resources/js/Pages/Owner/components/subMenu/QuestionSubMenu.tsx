@@ -13,6 +13,7 @@ export const showContextMenu = (event: TriggerEvent, nodeId: string) => {
 
 const QuestionSubMenu = () => {
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
+  const addQnodeNum = useOwnerStore((state) => state.addQnodeNum);
   const { deleteElements } = useReactFlow();
 
   const handleUpdateFirstQuestion = useCallback((params: ItemParams) => {
@@ -28,6 +29,7 @@ const QuestionSubMenu = () => {
       return
     }
     deleteElements({ nodes: [{ id: params.props['nodeId'] }] });
+    addQnodeNum(-1);
   }, []);
 
   return (
