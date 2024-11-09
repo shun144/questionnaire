@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, MouseEvent, memo, Fragment, useRef, useMemo } from 'react';
 import HorizontalBarChart from './HorizontalBarChart';
-import DebouncedInput from './DebouncedInput';
+// import DebouncedInput from './DebouncedInput';
+import DebouncedInput from '@/Components/DebouncedInput';
 import { IoSearchOutline } from "react-icons/io5";
 
 import {

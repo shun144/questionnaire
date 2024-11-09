@@ -2,7 +2,8 @@ import { router } from '@inertiajs/react';
 import { useEffect, useState, useCallback, MouseEvent, useMemo, Fragment } from 'react';
 import { User } from '../../../types';
 import { toast } from '@/Pages/Owner/components/toast/CustomToaster'
-import DebouncedInput from './DebouncedInput';
+// import DebouncedInput from './DebouncedInput';
+import DebouncedInput from '@/Components/DebouncedInput';
 
 import {
   useReactTable,
