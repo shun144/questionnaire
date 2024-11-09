@@ -187,7 +187,7 @@ class CityHeavenController extends Controller
             $status_code = $resShukkin['status_code'];
             $error_message = $resShukkin['error_message'];
             \Log::error("シティヘブン出勤API Error (Status: $status_code): $error_message");
-            return response()->json(['message' => "$error_message($status_code)"], 500);
+            return response()->json(['message' => "APIエラーが発生しました"], 500);
         }
         
         $resGirls = $this->getAllGirls($decrypted_access_key,$decrypted_shop_id);  
@@ -196,7 +196,7 @@ class CityHeavenController extends Controller
             $status_code = $resGirls['status_code'];
             $error_message = $resGirls['error_message'];
             \Log::error("シティヘブン女の子情報API Error (Status: $status_code): $error_message");
-            return response()->json(['message' => "$error_message($status_code)"], 500);
+            return response()->json(['message' => "APIエラーが発生しました"], 500);
         }
         
 
