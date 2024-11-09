@@ -13,9 +13,15 @@ type Props = {
   initialFirstPassword: string;
 }
 
+const nameMaxLength = 50;
+const englishNameMaxLength = 15;
+const mailMaxLength = 255;
+const passwordMaxLength = 255;
+
 const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstPassword }: Props) => {
 
   const { data, setData, patch, processing, errors, reset } = useForm({
+    id,
     name: initialName,
     english_name: initialEnglishName,
     email: initialEmail,
@@ -45,7 +51,7 @@ const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstP
             <div className='p-6 text-gray-900'>
               <form onSubmit={submit}>
                 <div>
-                  <InputLabel htmlFor="name" value="ユーザ名" />
+                  <InputLabel htmlFor="name" value={`ユーザ名（${nameMaxLength}文字）`} />
 
                   <TextInput
                     id="name"
@@ -56,12 +62,13 @@ const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstP
                     isFocused={true}
                     onChange={(e) => setData('name', e.target.value)}
                     required
+                    maxLength={nameMaxLength}
                   />
                   <InputError message={errors.name} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="english_name" value="店舗URL名" />
+                  <InputLabel htmlFor="english_name" value={`店舗URL名（${englishNameMaxLength}文字）`} />
 
                   <TextInput
                     id="english_name"
@@ -72,13 +79,13 @@ const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstP
                     isFocused={true}
                     onChange={(e) => setData('english_name', e.target.value)}
                     required
-                    maxLength={15}
+                    maxLength={englishNameMaxLength}
                   />
                   <InputError message={errors.english_name} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="email" value="メールアドレス" />
+                  <InputLabel htmlFor="email" value={`メールアドレス（${mailMaxLength}文字）`} />
 
                   <TextInput
                     id="email"
@@ -89,13 +96,14 @@ const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstP
                     autoComplete="username"
                     onChange={(e) => setData('email', e.target.value)}
                     required
+                    maxLength={mailMaxLength}
                   />
 
                   <InputError message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="first_password" value="初回パスワード" />
+                  <InputLabel htmlFor="password" value={`初回パスワード（8～${passwordMaxLength}文字）`} />
 
                   <TextInput
                     id="first_password"
@@ -105,6 +113,7 @@ const Edit = ({ id, initialName, initialEnglishName, initialEmail, initialFirstP
                     autoComplete="new-password"
                     onChange={(e) => setData('first_password', e.target.value)}
                     required
+                    maxLength={passwordMaxLength}
                   />
                   <InputError message={errors.first_password} className="mt-2" />
                 </div>

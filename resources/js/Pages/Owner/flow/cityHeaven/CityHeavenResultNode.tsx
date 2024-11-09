@@ -4,6 +4,7 @@ import { RecommendNodeType } from '../../types';
 import { showContextMenu } from '../../components/subMenu/ResultSubMenu';
 import { BsThreeDots } from "react-icons/bs";
 
+const messageMaxLength = 150;
 
 const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<RecommendNodeType>>) => {
 
@@ -27,15 +28,16 @@ const CityHeavenResultNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Rec
 
       <div className='flex flex-col justify-center items-center cursor-default pt-3 pb-6 px-3'>
         <div className='w-full flex flex-col justify-center items-center relative'>
-          <label htmlFor="message" className="self-start block text-md font-semibold text-rose-400">メッセージ</label>
+          <label htmlFor="message" className="self-start block text-md font-semibold text-rose-400">{`メッセージ（${messageMaxLength}文字）`}</label>
           <textarea
             id="message"
-            rows={3}
+            rows={5}
             className="block resize-none p-2.5 w-full text-md text-slate-200 placeholder-slate-500 bg-slate-800 rounded-sm border-1 ring-0 border-slate-400 focus:ring-0 focus:border-slate-200"
             value={nodeData.message}
             onChange={(event) => handleUpdateMessage(event)}
             placeholder="メッセージを入力してください"
-            maxLength={100}>
+            maxLength={messageMaxLength}
+          >
           </textarea>
           <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer", top: 18, left: -25, }} />
         </div>

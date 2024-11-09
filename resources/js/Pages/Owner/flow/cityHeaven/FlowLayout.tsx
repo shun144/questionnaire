@@ -4,14 +4,15 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import CityHeavenFlow from './CityHeavenFlow'
 import { useOwnerStore } from '../../store';
-import { Toaster } from 'react-hot-toast';
 import QuestionSubMenu from '../../components/subMenu/QuestionSubMenu';
 import ResultSubMenu from '../../components/subMenu/ResultSubMenu';
-import FlowHeader from './FlowHeader';
+import FlowHeader from '@/Pages/Owner/components/FlowHeader';
+import { CustomToaster, toast } from '@/Pages/Owner/components/toast/CustomToaster'
+
 
 type Props = {
   id: number,
-  quesitions: string,
+  questions: string,
   results: string,
   edges: string,
   title: string,
@@ -22,7 +23,7 @@ type Props = {
   zoom: number,
 }
 
-const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuestionId, x, y, zoom }: Props) => {
+const FlowLayout = ({ id, questions, results, edges, title, url, initFirstQuestionId, x, y, zoom }: Props) => {
 
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
 
@@ -42,13 +43,14 @@ const FlowLayout = ({ id, quesitions, results, edges, title, url, initFirstQuest
             initialUrl={url}
           />
           <CityHeavenFlow
-            initialNodes={[...JSON.parse(quesitions), ...JSON.parse(results)]}
+            initialNodes={[...JSON.parse(questions), ...JSON.parse(results)]}
             initialEdges={JSON.parse(edges)}
             defaultViewport={{ x, y, zoom }}
           />
         </div>
 
-        <Toaster position="bottom-right" reverseOrder={false} />
+        {/* <Toaster position="bottom-right" reverseOrder={false} /> */}
+        <CustomToaster />
         <QuestionSubMenu />
         <ResultSubMenu />
       </ReactFlowProvider>

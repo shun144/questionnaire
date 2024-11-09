@@ -9,6 +9,10 @@ import { BsThreeDots } from "react-icons/bs";
 import SalesPointSelect from './SalesPointSelect';
 import { showContextMenu } from '../../components/subMenu/QuestionSubMenu';
 
+const questionMaxLength = 100;
+const choiceMaxLength = 40;
+const choiceMaxLNum = 5;
+
 const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuestionNodeType>>) => {
 
   const firstNodeId = useOwnerStore((state) => state.firstNodeId);
@@ -40,7 +44,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
 
   // 選択肢の内容更新
   const handleUpdateChoice = useCallback((event: ChangeEvent<HTMLInputElement>, _choice: ChoiceType) => {
-    if (nodeData.choices.length > 5) {
+    if (nodeData.choices.length > choiceMaxLNum) {
       return
     }
     const targetValue = event.currentTarget.value;
@@ -84,22 +88,25 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
 
       <div className='flex flex-col justify-center items-center cursor-default pt-3 pb-6 px-3'>
         <div className='w-full flex flex-col justify-center items-center relative'>
-          <label htmlFor="message" className="self-start block text-md font-semibold text-indigo-500">質 問</label>
+          <label htmlFor="message" className="self-start block text-md font-semibold text-indigo-500">
+            {`質 問（${questionMaxLength}文字）`}
+          </label>
           <textarea
             id="message"
             rows={3}
             className="block resize-none p-2.5 w-full text-md text-slate-200 placeholder-slate-500 bg-slate-800 rounded-sm border-1 ring-0 border-slate-400 focus:ring-0 focus:border-slate-200"
             value={nodeData.topic}
-            maxLength={100}
             placeholder="質問内容を入力してください"
-            onChange={(event) => handleUpdateTopic(event)}>
+            onChange={(event) => handleUpdateTopic(event)}
+            maxLength={questionMaxLength}
+          >
           </textarea>
           <Handle id={nodeId} position={Position.Left} type="target" style={{ cursor: "pointer", top: 18, left: -25, }} />
         </div>
 
 
         <div className='w-full flex flex-col justify-center items-center pt-6'>
-          <div className="self-start block text-md font-semibold text-indigo-500">選 択 肢</div>
+          <div className="self-start block text-md font-semibold text-indigo-500">{`選 択 肢（${choiceMaxLength}文字/${choiceMaxLNum}項目）`}</div>
 
           {nodeData.choices.map((choice) => (
             <div key={choice.id} className='w-full relative'>
@@ -108,7 +115,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
                   className="w-full text-lg hover:shadow text-slate-200  placeholder-slate-500 bg-slate-800 rounded-sm border-1 ring-0 border-slate-400 focus:ring-0 focus:border-slate-200"
                   value={choice.content}
                   placeholder="選択肢を入力してください"
-                  maxLength={50}
+                  maxLength={choiceMaxLength}
                   onChange={(evt) => handleUpdateChoice(evt, choice)}
                 />
                 <button
@@ -132,7 +139,7 @@ const CityHeavenQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<Q
         </div>
 
         <div className='w-full mt-4'>
-          {nodeData.choices.length < 5 && (
+          {nodeData.choices.length < choiceMaxLNum && (
             <button
               className="text-indigo-600 border border-indigo-600 hover:text-indigo-300 hover:border-indigo-300 font-bold mt-1 w-full text-[0.8rem] py-1 flex justify-center items-center gap-1 transition-all"
               onClick={() => handleAddChoice()}

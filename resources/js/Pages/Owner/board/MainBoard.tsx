@@ -2,15 +2,17 @@ import { memo } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link, useForm } from '@inertiajs/react';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { deleteFlow } from '../utils';
 import { FlowType } from '../types';
+import { deleteFlow } from '@/Pages/Owner/utils';
 import CreateModal from './CreateModal';
-import { Toaster, toast } from 'react-hot-toast';
+import { router } from '@inertiajs/react';
+import { CustomToaster, toast } from '@/Pages/Owner/components/toast/CustomToaster'
 
 
 import { Menu, Item, TriggerEvent, Separator, Submenu, ItemParams, useContextMenu, } from "react-contexify";
 import "react-contexify/dist/ReactContexify.css";
 import EditModal from './EditModal';
+import axios from 'axios';
 
 type Props = {
   initialFlows: FlowType[];
@@ -30,22 +32,33 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
 
   const { props } = usePage();
 
+
   useEffect(() => {
     setFlows(initialFlows);
   }, [initialFlows])
 
   const { show } = useContextMenu({ id: MENU_ID });
 
+
   const handleFlowDelete = useCallback((params: ItemParams) => {
     const flowId = params.props.flowId;
+    const title = params.props.title;
+
+    if (!confirm(`${title}を削除してよろしいですか？`)) {
+      return
+    };
+
     (async () => {
-      try {
-        const res = await deleteFlow(flowId);
-      } catch (error) {
+      const res = await deleteFlow(flowId);
+      if (res) {
+        toast.success(`${title}を削除しました`);
+        setFlows(prev => prev.filter(x => x.id !== flowId));
+      } else {
+        toast.error(`${title}の削除に失敗しました`);
       }
     })();
-    setFlows(prev => prev.filter(x => x.id != flowId));
-  }, [setFlows])
+  }, []);
+
 
 
   const handleOpenEditModal = useCallback(({ props }: ItemParams) => {
@@ -59,7 +72,6 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
 
   const handleCopy = async (params: ItemParams) => {
     try {
-
       await navigator.clipboard.writeText(
         `${window.location.origin}/${props.auth.user.english_name}/${params.props.url}`
       );
@@ -151,7 +163,9 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
         flowId={editId}
       />
 
-      <Toaster position="bottom-right" reverseOrder={false} />
+
+      <CustomToaster />
+
       <Menu id={MENU_ID}>
         <Item
           closeOnClick={true}

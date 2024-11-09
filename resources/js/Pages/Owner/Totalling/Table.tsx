@@ -43,22 +43,36 @@ const Table = ({ flows }: Props) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
-        header: "ID", size: 10, minSize: 10, maxSize: 10,
+        header: "ID",
+        size: 20,
       }),
       columnHelper.accessor("category", {
-        header: "カテゴリ", size: 10, minSize: 10, maxSize: 10
+        header: "診断タイプ",
+        size: 25,
+        cell: ({ getValue }) => {
+          const value = getValue();
+          // カスタム表示
+          switch (value) {
+            case 'standard':
+              return '標準';
+            case 'cityHeaven':
+              return 'シティヘブン';
+            default:
+              return value; // それ以外の値はそのまま表示
+          }
+        }
       }),
       columnHelper.accessor("title", {
-        header: "タイトル"
+        header: "診断タイトル"
       }),
       columnHelper.accessor("total", {
-        header: "合計", size: 10, minSize: 10, maxSize: 10,
-        // sortingFn: sortTotalFn
+        header: "合計",
+        size: 35,
       }),
       columnHelper.display({
         id: "viewGraph",
         header: "内訳",
-        size: 10, minSize: 10, maxSize: 10,
+        size: 25,
         cell: ({ row }) => (
           <button
             onClick={() => { toggleRow(row.index) }}
@@ -82,6 +96,9 @@ const Table = ({ flows }: Props) => {
     state: {
       sorting,
       globalFilter,
+    },
+    defaultColumn: {
+      size: 200,
     },
   });
 
@@ -114,7 +131,11 @@ const Table = ({ flows }: Props) => {
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => {
                       return (
-                        <th key={header.id} colSpan={header.colSpan}>
+                        <th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          style={{ maxWidth: header.getSize() }}
+                        >
                           {header.isPlaceholder ? null : (
                             <div
                               className={`
@@ -161,8 +182,16 @@ const Table = ({ flows }: Props) => {
                         className="bg-white border-b "
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id} className="px-3 py-4 text-base"
-                            style={{ width: `${cell.column.getSize()}px` }}>
+                          <td
+                            key={cell.id}
+                            className='px-2 py-2'
+                            style={{
+                              maxWidth: `${cell.column.getSize()}px`,
+                              overflow: 'hidden',
+                              overflowWrap: 'break-word',
+                            }}
+                          // style={{ width: `${cell.column.getSize()}px` }}
+                          >
                             {flexRender(
                               cell.column.columnDef.cell,
                               cell.getContext()

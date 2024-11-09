@@ -22,7 +22,7 @@ const StandardResult = () => {
   return (
     <>
 
-      <div className='h-full w-full flex flex-col justify-start items-center relative'>
+      <div className='h-full w-full flex flex-col justify-start items-center relative overflow-x-hidden'>
 
         <div className='h-full w-11/12  md:w-6/12'>
 
@@ -52,22 +52,21 @@ const StandardResult = () => {
           ></div>
 
           <div className='h-12 w-full flex justify-center items-center mt-2 mb-1 md:mt-12 md:mb-10'>
-            <div className='text-xl text-violet-400/80 font-bold text-md select-none z-50 md:text-4xl'>
+            <div className='text-lg text-violet-400/80 font-bold text-md select-none z-50 md:text-4xl'>
               診 断 結 果
             </div>
           </div>
 
           <div className='h-96 w-full bg-white/40 rounded-lg shadow-sm border-2 border-white/40 backdrop-blur-[4px]
-          flex justify-start items-center flex-col'>
-            <div className='h-[6rem] md:h-[8rem] w-full  flex justify-center items-center border-b-2 border-white/60 '>
-              <div className='text-xl md:text-3xl text-slate-700 font-semibold z-50'>
+          flex justify-start items-center flex-col px-2 py-2 md:px-4 md:py-4'>
+            <div className='h-[8rem] w-full flex justify-center items-center border-b-2 border-white/60 pb-4'>
+              <div className='text-base md:text-3xl text-slate-700 font-semibold z-50'>
                 {(currentQuestionnarie as ResultType).result}
               </div>
-
             </div>
 
             <div className='grow w-full  flex justify-center items-center'>
-              <div className='text-xl md:text-2xl text-slate-600 font-normal z-50'>
+              <div className='text-base md:text-2xl text-slate-600 font-normal z-50'>
                 {(currentQuestionnarie as ResultType).message}
               </div>
             </div>
@@ -87,5 +86,4 @@ const StandardResult = () => {
   );
 }
 export default memo(StandardResult);
-
 

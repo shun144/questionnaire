@@ -3,7 +3,7 @@
 use App\Http\Controllers\ProfileController as OwnerProfileController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\AdminController;
-use App\Http\Controllers\ApiController;
+// use App\Http\Controllers\ApiController;
 use App\Http\Controllers\RespondentController;
 use App\Http\Controllers\OwnerContoller;
 use App\Http\Controllers\CityHeavenController;
@@ -42,18 +42,19 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 
     Route::get('/setting', [OwnerContoller::class, 'getApiCredential'])->name('setting');
+    
     Route::get('/totalling', [OwnerContoller::class, 'getTotalling'])->name('totalling');
     Route::get('/totalling/{id}', [OwnerContoller::class, 'getGraphData'])->name('graph');
     
     Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
     
-    Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow'])->name('flow.index');
-    Route::post('/flow/{id}', [OwnerContoller::class, 'commit']);
-
     Route::post('/flow', [OwnerContoller::class, 'addFlow'])->name('flow.create');
     
+    Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow'])->name('flow.index');
+    Route::post('/flow/{id}', [OwnerContoller::class, 'commit'])->name('flow.commit');
     Route::patch('/flow/{id}', [OwnerContoller::class, 'updateFlow'])->name('flow.update');
-    Route::delete('/flow', [OwnerContoller::class, 'deleteFlow']);
+    Route::delete('/flow/{id}', [OwnerContoller::class, 'deleteFlow'])->name('flow.delete');
+
 
     Route::get('/profile', [OwnerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [OwnerProfileController::class, 'update'])->name('profile.update');
@@ -70,10 +71,9 @@ Route::post('/{owner}/{flowUrl}', [RespondentController::class, 'addAchievement'
 Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'getQuestionnair']);
 Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
 
-Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
 
-// Route::get('/aaffa', [ApiController::class, 'test']);
+Route::get('/{owner}/{flowUrl}/cityheaven', [CityHeavenController::class, 'getCityHeavenGirls']);
 
-
+// Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
 
 

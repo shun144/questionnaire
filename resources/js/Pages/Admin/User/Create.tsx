@@ -5,6 +5,11 @@ import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 
+const nameMaxLength = 50;
+const englishNameMaxLength = 15;
+const mailMaxLength = 255;
+const passwordMaxLength = 255;
+
 const Create = () => {
 
   const { data, setData, post, processing, errors, reset } = useForm({
@@ -35,7 +40,7 @@ const Create = () => {
             <div className='p-6 text-gray-900'>
               <form onSubmit={submit}>
                 <div>
-                  <InputLabel htmlFor="name" value="ユーザ名" />
+                  <InputLabel htmlFor="name" value={`ユーザ名（${nameMaxLength}文字）`} />
 
                   <TextInput
                     id="name"
@@ -46,12 +51,13 @@ const Create = () => {
                     isFocused={true}
                     onChange={(e) => setData('name', e.target.value)}
                     required
+                    maxLength={nameMaxLength}
                   />
                   <InputError message={errors.name} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="english_name" value="店舗URL名" />
+                  <InputLabel htmlFor="english_name" value={`店舗URL名（${englishNameMaxLength}文字）`} />
 
                   <TextInput
                     id="english_name"
@@ -62,12 +68,13 @@ const Create = () => {
                     isFocused={true}
                     onChange={(e) => setData('english_name', e.target.value)}
                     required
+                    maxLength={englishNameMaxLength}
                   />
                   <InputError message={errors.english_name} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="email" value="メールアドレス" />
+                  <InputLabel htmlFor="email" value={`メールアドレス（${mailMaxLength}文字）`} />
 
                   <TextInput
                     id="email"
@@ -78,13 +85,14 @@ const Create = () => {
                     autoComplete="username"
                     onChange={(e) => setData('email', e.target.value)}
                     required
+                    maxLength={mailMaxLength}
                   />
 
                   <InputError message={errors.email} className="mt-2" />
                 </div>
 
                 <div className="mt-8">
-                  <InputLabel htmlFor="password" value="初回パスワード" />
+                  <InputLabel htmlFor="password" value={`初回パスワード（8～${passwordMaxLength}文字）`} />
 
                   <TextInput
                     id="password"
@@ -95,6 +103,7 @@ const Create = () => {
                     autoComplete="new-password"
                     onChange={(e) => setData('password', e.target.value)}
                     required
+                    maxLength={passwordMaxLength}
                   />
                   <InputError message={errors.password} className="mt-2" />
                 </div>

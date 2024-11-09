@@ -26,7 +26,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
         <GuestLayout>
             <Head title="Log in" />
 
-            <div>Admin</div>
+            <div className='pb-4 text-slate-500 font-bold'>管理者専用ログイン</div>
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
@@ -81,7 +81,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                             href={route('admin.password.request')}
                             className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                            パスワードを忘れた
+                            パスワードを忘れた方はこちら
                         </Link>
                     )}
 

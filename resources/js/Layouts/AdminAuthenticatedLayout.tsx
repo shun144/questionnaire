@@ -61,9 +61,9 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                                     </Dropdown.Trigger>
 
                                     <Dropdown.Content>
-                                        <Dropdown.Link href={route('admin.profile.edit')}>Profile</Dropdown.Link>
+                                        <Dropdown.Link href={route('admin.profile.edit')}>プロフィール</Dropdown.Link>
                                         <Dropdown.Link href={route('admin.logout')} method="post" as="button">
-                                            Log Out
+                                            ログアウト
                                         </Dropdown.Link>
                                     </Dropdown.Content>
                                 </Dropdown>
@@ -112,9 +112,9 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                         </div>
 
                         <div className="mt-3 space-y-1">
-                            <ResponsiveNavLink href={route('admin.profile.edit')}>Profile</ResponsiveNavLink>
+                            <ResponsiveNavLink href={route('admin.profile.edit')}>プロフィール</ResponsiveNavLink>
                             <ResponsiveNavLink method="post" href={route('admin.logout')} as="button">
-                                Log Out
+                                ログアウト
                             </ResponsiveNavLink>
                         </div>
                     </div>

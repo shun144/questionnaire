@@ -1,1 +1,0 @@
-import{b as a}from"./app-BMXDJVyd.js";const s=async t=>{try{return(await a.get(`totalling/${t}`)).data}catch{return{labels:[],datas:[]}}},o=async t=>{try{return await a.delete("/flow",{params:{flowId:t}}),!0}catch{return!1}},n=()=>Math.random().toString(32).substring(2);export{o as d,s as f,n as g};

@@ -10,6 +10,10 @@ type Props = {
   setIsOpenModal: Dispatch<SetStateAction<boolean>>;
   isRegisteredApiCredential: boolean;
 }
+
+const titleMaxLength = 50;
+const urlMaxLength = 15;
+
 const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }: Props) => {
 
   const { data, setData, post, processing, reset, errors, clearErrors
@@ -43,7 +47,7 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
         <form onSubmit={createFlow} className="p-6">
 
           <div className="mt-6">
-            <InputLabel htmlFor="initialTitle" value="診断タイトル" />
+            <InputLabel htmlFor="initialTitle" value={`診断タイトル（${titleMaxLength}文字）`} />
 
             <TextInput
               id="initialTitle"
@@ -51,14 +55,16 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
               name="initialTitle"
               value={data.initialTitle}
               onChange={(e) => setData('initialTitle', e.target.value)}
-              className="mt-1 block w-3/4 placeholder-slate-300"
+              className="mt-1 block w-11/12 placeholder-slate-300"
               placeholder="タイトル"
+              required
+              maxLength={titleMaxLength}
             />
             <InputError message={errors.initialTitle} className="mt-2" />
           </div>
 
           <div className="mt-10">
-            <InputLabel htmlFor="initialUrl" value="診断URL名" />
+            <InputLabel htmlFor="initialUrl" value={`診断URL名（${urlMaxLength}文字）`} />
 
             <TextInput
               id="initialUrl"
@@ -66,8 +72,10 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
               name="initialUrl"
               value={data.initialUrl}
               onChange={(e) => setData('initialUrl', e.target.value)}
-              className="mt-1 block w-3/4 placeholder-slate-300"
+              className="mt-1 block w-11/12 placeholder-slate-300"
               placeholder="URL"
+              required
+              maxLength={urlMaxLength}
             />
             <InputError message={errors.initialUrl} className="mt-2" />
           </div>
@@ -103,7 +111,6 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
                     checked={data.initialCategory === 'cityHeaven'}
                     onChange={handleOptionChange}
                     disabled={!isRegisteredApiCredential}
-
                   />
                   <label
                     htmlFor="cityHeaven"

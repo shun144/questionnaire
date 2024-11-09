@@ -1,8 +1,6 @@
 import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link, } from '@inertiajs/react';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-// import UpdatePasswordForm from './Partials/UpdatePasswordForm';
 import UpdateCityHeavenApiForm from './Partials/UpdateCityHeavenApiForm'
 
 type Props = {
@@ -19,7 +17,6 @@ const Edit = ({ masking_access_key, masking_shop_id }: Props) => {
         </div >
       }
     >
-
       <Head title="Setting" />
       <div className="py-12">
         <div className="max-w-4xl mx-auto sm:px-6 lg:px-8 space-y-6">
@@ -30,14 +27,6 @@ const Edit = ({ masking_access_key, masking_shop_id }: Props) => {
               masking_access_key={masking_access_key}
               masking_shop_id={masking_shop_id} />
           </div>
-
-
-
-          {/* <div className="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-            <UpdatePasswordForm className="max-w-xl" />
-          </div> */}
-
-
         </div>
       </div>
 

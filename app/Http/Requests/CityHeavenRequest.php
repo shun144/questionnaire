@@ -40,12 +40,11 @@ class CityHeavenRequest extends FormRequest
             $client = new Client();
 
             $API = env('CITY_HEAVEN_API_SHOP_INFO', "");
-
+       
             if($API == "") {
                 $validator->errors()->add('access_key', "店舗情報APIのURLが登録されていません。管理者へ確認してください。");
                 return;
             }
-
 
             // 店舗情報API
             $response = $client->post($API,
@@ -64,6 +63,7 @@ class CityHeavenRequest extends FormRequest
             }
 
             $res_body = simplexml_load_string($response->getBody());
+    
             if (isset($res_body->error)) {
                 $error_message = (string) $res_body->error->message;
                 $validator->errors()->add('access_key', $error_message);

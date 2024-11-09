@@ -102,7 +102,7 @@ const StandardFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) =>
     const newChoiceNo = getNewId();
 
     // 既存の質問ノードが0個の場合、追加した質問ノードをアンケートの最初の質問にする
-    if (getNodes().length === 0) {
+    if (getNodes().filter(x => x.type === 'qNode').length === 0) {
       setFirstNodeId(newQuestionNo);
     }
 
@@ -163,6 +163,11 @@ const StandardFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) =>
 
   // edgeの再接続時イベント
   const onReconnect = useCallback((oldEdge: Edge, newConn: Connection) => {
+    // 自分自身に接続できないようにする
+    if (oldEdge.source === newConn.target || newConn.source === oldEdge.target) {
+      return
+    }
+
     edgeReconnSuccess.current = true;
     setEdges((eds) => reconnectEdge(oldEdge, newConn, eds));
   }, []);
@@ -181,6 +186,12 @@ const StandardFlow = ({ initialNodes, initialEdges, defaultViewport }: Props) =>
   }, []);
 
   const onConnect = useCallback((params: Connection | Edge) => {
+
+    // 自分自身に接続できないようにする
+    if (params.source === params.target) {
+      return
+    }
+
     setEdges((eds) => addEdge({ ...params, type: 'smoothstep' }, eds))
   }, [setEdges]);
 

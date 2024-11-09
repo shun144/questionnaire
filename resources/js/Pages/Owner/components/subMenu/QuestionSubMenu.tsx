@@ -12,6 +12,7 @@ export const showContextMenu = (event: TriggerEvent, nodeId: string) => {
 }
 
 const QuestionSubMenu = () => {
+  const firstNodeId = useOwnerStore((state) => state.firstNodeId);
   const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
   const addQnodeNum = useOwnerStore((state) => state.addQnodeNum);
   const { deleteElements } = useReactFlow();
@@ -24,13 +25,19 @@ const QuestionSubMenu = () => {
   }, [setFirstNodeId]);
 
 
-  const deleteNode = useCallback((params: ItemParams) => {
+  const deleteNode = (params: ItemParams) => {
     if (!params.props) {
       return
     }
+
     deleteElements({ nodes: [{ id: params.props['nodeId'] }] });
+
+    if (firstNodeId === params.props['nodeId']) {
+      setFirstNodeId("");
+    }
+
     addQnodeNum(-1);
-  }, []);
+  };
 
   return (
     <Menu id={QUESTION_MENU_ID}>

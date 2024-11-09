@@ -1,4 +1,4 @@
-import { Node, Edge } from '@xyflow/react';
+// import { Node, Edge } from '@xyflow/react';
 import axios from 'axios';
 import { Graph } from './types';
 // import { v4 as uuidv4 } from 'uuid';
@@ -15,17 +15,51 @@ export const fetchGraphResource = async (id: number): Promise<Graph> => {
   }
 };
 
-export const deleteFlow = async (flowId: number): Promise<boolean> => {
 
+export const deleteFlow = async (id: number): Promise<boolean> => {
   try {
-    await axios.delete('/flow', {
-      params: { flowId }
-    });
-    return true;
+    await axios.delete(`/flow/${id}`);
+    return true; // 削除成功
   } catch (error) {
-    return false;
+    return false; // 削除失敗または対象が存在しない
   }
-}
+};
+
+// export const deleteFlow = async (id: number): Promise<boolean> => {
+
+//   const res = await axios.delete(`/flow/${id}`)
+//     .then(() => {
+//       return true;
+//     })
+//     .catch((error) => {
+//       return false;
+//     });
+
+//   return res;
+// }
+
+// export const deleteFlow = async (id: number): Promise<boolean> => {
+
+//   try {
+//     const res = await axios.delete<boolean>(`/flow/${id}`);
+//     // await axios.delete('/flow', {
+//     //   params: { flowId }
+//     // });
+
+//     // axios.delete(`/flow/${flowId}`)
+//     //   .then(() => {
+//     //     toast.success(`${title}を削除しました`);
+//     //     setFlows(prev => prev.filter(x => x.id !== flowId))
+//     //   })
+//     //   .catch((error) => {
+//     //     toast.error(error);
+//     //   });
+
+//     return true;
+//   } catch (error) {
+//     return false;
+//   }
+// }
 
 
 // export const getFlowTitleAndUrl = async (flowId: number): Promise<{ title: string, url: string }> => {
@@ -64,37 +98,37 @@ export const deleteFlow = async (flowId: number): Promise<boolean> => {
 // }
 
 
-export const getInitialNodes = async (flowId: number) => {
-  const axiosGetQuestionNode = axios.get<string>('/question-nodes', {
-    params: {
-      flow_id: flowId
-    }
-  });
-  const axiosGetResultNode = axios.get<string>('/result-nodes', {
-    params: {
-      flow_id: flowId
-    }
-  });
-  const [questionNodes, resultNodes] = await Promise.all([axiosGetQuestionNode, axiosGetResultNode]);
+// export const getInitialNodes = async (flowId: number) => {
+//   const axiosGetQuestionNode = axios.get<string>('/question-nodes', {
+//     params: {
+//       flow_id: flowId
+//     }
+//   });
+//   const axiosGetResultNode = axios.get<string>('/result-nodes', {
+//     params: {
+//       flow_id: flowId
+//     }
+//   });
+//   const [questionNodes, resultNodes] = await Promise.all([axiosGetQuestionNode, axiosGetResultNode]);
 
-  const initialQuestionNodes: Node[] = questionNodes.data.length ? JSON.parse(questionNodes.data) : [];
-  const initialResultNodes: Node[] = resultNodes.data.length ? JSON.parse(resultNodes.data) : [];
+//   const initialQuestionNodes: Node[] = questionNodes.data.length ? JSON.parse(questionNodes.data) : [];
+//   const initialResultNodes: Node[] = resultNodes.data.length ? JSON.parse(resultNodes.data) : [];
 
-  return [...initialQuestionNodes, ...initialResultNodes];
-}
+//   return [...initialQuestionNodes, ...initialResultNodes];
+// }
 
 
-export const getInitialEdges = async (flowId: number) => {
-  const edges = await axios.get<string>('/edges', {
-    params: {
-      flow_id: flowId
-    }
-  });
+// export const getInitialEdges = async (flowId: number) => {
+//   const edges = await axios.get<string>('/edges', {
+//     params: {
+//       flow_id: flowId
+//     }
+//   });
 
-  const initialEdges: Edge[] = edges.data.length ? JSON.parse(edges.data) : [];
+//   const initialEdges: Edge[] = edges.data.length ? JSON.parse(edges.data) : [];
 
-  return initialEdges;
-}
+//   return initialEdges;
+// }
 
 // export const getUniqueId = () => {
 //   const uniqueId = uuidv4();

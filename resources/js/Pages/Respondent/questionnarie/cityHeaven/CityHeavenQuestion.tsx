@@ -25,13 +25,21 @@ const CityHeavenQuestion = () => {
 
           <div className="rounded-2xl shadow-md">
             <div
+              className="rounded-t-2xl bg-gradient-to-br from-purple-400 via-violet-400 to-blue-200
+               text-white flex justify-center items-center px-3 py-3 md:px-5 md:py-4">
+
+              <div className="w-full text-start break-all text-base md:text-3xl">
+                {(currentQuestionnarie as QuestionType).topic}
+              </div>
+            </div>
+            {/* <div
               className='rounded-t-2xl bg-gradient-to-br from-purple-400 via-violet-400 to-blue-200
                text-white text-lg flex justify-center items-center px-3 py-3 md:text-2xl md:px-5 md:py-7 md:h-[100px]'>
 
               <div className="w-full text-start break-all line-clamp-2 text-xl md:text-3xl">
                 {(currentQuestionnarie as QuestionType).topic}
               </div>
-            </div>
+            </div> */}
 
             <div className="bg-white rounded-b-2xl py-1 md:py-4">
               <div className='flex flex-col justify-center items-center gap-y-4 py-4 mb:gap-y-7 mb:py-8'>
@@ -63,9 +71,15 @@ const CityHeavenQuestion = () => {
                       </div>
 
                       <div className='w-10/12 md:w-11/12'>
-                        <div className='px-2 flex justify-start items-center'>
-                          <p className='break-all line-clamp-2 text-lg md:text-2xl'>{content}</p>
+                        <div className="md:px-3">
+                          <div className='break-all text-left pr-3 text-sm md:text-2xl '>
+                            {content}
+                          </div>
+
                         </div>
+                        {/* <div className='px-2 flex justify-start items-center'>
+                          <p className='break-all line-clamp-2 text-lg md:text-2xl'>{content}</p>
+                        </div> */}
                       </div>
                     </button>
                   ))

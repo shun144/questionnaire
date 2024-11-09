@@ -1,7 +1,6 @@
 import { useRef, FormEventHandler, memo } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { useForm } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
@@ -64,10 +63,12 @@ const UpdateCityHeavenApiForm = ({ className = '', masking_access_key, masking_s
                 {masking_access_key && masking_shop_id && (
                     <div className='w-full h-full flex flex-col justify-center items-start'>
 
-                        <div className='text-[14px] text-white select-none bg-emerald-500/90 py-2 px-4 rounded grid grid-rows-2 grid-cols-3 gap-x-2 gap-y-1 w-64'>
-                            <div className='col-span-2 '>登録済みアクセスキー：</div>
+                        <div className='text-[14px] text-white select-none bg-emerald-500/90 py-2 px-4 rounded grid grid-rows-2 grid-cols-2 gap-y-1 w-52'
+                            style={{ gridTemplateColumns: "1fr 35px" }}
+                        >
+                            <div className=''>登録済みアクセスキー：</div>
                             <div className='text-end'>{masking_access_key}</div>
-                            <div className='col-span-2'>登録済み店舗ID：</div>
+                            <div className=''>登録済み店舗ID：</div>
                             <div className='text-end'>{masking_shop_id}</div>
                         </div>
                     </div>

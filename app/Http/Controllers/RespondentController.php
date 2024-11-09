@@ -4,18 +4,19 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
-
 use Illuminate\Support\Facades\Http;
 use Carbon\Carbon;
 
 class RespondentController extends Controller
 {
 
+    /**
+     * 診断内容を取得
+     */
     public function getQuestionnair($owner, $flowUrl){
         try {
             $user_record = DB::table('users')
@@ -78,25 +79,16 @@ class RespondentController extends Controller
                 'edges' => $edges,
                 'firstQuestionId' => $first_question_id,
             ]);
-
-            // return Inertia::render('Respondent/questionnarie/cityHeaven/Index', [
-            //     'ownerName' => $user_record->name,
-            //     'title' => $title,
-            //     'questions' => $questions,
-            //     'results' => $results,
-            //     'edges' => $edges,
-            //     'firstQuestionId' => $first_question_id,
-            // ]);
         }
         catch (\Exception $e) {
-
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
+            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            return Inertia::render('Respondent/questionnarie/components/NotFound');
         }
     }
 
+    /**
+     * 回答実績登録
+     */
     public function addAchievement($owner, $flowUrl, Request $request){
         try {
 
@@ -106,7 +98,7 @@ class RespondentController extends Controller
             ->first();
 
 
-            // オーナーが存在しないなら修了
+            // オーナーが存在しないなら終了
             if (is_null($user_record)) {
                 return;
             }
@@ -119,30 +111,21 @@ class RespondentController extends Controller
             ->select('id')
             ->first();
 
-            // アンケートが存在しないなら修了
+            // アンケートが存在しないなら終了
             if (is_null($flow_record)) {
                 return;
             }
 
-            $params = $request->only([
-                'result'
-            ]);
+            $params = $request->only(['result']);
 
-            $now = Carbon::now();
             DB::table('achievements')->insert([
                 'flow_id' => $flow_record->id,
                 'result' =>  $params['result'],
-                'created_at' => $now,
+                'created_at' => Carbon::now(),
             ]);
-
-  
         }
         catch (\Exception $e) {
-
-            $data = [
-                'err' => $e->getMessage()
-            ];
-            return response()->json($data);
+            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
         }
     }
 }

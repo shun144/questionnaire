@@ -1,7 +1,7 @@
 import { router } from '@inertiajs/react';
 import { useEffect, useState, useCallback, MouseEvent, useMemo, Fragment } from 'react';
 import { User } from '../../../types';
-import toast from 'react-hot-toast';
+import { toast } from '@/Pages/Owner/components/toast/CustomToaster'
 import DebouncedInput from './DebouncedInput';
 
 import {
@@ -22,13 +22,13 @@ type UserForAdmin = User & {
 
 type Props = {
   initialUsers: UserForAdmin[];
-  success?: string
+  success?: string;
+  fail?: string;
 }
 
 const columnHelper = createColumnHelper<UserForAdmin>();
 
-const Table = ({ initialUsers, success }: Props) => {
-
+const Table = ({ initialUsers, success, fail }: Props) => {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -38,6 +38,12 @@ const Table = ({ initialUsers, success }: Props) => {
       toast.success(success, { duration: 4000 });
     }
   }, [success])
+
+  useEffect(() => {
+    if (fail) {
+      toast.error(fail, { duration: 4000 });
+    }
+  }, [fail])
 
   const handleClickEdit = (event: MouseEvent, userId: number) => {
     event.preventDefault();
@@ -54,10 +60,11 @@ const Table = ({ initialUsers, success }: Props) => {
   const columns = useMemo(
     () => [
       columnHelper.accessor("id", {
-        header: "ID", size: 10, minSize: 10, maxSize: 10,
+        header: "ID",
+        size: 25,
       }),
       columnHelper.accessor("name", {
-        header: "ユーザ名"
+        header: "ユーザ名",
       }),
       columnHelper.accessor("english_name", {
         header: "店舗URL名"
@@ -71,7 +78,7 @@ const Table = ({ initialUsers, success }: Props) => {
       columnHelper.display({
         id: "Action",
         header: "Action",
-        size: 10, minSize: 10, maxSize: 10,
+        size: 65,
         cell: ({ row }) => (
           <>
             <button
@@ -106,6 +113,9 @@ const Table = ({ initialUsers, success }: Props) => {
       sorting,
       globalFilter,
     },
+    defaultColumn: {
+      size: 200,
+    },
   });
 
   return (
@@ -131,13 +141,20 @@ const Table = ({ initialUsers, success }: Props) => {
             </div>
 
             {/* テーブル */}
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500">
+            <table
+              className="w-full text-sm text-left rtl:text-right text-gray-500"
+
+            >
               <thead className="text-sm text-gray-700 bg-gray-200 ">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <tr key={headerGroup.id}>
                     {headerGroup.headers.map(header => {
                       return (
-                        <th key={header.id} colSpan={header.colSpan}>
+                        <th
+                          key={header.id}
+                          colSpan={header.colSpan}
+                          style={{ maxWidth: header.getSize() }}
+                        >
                           {header.isPlaceholder ? null : (
                             <div
                               className={`
@@ -180,15 +197,22 @@ const Table = ({ initialUsers, success }: Props) => {
                       <tr
                         key={row.id}
                         data-state={row.getIsSelected() && "selected"}
-                        className="bg-white border-b "
+                        className="bg-white border-b"
                       >
                         {row.getVisibleCells().map((cell) => (
-                          <td key={cell.id} className="px-3 py-4 text-base"
-                            style={{ width: `${cell.column.getSize()}px` }}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
+                          <td key={cell.id}
+                            className='px-2 py-2'
+                            style={{
+                              maxWidth: cell.column.getSize(),
+                              overflow: 'hidden',
+                              overflowWrap: 'break-word',
+                            }}
+                          >
+                            {
+                              flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext()
+                              )}
                           </td>
                         ))}
                       </tr>
@@ -245,7 +269,7 @@ const Table = ({ initialUsers, success }: Props) => {
 
         </div>
 
-      </div>
+      </div >
     </>
   )
 }
@@ -255,145 +279,6 @@ export default Table;
 
 
 
-
-
-
-
-
-
-
-// import AdminAuthenticatedLayout from '@/Layouts/AdminAuthenticatedLayout';
-// import { Head, usePage, useForm, Link, router } from '@inertiajs/react';
-// import { useEffect, useState, useCallback, MouseEvent } from 'react';
-// import { User } from '../../../types';
-// import ResponsivePagination from 'react-responsive-pagination';
-// import toast from 'react-hot-toast';
-// import TextInput from '@/Components/TextInput';
-
-// type UserForAdmin = User & {
-//   first_password: string
-// }
-
-
-// type Props = {
-//   initialUsers: UserForAdmin[];
-//   success?: string
-// }
-
-// const Table = ({ initialUsers, success }: Props) => {
-
-//   const [users, setUsers] = useState<UserForAdmin[]>(initialUsers);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [totalPages, setTotalPages] = useState(0);
-//   const [currentItems, setCurrentItems] = useState<UserForAdmin[]>([]);
-
-//   const peoplePerPage = 10; // 1ページあたりの人数
-
-//   useEffect(() => {
-//     setUsers(initialUsers);
-//     setTotalPages(Math.ceil(initialUsers.length / peoplePerPage));
-//   }, [initialUsers])
-
-//   useEffect(() => {
-//     setCurrentItems(users.slice((currentPage - 1) * peoplePerPage, currentPage * peoplePerPage));
-//   }, [users, currentPage])
-
-
-//   useEffect(() => {
-//     if (success) {
-//       toast.success(success, { duration: 4000 });
-//     }
-//   }, [success])
-
-//   const handlePageChange = useCallback((page: number) => {
-//     setCurrentPage(page);
-//   }, [setCurrentPage])
-
-//   const handleClickEdit = (event: MouseEvent, userId: number, userName: string) => {
-//     event.preventDefault();
-//     router.get(`/admin/user/${userId}`)
-//   }
-
-
-//   const handleClickDelete = (event: MouseEvent, userId: number, userName: string) => {
-//     event.preventDefault();
-//     router.delete(`/admin/user/${userId}`, {
-//       onBefore: () => confirm(`${userName}さんを削除してよろしいですか？`),
-//     })
-//   }
-
-
-
-//   return (
-//     <>
-//       <div className='max-w-7xl mx-auto sm:px-6 lg:py-8'>
-//         <div className='bg-white overflow-hidden shadow-sm'>
-//           <div className='p-6 text-gray-900'>
-
-//             <table className='w-full text-sm text-left rtl:text-right text-gray-500'>
-//               <thead className='text-xs text-slate-700 uppercase border-b-2 border-slate-600 bg-slate-200'>
-//                 <tr className='text-nowrap'>
-//                   <th className='px-3 py-3'>ID</th>
-//                   <th className='px-3 py-3'>ユーザ名</th>
-//                   <th className='px-3 py-3'>店舗URL名</th>
-//                   <th className='px-3 py-3'>メールアドレス</th>
-//                   <th className='px-3 py-3'>初回パスワード</th>
-//                   <th className='px-3 py-3 text-center'>action</th>
-//                 </tr>
-//               </thead>
-//               <tbody className='text-slate-800'>
-
-//                 {currentItems && currentItems.map(user => (
-//                   <tr
-//                     key={user.id}
-//                     className='bg-white border-b border-slate-400 text-md'>
-//                     <td className='px-3 py-2'>{user.id}</td>
-//                     <td className='px-3 py-2'>{user.name}</td>
-//                     <td className='px-3 py-2'>{user.english_name}</td>
-//                     <td className='px-3 py-2'>{user.email}</td>
-//                     <td className='px-3 py-2'>{user.first_password}</td>
-//                     <td className='px-3 py-2 text-center'>
-
-//                       <button
-//                         className='font-medium text-blue-600 hover:bg-blue-500 hover:text-white mx-1 transiton-all duration-150 p-1 rounded'
-//                         onClick={(event) => c(event, user.id, user.name)}
-//                       >
-//                         編集
-//                       </button>
-
-//                       <button
-//                         className='font-medium text-red-600 hover:bg-red-500 hover:text-white mx-1 transiton-all duration-150 p-1 rounded'
-//                         onClick={(event) => handleClickDelete(event, user.id, user.name)}
-//                       >
-//                         削除
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-
-//             <div className='w-full flex justify-center items-center mt-3'>
-//               <ResponsivePagination
-//                 current={currentPage}
-//                 total={totalPages}
-//                 onPageChange={handlePageChange}
-//                 maxWidth={350}
-//                 className="pagination select-none flex space-x-2"
-//               />
-//             </div>
-
-//           </div>
-
-//         </div>
-
-//       </div>
-//     </>
-//   )
-// }
-
-
-// export default Table;
 
 
 

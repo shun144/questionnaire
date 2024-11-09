@@ -205,6 +205,7 @@ return [
         'district' => '地区',
         'duration' => '期間',
         'email' => 'メールアドレス',
+        'english_name'=>'店舗URL名',
         'excerpt' => '抜粋',
         'filter' => 'フィルタ',
         'first_name' => '名',

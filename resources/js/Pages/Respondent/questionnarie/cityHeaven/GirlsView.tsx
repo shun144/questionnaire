@@ -8,8 +8,8 @@ import { usePage } from '@inertiajs/react';
 type Props = {
   girlsData: GirlType[];
 }
-
 const peoplePerPage = 10;
+const highLank = 3; // highLankに指定した順位までラベルの色を上位用にする
 
 const GirlsView = ({ girlsData }: Props) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,6 +43,12 @@ const GirlsView = ({ girlsData }: Props) => {
     mypage_url: string
   ) => {
     e.preventDefault;
+
+    // JSスキームXSS対策
+    if (!mypage_url.match(/^https?:\/\//)) {
+      return;
+    }
+
     countUpAchievement(url, name);
     window.open(mypage_url, "_blank", "noopener,noreferrer");
   }, [])
@@ -50,11 +56,17 @@ const GirlsView = ({ girlsData }: Props) => {
   return (
     <>
 
-      <div className='w-full h-12 flex flex-col justify-center items-center my-2 px-2 md:min-h-20 md:max-h-20' >
-        <div className=' text-slate-700 font-bold text-md md:text-3xl'>
+      <div className='w-full flex flex-col justify-center items-center my-2 px-2 md:w-11/12 md:min-h-12 max-h-40' >
+        <div className=' text-slate-600 font-semibold text-sm md:font-bold md:text-3xl md:py-8'>
           {message}
         </div>
       </div>
+
+      {/* <div className='w-full h-12 flex flex-col justify-center items-center my-2 px-2 md:min-h-20 md:max-h-20' >
+        <div className=' text-slate-700 font-bold text-md md:text-3xl'>
+          {message}
+        </div>
+      </div> */}
 
       <div className='w-full px-1 md:w-11/12'>
         <div className='grid mb-4 grid-cols-2 gap-x-3 gap-y-4
@@ -70,13 +82,13 @@ const GirlsView = ({ girlsData }: Props) => {
                   md:max-w-xl md:pt-4 md:px-2"
               >
                 <div className='absolute -top-2 -left-1 md:-top-3 md:-left-3'>
-                  <div className={`${idx + 1 + (currentPage - 1) * 10 <= 3 ? "bg-amber-400" : "bg-violet-300"} rounded-full shadow flex justify-center items-center border-2 md:border-4 border-slate-100 w-6 h-6 md:w-10 md:h-10`}>
+                  <div className={`${idx + 1 + (currentPage - 1) * 10 <= highLank ? "bg-amber-400" : "bg-violet-300"} rounded-full shadow flex justify-center items-center border-2 md:border-4 border-slate-100 w-6 h-6 md:w-10 md:h-10`}>
                     <div className='text-white text-sm md:text-xl md:font-semibold'>{idx + 1 + (currentPage - 1) * 10}</div>
                   </div>
                 </div>
 
                 <div className='rounded-lg pb-2'>
-                  <img className={`${idx + 1 + (currentPage - 1) * 10 <= 3 ? "border-yellow-200" : "border-violet-100"}  rounded-lg border-4 shadow-xl object-cover h-36 md:h-60`}
+                  <img className={`${idx + 1 + (currentPage - 1) * 10 <= highLank ? "border-yellow-200" : "border-violet-100"}  rounded-lg border-4 shadow-xl object-cover h-36 md:h-60`}
                     src={picture_url} alt={name} />
                 </div>
 

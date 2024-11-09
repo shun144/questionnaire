@@ -11,6 +11,8 @@ type Props = {
   salePoints: SalsPointType[];
 }
 
+const optionMaxNum = 3;
+
 const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
 
   const [selectedOptions, setSelectedOptions] = useState<MultiValue<SalsPointType>>(salePoints);
@@ -110,7 +112,7 @@ const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
       options={salesPoints}
       onChange={(options) => (options ? handleSelectChange([...options]) : null)}
       noOptionsMessage={() => "セールスポイントが見つかりません"}
-      placeholder="ここをクリックするとセールスポイントを選べます"
+      placeholder={`ここをクリックするとセールスポイントを"${optionMaxNum}つ"まで選べます`}
       isSearchable={true}
       isMulti
       components={{
@@ -118,7 +120,7 @@ const SalesPointSelect = ({ nodeId, choiceId, salePoints }: Props) => {
         DropdownIndicator: () => null,
         Menu: (props: MenuProps<SalsPointType, true, GroupBase<SalsPointType>>) => (<components.Menu {...props} className="nowheel" />)
       }}
-      isOptionDisabled={() => selectedOptions.length >= 3}
+      isOptionDisabled={() => selectedOptions.length >= optionMaxNum}
       styles={customStyles}
     />
   )

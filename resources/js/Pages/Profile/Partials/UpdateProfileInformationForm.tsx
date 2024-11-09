@@ -6,12 +6,17 @@ import { Link, useForm, usePage, } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 import { FormEventHandler } from 'react';
 
+const nameMaxLength = 50;
+const englishNameMaxLength = 15;
+const mailMaxLength = 255;
+const passwordMaxLength = 255;
+
 
 export default function UpdateProfileInformation({ mustVerifyEmail, status, className = '' }: { mustVerifyEmail: boolean, status?: string, className?: string }) {
     const user = usePage().props.auth.user;
 
-
     const { data, setData, patch, errors, processing, recentlySuccessful } = useForm({
+        id: user.id,
         name: user.name,
         english_name: user.english_name,
         email: user.email,
@@ -26,16 +31,16 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
     return (
         <section className={className}>
             <header>
-                <h2 className="text-lg font-medium text-gray-900">プロフィール</h2>
+                {/* <h2 className="text-lg font-medium text-gray-900">プロフィール</h2> */}
 
                 <p className="mt-1 text-sm text-gray-600">
-                    プロフィール情報やメールアドレスを更新します
+                    ユーザ情報やメールアドレスを更新します
                 </p>
             </header>
 
             <form onSubmit={submit} className="mt-6 space-y-6">
                 <div>
-                    <InputLabel htmlFor="name" value="名前" />
+                    <InputLabel htmlFor="name" value={`ユーザ名（${nameMaxLength}文字）`} />
 
                     <TextInput
                         id="name"
@@ -45,6 +50,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         required
                         isFocused
                         autoComplete="name"
+                        maxLength={nameMaxLength}
                     />
 
                     <InputError className="mt-2" message={errors.name} />
@@ -52,7 +58,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
 
                 {/* 英語名 */}
                 <div>
-                    <InputLabel htmlFor="english_name" value="店舗URL" />
+                    <InputLabel htmlFor="english_name" value={`店舗URL名（${englishNameMaxLength}文字）`} />
                     <TextInput
                         id="english_name"
                         className="mt-1 block w-full"
@@ -61,12 +67,13 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         required
                         isFocused
                         autoComplete="english_name"
+                        maxLength={englishNameMaxLength}
                     />
                     <InputError className="mt-2" message={errors.english_name} />
                 </div>
 
                 <div>
-                    <InputLabel htmlFor="email" value="メールアドレス" />
+                    <InputLabel htmlFor="email" value={`メールアドレス（${mailMaxLength}文字）`} />
 
                     <TextInput
                         id="email"
@@ -76,6 +83,7 @@ export default function UpdateProfileInformation({ mustVerifyEmail, status, clas
                         onChange={(e) => setData('email', e.target.value)}
                         required
                         autoComplete="username"
+                        maxLength={mailMaxLength}
                     />
 
                     <InputError className="mt-2" message={errors.email} />

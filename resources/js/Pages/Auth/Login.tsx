@@ -24,13 +24,13 @@ export default function Login({ status, canResetPassword }: { status?: string, c
 
     return (
         <GuestLayout>
-            <Head title="Log in" />
+            <Head title="ログイン" />
 
             {status && <div className="mb-4 font-medium text-sm text-green-600">{status}</div>}
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="email" value="Email" />
+                    <InputLabel htmlFor="email" value="メールアドレス" />
 
                     <TextInput
                         id="email"
@@ -47,7 +47,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                 </div>
 
                 <div className="mt-4">
-                    <InputLabel htmlFor="password" value="Password" />
+                    <InputLabel htmlFor="password" value="パスワード" />
 
                     <TextInput
                         id="password"
@@ -62,7 +62,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                     <InputError message={errors.password} className="mt-2" />
                 </div>
 
-                <div className="block mt-4">
+                {/* <div className="block mt-4">
                     <label className="flex items-center">
                         <Checkbox
                             name="remember"
@@ -71,7 +71,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                         />
                         <span className="ms-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                </div>
+                </div> */}
 
                 <div className="flex items-center justify-end mt-4">
                     {canResetPassword && (
@@ -79,7 +79,7 @@ export default function Login({ status, canResetPassword }: { status?: string, c
                             href={route('password.request')}
                             className="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                         >
-                            Forgot your password?
+                            パスワードを忘れた方はこちら
                         </Link>
                     )}
 

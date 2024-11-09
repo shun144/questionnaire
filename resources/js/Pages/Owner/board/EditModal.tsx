@@ -4,7 +4,8 @@ import Modal from '@/Components/Modal';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
-import { toast } from 'react-hot-toast';
+import { toast } from '@/Pages/Owner/components/toast/CustomToaster'
+
 
 type Props = {
   isOpenModal: boolean;
@@ -13,6 +14,10 @@ type Props = {
   editUrl: string;
   flowId: number;
 }
+
+const titleMaxLength = 50;
+const urlMaxLength = 15;
+
 const EditModal = ({ isOpenModal, setIsOpenModal, editTitle, editUrl, flowId }: Props) => {
 
   const { data, setData, patch, processing, reset, errors, clearErrors
@@ -50,7 +55,7 @@ const EditModal = ({ isOpenModal, setIsOpenModal, editTitle, editUrl, flowId }: 
         <form onSubmit={updateFlow} className="p-6">
 
           <div className="mt-6">
-            <InputLabel htmlFor="editTitle" value="診断タイトル" />
+            <InputLabel htmlFor="editTitle" value={`診断URL名（${urlMaxLength}文字）`} />
 
             <TextInput
               id="editTitle"
@@ -58,24 +63,26 @@ const EditModal = ({ isOpenModal, setIsOpenModal, editTitle, editUrl, flowId }: 
               name="editTitle"
               value={data.editTitle}
               onChange={(e) => setData('editTitle', e.target.value)}
-              className="mt-1 block w-3/4 placeholder-slate-300"
+              className="mt-1 block w-11/12 placeholder-slate-300"
               placeholder="タイトル"
-              maxLength={50}
+              required
+              maxLength={titleMaxLength}
             />
             <InputError message={errors.editTitle} className="mt-2" />
           </div>
 
           <div className="mt-10">
-            <InputLabel htmlFor="editUrl" value="診断URL名" />
+            <InputLabel htmlFor="editUrl" value={`診断URL名（${urlMaxLength}文字）`} />
             <TextInput
               id="editUrl"
               type="text"
               name="editUrl"
               value={data.editUrl}
               onChange={(e) => setData('editUrl', e.target.value)}
-              className="mt-1 block w-3/4 placeholder-slate-300"
+              className="mt-1 block w-11/12 placeholder-slate-300"
               placeholder="URL"
-              maxLength={15}
+              required
+              maxLength={urlMaxLength}
             />
             <InputError message={errors.editUrl} className="mt-2" />
           </div>

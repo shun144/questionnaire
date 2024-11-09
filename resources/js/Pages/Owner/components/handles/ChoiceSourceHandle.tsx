@@ -8,8 +8,6 @@ import {
 
 export type Props = {
   id: string;
-  // type: HandleType;
-  // position: Position;
   connectionLimit: number;
   style: CSSProperties;
 }
