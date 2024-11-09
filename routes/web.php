@@ -29,6 +29,10 @@ Route::prefix('admin')->name('admin.')->group(function(){
         
         Route::delete('/user/{id}', [AdminController::class, 'destroy'])->name('user.destroy');
 
+        
+        Route::get('/logs', [AdminController::class, 'getLogList'])->name('logs');
+
+
 
         Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [AdminProfileController::class, 'update'])->name('profile.update');

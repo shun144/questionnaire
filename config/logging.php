@@ -67,7 +67,8 @@ return [
 
         'daily' => [
             'driver' => 'daily',
-            'path' => storage_path('logs/DiagnosisMaster.log'),
+            // 'path' => storage_path('logs/DiagnosisMaster.log'),
+            'path' => public_path('logs/DiagnosisMaster.log'),
             'level' => env('LOG_LEVEL', 'debug'),
             'tap' => [App\Logging\CustomizeFormatter::class],
             'days' => env('LOG_DAILY_DAYS', 45),

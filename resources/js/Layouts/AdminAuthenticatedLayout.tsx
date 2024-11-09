@@ -29,6 +29,12 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                                 >
                                     ユーザ一覧
                                 </NavLink>
+                                <NavLink
+                                    href={route('admin.logs')}
+                                    active={route().current('admin.logs')}
+                                >
+                                    ログ一覧
+                                </NavLink>
 
                             </div>
                         </div>
@@ -100,6 +106,9 @@ export default function AdminAuthenticated({ header, children }: PropsWithChildr
                     <div className="pt-2 pb-3 space-y-1">
                         <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
                             ユーザ一覧
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('admin.logs')} active={route().current('admin.logs')}>
+                            ログ一覧
                         </ResponsiveNavLink>
                     </div>
 

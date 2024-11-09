@@ -18,6 +18,7 @@ use App\Http\Requests\ProfileUpdateRequest as UserProfileUpdateRequest;
 use Carbon\Carbon;
 use Illuminate\Validation\Rule;
 use App\Rules\ProhibitedNames;
+use Illuminate\Support\Facades\File;
 
 class AdminController extends Controller
 {
@@ -49,6 +50,7 @@ class AdminController extends Controller
             ]);
         }
     }
+
 
     /**
      * ユーザ作成画面へ遷移
@@ -163,5 +165,56 @@ class AdminController extends Controller
             return to_route('admin.dashboard')->with('fail', 'ユーザ削除に失敗しました');
         }
     }
+
+    /**
+     * ログファイル一覧を取得
+     */
+    public function getLogList(){
+        try {
+
+            $path = public_path('logs');
+
+            // ディレクトリの存在確認
+            if (!File::exists($path)) {
+                Log::error("Logs directory does not exist at path: $path");
+                return [];
+            }
+
+            // ファイル取得とURL変換
+            $logFiles = File::files($path);
+            $logFilesArray = [];
+
+            foreach ($logFiles as $file) {
+                $logFilesArray[] = [
+                    'name' => $file->getFilename(),
+                    'url' => url('logs/' . $file->getFilename())
+                ];
+            }
+
+            // ファイル名の降順にソート
+            usort($logFilesArray, function ($a, $b) {
+                return strcmp($b['name'], $a['name']); // 名前で降順ソート
+            });
+
+            return Inertia::render('Admin/Log/Index', [
+                'initialLogs' =>  $logFilesArray,
+                'success' => session('success'),
+                'fail' => session('fail'),
+            ]);
+
+        }
+        catch (\Exception $e) {
+            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+
+            // セッションにエラーメッセージを格納
+            session()->flash('fail', 'ログ一覧取得中にエラーが発生しました。');
+
+            return Inertia::render('Admin/User/Index', [
+                'initialLogs' =>  [],
+                'fail' => session('fail'),
+            ]);
+        }
+    }
+
 
 }
