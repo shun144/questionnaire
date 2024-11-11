@@ -1,8 +1,8 @@
 import { router } from '@inertiajs/react';
-import { useEffect, useState, useCallback, MouseEvent, useMemo, Fragment } from 'react';
-import { User } from '../../../types';
+import { useEffect, useState, useCallback, MouseEvent, useMemo, Fragment, memo } from 'react';
+// import { User } from '../../../types';
+import { User } from '@/types';
 import { toast } from '@/Pages/Owner/components/toast/CustomToaster'
-// import DebouncedInput from './DebouncedInput';
 import DebouncedInput from '@/Components/DebouncedInput';
 
 import {
@@ -21,7 +21,7 @@ type UserForAdmin = User & {
   first_password: string
 }
 
-type Props = {
+export type TableProps = {
   initialUsers: UserForAdmin[];
   success?: string;
   fail?: string;
@@ -29,7 +29,7 @@ type Props = {
 
 const columnHelper = createColumnHelper<UserForAdmin>();
 
-const Table = ({ initialUsers, success, fail }: Props) => {
+const Table = ({ initialUsers, success, fail }: TableProps) => {
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [globalFilter, setGlobalFilter] = useState("");
@@ -276,7 +276,7 @@ const Table = ({ initialUsers, success, fail }: Props) => {
 }
 
 
-export default Table;
+export default memo(Table);
 
 
 

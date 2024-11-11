@@ -32,8 +32,6 @@ Route::prefix('admin')->name('admin.')->group(function(){
         
         Route::get('/logs', [AdminController::class, 'getLogList'])->name('logs');
 
-
-
         Route::get('/profile', [AdminProfileController::class, 'edit'])->name('profile.edit');
         Route::patch('/profile', [AdminProfileController::class, 'update'])->name('profile.update');
         Route::delete('/profile', [AdminProfileController::class, 'destroy'])->name('profile.destroy');
@@ -51,6 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/totalling/{id}', [OwnerContoller::class, 'getGraphData'])->name('graph');
     
     Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
+    Route::delete('/city-heaven', [CityHeavenController::class, 'delete'])->name('cityheaven.delete');
     
     Route::post('/flow', [OwnerContoller::class, 'addFlow'])->name('flow.create');
     

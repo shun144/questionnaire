@@ -1,21 +1,12 @@
-import React from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, usePage, Link, } from '@inertiajs/react';
-import TotallingTable from "./Table";
+import { Head } from '@inertiajs/react';
+import TotallingTable, { TableProps } from "./Table";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 
-type Props = {
-  flows: {
-    id: number,
-    title: string;
-    category: string;
-    total: number
-  }[]
-}
 
 const queryClient = new QueryClient()
 
-const Index = ({ flows }: Props) => {
+const Index = ({ flows }: TableProps) => {
   return (
     <AuthenticatedLayout
       header={

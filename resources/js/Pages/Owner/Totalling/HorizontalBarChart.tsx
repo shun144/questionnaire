@@ -2,19 +2,21 @@ import { memo, useEffect, useRef, useState, useMemo } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, TooltipItem, TooltipModel } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useQuery } from '@tanstack/react-query'
-import { fetchGraphResource } from "../utils";
+import { fetchGraphResource } from "@/Pages/Owner/utils";
 import { colorList } from "./colorList";
+
+export type BarChartProps = {
+  flowId: number;
+}
 
 // Chart.jsのモジュールを登録
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
 const regex = new RegExp('.{1,25}', 'g');
 
-type Props = {
-  flowId: number
-}
-
-const HorizontalBarChart = ({ flowId }: Props) => {
+const HorizontalBarChart = ({ flowId }: BarChartProps) => {
   const chartRef = useRef<ChartJS<'bar'> | null>(null);
+
   const { isPending, error, data, isFetching, dataUpdatedAt } = useQuery({
     queryKey: [`barChart${String(flowId)}`],
     queryFn: () => fetchGraphResource(flowId).then((res) => ({
@@ -33,13 +35,10 @@ const HorizontalBarChart = ({ flowId }: Props) => {
     staleTime: 1000 * 60 * 5,
   })
 
-  const [chartHeight, setChartHeight] = useState<number>(0);
-
   useEffect(() => {
     if (chartRef.current && data) {
       const chartCanvas = chartRef.current.canvas;
       const newHeight = 100 + data.labels.length * 100;
-      setChartHeight(newHeight);
       chartCanvas.style.height = `${newHeight}px`; // CSSでの高さ設定
       chartCanvas.height = newHeight; // Canvasの高さも設定
       chartRef.current.update(); // チャートを更新
@@ -81,7 +80,6 @@ const HorizontalBarChart = ({ flowId }: Props) => {
         y: {
           stacked: false, // スタッキングを無効にする
           beginAtZero: true,
-
           ticks: {
             callback: function (_: string | number, idx: number) {
               const label = data!.labels[idx];
@@ -96,40 +94,24 @@ const HorizontalBarChart = ({ flowId }: Props) => {
     }
   ), [data])
 
+  if (isPending) { return <SkeltonMsg message="Loading..." /> }
 
-  if (isPending) {
-    return (
-      <div className="relative w-full h-24 bg-slate-50">
-        <span
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-100 transition-opacity duration-500"
-        >
-          Loading...
-        </span>
-      </div>
-    )
-  }
+  if (error) { return <SkeltonMsg message="グラフデータの取得に失敗しました。" /> }
 
-  if (error) {
-    return (
-      <div className="relative w-full h-24 bg-slate-50">
-        <span
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-100 transition-opacity duration-500"
-        >
-          エラー
-        </span>
-      </div>
-    )
-  }
 
   return (
-    <div
-      className="w-full bg-gray-50 px-2 border-2 border-gray-300 overflow-hidden transition-all duration-300 ease-in-out"
-      style={{ height: `${chartHeight}px` }}>
-      <Bar data={data!} options={options} ref={chartRef} />
+    <div className="w-full flex justify-center items-center px-2 pt-2 pb-6 ">
+      <div className="w-full bg-gray-50 border-2 border-gray-300">
+        <Bar data={data!} options={options} ref={chartRef} />
+      </div>
     </div>
-  )
-};
+  );
+}
 
+function SkeltonMsg({ message }: { message: string }) {
+  return (
+    <div className="w-full flex justify-center items-center py-6">{message}</div>
+  )
+}
 
 export default memo(HorizontalBarChart);
-

@@ -1,8 +1,8 @@
-import { useRef, FormEventHandler, memo } from 'react';
+import { useRef, FormEventHandler, memo, MouseEvent } from 'react';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import { Transition } from '@headlessui/react';
 
 type Props = {
@@ -39,6 +39,18 @@ const UpdateCityHeavenApiForm = ({ className = '', masking_access_key, masking_s
             },
         });
     };
+
+    const handleDelete = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
+
+        router.delete('/city-heaven', {
+            preserveScroll: true,
+            onBefore: () => confirm("資格情報を削除してよろしいですか？\n作成済みのシティヘブン診断結果が表示されなくなります"),
+            // onSuccess: () => reset(),
+            onFinish: () => reset(),
+        })
+    }
+
 
     return (
         <section className={className}>
@@ -106,22 +118,37 @@ const UpdateCityHeavenApiForm = ({ className = '', masking_access_key, masking_s
                     <InputError message={errors.shop_id} className="mt-2" />
                 </div>
 
-                <div className="flex items-center gap-4">
-                    {/* <PrimaryButton disabled={processing}>保存</PrimaryButton> */}
+                <div className="flex items-center justify-between gap-4">
 
-                    <button className="bg-indigo-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-indigo-600" disabled={processing}>
-                        保 存
+                    <div className='flex items-end justify-center gap-2'>
+                        <button
+                            className={` py-2 px-3 text-white rounded shadow transition-all 
+                            ${processing ? " bg-slate-400 hover:bg-slate-400" : "bg-indigo-500 hover:bg-indigo-600"}`}
+                            disabled={processing}
+                        >
+                            保 存
+                        </button>
+                        <Transition
+                            show={recentlySuccessful}
+                            enter="transition ease-in-out"
+                            enterFrom="opacity-0"
+                            leave="transition ease-in-out"
+                            leaveTo="opacity-0"
+                        >
+                            <p className="text-sm text-gray-600">保存完了</p>
+                        </Transition>
+                    </div>
+
+
+                    <button
+                        className={` py-2 px-3 text-white rounded shadow transition-all  ${(!masking_access_key || !masking_shop_id || processing) ? "bg-slate-400 hover:bg-slate-400" : "bg-red-500 hover:bg-red-600"}`}
+                        disabled={!masking_access_key || !masking_shop_id || processing}
+                        onClick={handleDelete}
+                    >
+                        削 除
                     </button>
 
-                    <Transition
-                        show={recentlySuccessful}
-                        enter="transition ease-in-out"
-                        enterFrom="opacity-0"
-                        leave="transition ease-in-out"
-                        leaveTo="opacity-0"
-                    >
-                        <p className="text-sm text-gray-600">保存完了</p>
-                    </Transition>
+
                 </div>
             </form>
         </section>

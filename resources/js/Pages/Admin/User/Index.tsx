@@ -1,23 +1,11 @@
 import AdminAuthenticatedLayout from '@/Layouts/AdminAuthenticatedLayout';
-import { Head, usePage, useForm, Link, router } from '@inertiajs/react';
-import { useEffect, useState, useCallback, MouseEvent } from 'react';
-import { User } from '../../../types';
+import { Head, Link } from '@inertiajs/react';
 import 'react-responsive-pagination/themes/classic.css';
-import { CustomToaster, toast } from '@/Pages/Owner/components/toast/CustomToaster'
-import UserTable from './Table';
-
-type UserForAdmin = User & {
-  first_password: string
-}
+import { CustomToaster } from '@/Pages/Owner/components/toast/CustomToaster'
+import UserTable, { TableProps } from './Table';
 
 
-type Props = {
-  initialUsers: UserForAdmin[];
-  success?: string;
-  fail?: string;
-}
-
-const Index = ({ initialUsers, success, fail }: Props) => {
+const Index = ({ initialUsers, success, fail }: TableProps) => {
 
   return (
     <AdminAuthenticatedLayout
