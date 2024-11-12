@@ -152,7 +152,7 @@ const FlowHeader = ({ id, initialTitle, initialUrl }: Props) => {
 
               <div className='flex w-full flex-row items-center'>
                 <label htmlFor="url" className="block text-sm font-medium text-gray-800 h-10 leading-10  text-center">URL：</label>
-                <div className='text-gray-400 border-slate-300 pr-1'>{window.location.origin}/{owner}/</div>
+                <div className='text-gray-400 border-slate-300 pr-1 text-sm'>{window.location.origin}/{owner}/</div>
                 <input
                   type="text" id="url" placeholder="URLを入力してください" ref={urlRef}
                   className={`grow bg-white  text-gray-900 text-sm focus:ring-transparent  block  p-2.5 h-full placeholder-slate-400 rounded ${error.url ? "border-rose-300 focus:border-rose-400 border-2" : "border-slate-400 focus:border-blue-400 border"} `}

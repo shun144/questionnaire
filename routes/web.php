@@ -28,7 +28,6 @@ Route::prefix('admin')->name('admin.')->group(function(){
         Route::patch('/user/{id}', [AdminController::class, 'update'])->name('user.update'); 
         
         Route::delete('/user/{id}', [AdminController::class, 'destroy'])->name('user.destroy');
-
         
         Route::get('/logs', [AdminController::class, 'getLogList'])->name('logs');
 
@@ -43,13 +42,13 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 
-    Route::get('/setting', [OwnerContoller::class, 'getApiCredential'])->name('setting');
+    // Route::get('/setting', [OwnerContoller::class, 'getApiCredential'])->name('setting');
     
     Route::get('/totalling', [OwnerContoller::class, 'getTotalling'])->name('totalling');
     Route::get('/totalling/{id}', [OwnerContoller::class, 'getGraphData'])->name('graph');
     
-    Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
-    Route::delete('/city-heaven', [CityHeavenController::class, 'delete'])->name('cityheaven.delete');
+    // Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
+    // Route::delete('/city-heaven', [CityHeavenController::class, 'delete'])->name('cityheaven.delete');
     
     Route::post('/flow', [OwnerContoller::class, 'addFlow'])->name('flow.create');
     
@@ -75,8 +74,7 @@ Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'get
 Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
 
 
-Route::get('/{owner}/{flowUrl}/cityheaven', [CityHeavenController::class, 'getCityHeavenGirls']);
+// Route::get('/{owner}/{flowUrl}/cityheaven', [CityHeavenController::class, 'getCityHeavenGirls']);
 
-// Route::get('/{owner}/{flowUrl}/cityheaven', [ApiController::class, 'getCityHeavenGirls']);
 
 

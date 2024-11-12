@@ -37,9 +37,9 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
     setIsOpenModal(false);
   }
 
-  const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setData('initialCategory', event.target.value);
-  };
+  // const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setData('initialCategory', event.target.value);
+  // };
 
   return (
     <>
@@ -80,7 +80,9 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
             <InputError message={errors.initialUrl} className="mt-2" />
           </div>
 
-          <div className="mt-10 w-fit">
+          <input type="hidden" name="category" value="standard" />
+
+          {/* <div className="mt-10 w-fit">
             <InputLabel htmlFor="standard" value="診断タイプ" />
             <div className="mx-auto max-w-md min-w-[320px]">
               <div className="flex border border-slate-300 rounded-md overflow-hidden inline-radio">
@@ -132,10 +134,10 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
                 から登録できます。
               </p>
             </div>
-          </div>
+          </div> */}
 
 
-          <div className="mt-3 flex justify-end">
+          <div className="mt-12 flex justify-start">
             <button className="bg-indigo-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-indigo-600" disabled={processing}>
               作 成
             </button>

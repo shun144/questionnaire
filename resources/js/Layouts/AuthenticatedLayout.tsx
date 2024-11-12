@@ -34,12 +34,12 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                 >
                                     診断一覧
                                 </NavLink>
-                                <NavLink
+                                {/* <NavLink
                                     href={route('setting')}
                                     active={route().current('setting')}
                                 >
                                     API資格情報
-                                </NavLink>
+                                </NavLink> */}
                                 <NavLink
                                     href={route('totalling')}
                                     active={route().current('totalling')}
@@ -124,9 +124,9 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
                             診断一覧
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink href={route('setting')} active={route().current('setting')}>
+                        {/* <ResponsiveNavLink href={route('setting')} active={route().current('setting')}>
                             API資格情報
-                        </ResponsiveNavLink>
+                        </ResponsiveNavLink> */}
                         <ResponsiveNavLink href={route('totalling')} active={route().current('totalling')}>
                             結果集計
                         </ResponsiveNavLink>

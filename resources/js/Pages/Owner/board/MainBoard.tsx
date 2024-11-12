@@ -2,7 +2,7 @@ import { memo } from 'react'
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, usePage, Link, useForm } from '@inertiajs/react';
 import { useCallback, useEffect, useState, useRef } from 'react';
-import { FlowType } from '../types';
+import { FlowType } from '@/Pages/Owner/types';
 import { deleteFlow } from '@/Pages/Owner/utils';
 import CreateModal from './CreateModal';
 import EditModal from './EditModal';
@@ -103,24 +103,19 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
           <div className='grid grid-cols-5 gap-8'>
             <>
               {
-                flows.map(({ id, category, title, url }) => (
+                flows.map(({ id, title, url }) => (
                   <Link
                     key={id}
                     onContextMenu={(event) => displayMenu(event, id, title, url)}
                     href={`flow/${id}`}
                     as="button"
                     type="button"
-                    className="w-56 h-48 rounded-lg shadow border inline-block bg-white overflow-hidden select-none
+                    className="w-56 h-40 rounded-lg shadow border inline-block bg-white overflow-hidden select-none
                     hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-slate-200 transition-all duration-300 py-2">
 
                     <div className="w-full h-full flex flex-col justify-center items-center">
-                      <div className='w-full h-1/6 pl-2 flex justify-start items-center'>
-                        <div className={`${category === 'standard' ? "bg-emerald-100 text-emerald-600" : "bg-rose-100 text-pink-500"} inline-flex rounded-md h-full justify-center items-center text-xs  px-1`}>
-                          {category === 'standard' ? "標準" : "シティヘブン"}
-                        </div>
-                      </div>
 
-                      <div className='w-full h-4/6 pt-2'>
+                      <div className='w-full h-5/6 pt-2'>
                         <div className='px-2 h-full flex flex-col justify-start'>
                           <p className='text-slate-700 text-lg break-all leading-tight text-start'>{title}</p>
                         </div>

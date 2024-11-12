@@ -1,4 +1,0 @@
-2024-11-09 17:04:25 [local.INFO] App\Http\Controllers\AdminController::getLogList admin(UserID:1) test
-2024-11-09 20:54:31 [local.ERROR] App\Http\Controllers\CityHeavenController::delete testtesttesttesttesttesttesttaaaaaaaaaesttesttestt(UserID:2) Undefined variable $id(errLine.290)
-2024-11-09 20:54:58 [local.ERROR] App\Http\Controllers\CityHeavenController::delete testtesttesttesttesttesttesttaaaaaaaaaesttesttestt(UserID:2) Undefined variable $id(errLine.290)
-2024-11-09 20:56:53 [local.ERROR] App\Http\Controllers\CityHeavenController::delete testtesttesttesttesttesttesttaaaaaaaaaesttesttestt(UserID:2) Undefined variable $id(errLine.290)
