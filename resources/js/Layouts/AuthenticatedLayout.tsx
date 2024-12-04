@@ -32,7 +32,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                                     href={route('dashboard')}
                                     active={route().current('dashboard')}
                                 >
-                                    診断一覧
+                                    アンケート一覧
                                 </NavLink>
                                 {/* <NavLink
                                     href={route('setting')}
@@ -122,7 +122,7 @@ export default function Authenticated({ header, children }: PropsWithChildren<{ 
                             Dashboard
                         </ResponsiveNavLink> */}
                         <ResponsiveNavLink href={route('dashboard')} active={route().current('dashboard')}>
-                            診断一覧
+                            アンケート一覧
                         </ResponsiveNavLink>
                         {/* <ResponsiveNavLink href={route('setting')} active={route().current('setting')}>
                             API資格情報

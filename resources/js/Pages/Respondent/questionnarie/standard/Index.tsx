@@ -71,7 +71,7 @@ const Questionnaire = ({ ownerName, title, questions, results, edges, firstQuest
 
         <Header title={title} />
 
-        <div className=' bg-slate-100 grow'>
+        <div className=' bg-slate-100 grow basis-1/2 overflow-hidden '>
           {!isLoading && (
             <>
               {currentQuestionnarie.category === 'question' && <StandardQuestion />}

@@ -1,16 +1,15 @@
 import { useCallback, ChangeEvent, memo } from 'react'
 import { Node, NodeProps, Handle, Position, useReactFlow } from '@xyflow/react';
-import ChoiceSourceHandle from '../../components/handles/ChoiceSourceHandle';
-import { getNewId } from '../../utils';
-import { useOwnerStore } from '../../store';
-import { ChoiceType, QuestionNodeType } from '../../types';
+import ChoiceSourceHandle from '@/Pages/Owner/components/handles/ChoiceSourceHandle';
+import { showContextMenu } from '@/Pages/Owner/components/subMenu/QuestionSubMenu';
+import { getNewId } from '@/Pages/Owner/utils';
+import { useOwnerStore } from '@/Pages/Owner/store';
+import { questionMaxLength, choiceMaxLength, choiceMaxLNum } from '@/Pages/Owner/constants';
+import { ChoiceType, QuestionNodeType } from '@/Pages/Owner/types';
 import { FaRegTrashAlt, FaPlus } from "react-icons/fa";
 import { BsThreeDots } from "react-icons/bs";
-import { showContextMenu } from '../../components/subMenu/QuestionSubMenu';
 
-const questionMaxLength = 100;
-const choiceMaxLength = 40;
-const choiceMaxLNum = 5;
+
 
 const StandardQuestionNode = ({ id: nodeId, data: nodeData }: NodeProps<Node<QuestionNodeType>>) => {
 

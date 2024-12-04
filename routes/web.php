@@ -38,7 +38,9 @@ Route::prefix('admin')->name('admin.')->group(function(){
     require __DIR__.'/admin.php';
 });
 
-Route::middleware('auth')->group(function () {
+// Route::middleware('auth')->group(function () {
+
+Route::middleware(['auth','force.password.change'])->group(function () {
 
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
 

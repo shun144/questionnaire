@@ -86,10 +86,10 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
     <AuthenticatedLayout
       header={
         <div className='flex justify-between items-center py-3'>
-          <h2 className="font-bold text-xl text-slate-600 leading-tight">診 断 一 覧</h2>
+          <h2 className="font-bold text-xl text-slate-600 leading-tight">アンケート一覧</h2>
           <button className="bg-indigo-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-indigo-600"
             onClick={() => setIsOpenCreateModal(true)}>
-            診 断 作 成
+            作 成
           </button>
         </div >
       }
@@ -133,7 +133,7 @@ const MainBoard = ({ initialFlows, isRegisteredApiCredential }: Props) => {
           :
           <div className='w-full h-full flex justify-center items-start'>
             <div className='text-3xl font-bold select-none text-slate-400/80'>
-              診断作成ボタンから診断を作成してください
+              作成ボタンからアンケートを作成してください
             </div>
           </div>
         }

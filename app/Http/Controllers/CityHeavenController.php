@@ -24,9 +24,6 @@ use App\Models\CityHeaven;
 
 class CityHeavenController extends Controller
 {
-
-
-
     public function getCityHeavenGirls($owner) {
 
         $user_record = DB::table('users')->where('english_name', $owner)->select('id')->first();

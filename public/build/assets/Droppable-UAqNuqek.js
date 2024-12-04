@@ -1,0 +1,1 @@
+import{r as o,j as t}from"./app-BPOq-aCu.js";import{u as a}from"./core.esm-BMO0gdOp.js";const p=({children:e,id:s})=>{const{setNodeRef:r,isOver:m}=a({id:s});return t.jsx("div",{ref:r,className:"bg-slate-950 w-[95%]",children:e})},f=o.memo(p);export{f as default};

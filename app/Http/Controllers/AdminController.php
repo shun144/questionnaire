@@ -85,6 +85,7 @@ class AdminController extends Controller
                 'email' => $validatedData['email'],
                 'password' => Hash::make($validatedData['password']),
                 'first_password' => $validatedData['password'],
+                'force_password_reset' => true,
             ]);
     
             return to_route('admin.dashboard')->with('success', 'ユーザを追加しました');
@@ -122,7 +123,7 @@ class AdminController extends Controller
 
 
     /**
-     * ユーザ編集
+     * ユーザ更新
      */
     public function update($id, UserProfileUpdateRequest $request): RedirectResponse
     {

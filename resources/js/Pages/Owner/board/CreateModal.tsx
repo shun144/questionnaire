@@ -82,61 +82,6 @@ const CreateModal = ({ isOpenModal, setIsOpenModal, isRegisteredApiCredential }:
 
           <input type="hidden" name="category" value="standard" />
 
-          {/* <div className="mt-10 w-fit">
-            <InputLabel htmlFor="standard" value="診断タイプ" />
-            <div className="mx-auto max-w-md min-w-[320px]">
-              <div className="flex border border-slate-300 rounded-md overflow-hidden inline-radio">
-                <div className="flex-1">
-                  <input
-                    type="radio"
-                    id="standard"
-                    name="category"
-                    value="standard"
-                    className="opacity-0 absolute"
-                    checked={data.initialCategory === 'standard'}
-                    onChange={handleOptionChange}
-                  />
-                  <label
-                    htmlFor="standard"
-                    className={`text-sm flex items-center justify-center w-full h-12 text-gray-400 cursor-pointer border-r-2 border-white transition duration-300 select-none ${data.initialCategory === 'standard' ? 'bg-emerald-400 text-white font-medium' : ''}`}
-                  >
-                    標準診断
-                  </label>
-                </div>
-                <div className="flex-1">
-                  <input
-                    type="radio"
-                    id="cityHeaven"
-                    name="category"
-                    value="cityHeaven"
-                    className="opacity-0 absolute"
-                    checked={data.initialCategory === 'cityHeaven'}
-                    onChange={handleOptionChange}
-                    disabled={!isRegisteredApiCredential}
-                  />
-                  <label
-                    htmlFor="cityHeaven"
-                    className={`text-sm  flex items-center justify-center w-full h-12 text-gray-400 transition duration-300 select-none 
-                    ${data.initialCategory === 'cityHeaven' ? 'bg-pink-500 text-white font-medium' : ''}
-                    ${isRegisteredApiCredential ? "cursor-pointer" : "cursor-not-allowed"}
-                  `}
-                  >
-                    シティヘブン診断
-                  </label>
-                </div>
-              </div>
-              <p className='text-slate-400 select-none pt-2'>
-                シティヘブン診断のご利用には、シティヘブンAPIに関する資格情報が必要です。
-                資格情報は
-                <Link className="inline text-indigo-700 underline hover:text-indigo-400" href={"setting"}>
-                  こちら
-                </Link>
-                から登録できます。
-              </p>
-            </div>
-          </div> */}
-
-
           <div className="mt-12 flex justify-start">
             <button className="bg-indigo-500 py-2 px-3 text-white rounded shadow transition-all hover:bg-indigo-600" disabled={processing}>
               作 成
