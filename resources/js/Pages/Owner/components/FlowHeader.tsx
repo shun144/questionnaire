@@ -145,7 +145,7 @@ const FlowHeader = ({ id, initialTitle, initialUrl }: Props) => {
               </div>
             </div>
 
-            <div className=' flex flex-col items-center w-96'>
+            <div className=' flex flex-col items-center w-[580px]'>
               <div>
                 {error.url && (<div className='text-sm text-red-500'>{error.url}</div>)}
               </div>
