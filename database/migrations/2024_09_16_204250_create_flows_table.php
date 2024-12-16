@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('flows', function (Blueprint $table) {
             $table->id();
             $table->string('title', 50)->nullable();
-            $table->string('category');
             $table->string('url', 15)->nullable();
             $table->string('first_question_id')->nullable();
             $table->float('x', 8, 2)->default(0);

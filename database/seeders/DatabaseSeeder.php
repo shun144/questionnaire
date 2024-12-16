@@ -20,10 +20,10 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@example.com',
         ]);
         
-        // User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        User::factory()->create([
+            'name' => 'TestUser',
+            'email' => 'test@example.com',
+        ]);
 
         // $this->call([
         //     initFlowSeeder::class,

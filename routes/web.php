@@ -3,10 +3,8 @@
 use App\Http\Controllers\ProfileController as OwnerProfileController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\AdminController;
-// use App\Http\Controllers\ApiController;
 use App\Http\Controllers\RespondentController;
 use App\Http\Controllers\OwnerContoller;
-use App\Http\Controllers\CityHeavenController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -38,28 +36,16 @@ Route::prefix('admin')->name('admin.')->group(function(){
     require __DIR__.'/admin.php';
 });
 
-// Route::middleware('auth')->group(function () {
-
 Route::middleware(['auth','force.password.change'])->group(function () {
 
     Route::get('/dashboard', [OwnerContoller::class, 'getFlowList'])->name('dashboard');
-
-    // Route::get('/setting', [OwnerContoller::class, 'getApiCredential'])->name('setting');
-    
     Route::get('/totalling', [OwnerContoller::class, 'getTotalling'])->name('totalling');
     Route::get('/totalling/{id}', [OwnerContoller::class, 'getGraphData'])->name('graph');
-    
-    // Route::put('/city-heaven', [CityHeavenController::class, 'update'])->name('cityheaven.update');
-    // Route::delete('/city-heaven', [CityHeavenController::class, 'delete'])->name('cityheaven.delete');
-    
     Route::post('/flow', [OwnerContoller::class, 'addFlow'])->name('flow.create');
-    
     Route::get('/flow/{id}', [OwnerContoller::class, 'getFlow'])->name('flow.index');
     Route::post('/flow/{id}', [OwnerContoller::class, 'commit'])->name('flow.commit');
     Route::patch('/flow/{id}', [OwnerContoller::class, 'updateFlow'])->name('flow.update');
     Route::delete('/flow/{id}', [OwnerContoller::class, 'deleteFlow'])->name('flow.delete');
-
-
     Route::get('/profile', [OwnerProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [OwnerProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [OwnerProfileController::class, 'destroy'])->name('profile.destroy');
@@ -74,9 +60,6 @@ Route::post('/{owner}/{flowUrl}', [RespondentController::class, 'addAchievement'
 
 Route::get('/{owner}/{flowUrl}/questionnaire', [RespondentController::class,'getQuestionnair']);
 Route::get('/{owner}/{flowUrl}/firstQuestionId', [RespondentController::class,'getFirstQuestionId']);
-
-
-// Route::get('/{owner}/{flowUrl}/cityheaven', [CityHeavenController::class, 'getCityHeavenGirls']);
 
 
 

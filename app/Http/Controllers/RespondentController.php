@@ -34,7 +34,7 @@ class RespondentController extends Controller
                 ['user_id', $user_record->id],
                 ['url', $flowUrl],
             ])
-            ->select('id', 'first_question_id', 'title', 'category')
+            ->select('id', 'first_question_id', 'title')
             ->first();
 
             // アンケートが存在しないならNotFoundページを表示
@@ -45,7 +45,6 @@ class RespondentController extends Controller
             $flow_id = $flow_record->id;
             $title = $flow_record->title;
             $first_question_id = $flow_record->first_question_id;
-            $category = $flow_record->category;
 
             $questions_record = DB::table('questions')
             ->where('flow_id', $flow_id)
@@ -71,7 +70,7 @@ class RespondentController extends Controller
                 return Inertia::render('Respondent/questionnarie/components/NotFound');
             }
 
-            return Inertia::render('Respondent/questionnarie/'.$category.'/Index', [
+            return Inertia::render('Respondent/questionnarie/Index', [
                 'ownerName' => $user_record->name,
                 'title' => $title,
                 'questions' => $questions,

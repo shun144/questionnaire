@@ -1,18 +1,51 @@
-import { Link, InertiaLinkProps } from '@inertiajs/react';
+import { memo } from "react";
+import { Link, InertiaLinkProps } from "@inertiajs/react";
+import { tv } from "tailwind-variants";
+import { IconType } from "react-icons";
 
-export default function NavLink({ active = false, className = '', children, ...props }: InertiaLinkProps & { active: boolean }) {
+type Props = InertiaLinkProps & { active?: boolean; icon?: IconType };
+
+const linkTv = tv({
+    base: "flex justify-start items-center w-full min-w-20 min-h-20 overflow-hidden border-b border-slate-300 group transition duration-300",
+    variants: {
+        active: {
+            true: "bg-indigo-500",
+            false: "bg-transparent hover:bg-slate-200",
+        },
+    },
+    defaultVariants: {
+        active: false,
+    },
+});
+
+const spanTv = tv({
+    base: "text-base font-medium leading-5  ease-in-out focus:outline-none whitespace-nowrap transition duration-300",
+    variants: {
+        active: {
+            true: "text-white",
+            false: "text-indigo-600 group-hover:text-indigo-400",
+        },
+    },
+    defaultVariants: {
+        active: false,
+    },
+});
+
+const NavLink = ({ active = false, children, icon: Icon, ...props }: Props) => {
     return (
-        <Link
-            {...props}
-            className={
-                'inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium leading-5 transition duration-150 ease-in-out focus:outline-none ' +
-                (active
-                    ? 'border-indigo-400 text-gray-900 focus:border-indigo-700 '
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 focus:text-gray-700 focus:border-gray-300 ') +
-                className
-            }
-        >
-            {children}
+        <Link {...props} className={linkTv({ active })}>
+            <div className="flex justify-center items-center gap-3 pl-2">
+                {Icon && (
+                    <Icon
+                        size={40}
+                        className="bg-indigo-100 text-indigo-700 p-2 rounded-full shrink-0"
+                    />
+                )}
+
+                <span className={spanTv({ active })}>{children}</span>
+            </div>
         </Link>
     );
-}
+};
+
+export default memo(NavLink);

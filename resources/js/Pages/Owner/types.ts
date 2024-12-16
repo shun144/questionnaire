@@ -1,73 +1,67 @@
-export type FlowCategoryType = 'standard' | 'cityHeaven';
-
 export type FlowType = {
-  id: number;
-  category: FlowCategoryType;
-  title: string;
-  url: string;
-  firstQuestionId: string;
-}
+    id: number;
+    title: string;
+    url: string;
+    firstQuestionId: string;
+};
 
 export type SalsPointType = {
-  label: string;
-  no: string;
-  value: string;
-}
+    label: string;
+    no: string;
+    value: string;
+};
 
 export type ChoiceType = {
-  id: string;
-  content: string;
-  salePoints: SalsPointType[]
-}
+    id: string;
+    content: string;
+    salePoints: SalsPointType[];
+};
 
 export type QuestionNodeType = {
-  id: string,
-  topic: string;
-  img?: string;
-  choices: ChoiceType[];
-}
-
+    id: string;
+    topic: string;
+    img?: string;
+    choices: ChoiceType[];
+};
 
 export type ResultNodeType = {
-  id: string;
-  result: string;
-  message?: string;
-  img?: string;
-  url?: string;
-}
+    id: string;
+    result: string;
+    message?: string;
+    img?: string;
+    url?: string;
+};
 
 export type RecommendNodeType = {
-  id: string;
-  message?: string;
-}
+    id: string;
+    message?: string;
+};
 
 export type OwnerState = {
-  firstNodeId: string,
-  flowTitle: string,
-  flowUrl: string,
-  isDirty: boolean,
+    firstNodeId: string;
+    flowTitle: string;
+    flowUrl: string;
+    isDirty: boolean;
 
-  qNodeNum: number,
-  rNodeNum: number,
+    qNodeNum: number;
+    rNodeNum: number;
 
-  setFirstNodeId: (by: string) => void,
-  setFlowTitle: (by: string) => void,
-  setFlowUrl: (by: string) => void,
-  setIsDirty: (by: boolean) => void,
+    isSidebarOpen: boolean;
 
-  setQnodeNum: (by: number) => void
-  addQnodeNum: (by: number) => void,
+    setFirstNodeId: (by: string) => void;
+    setFlowTitle: (by: string) => void;
+    setFlowUrl: (by: string) => void;
+    setIsDirty: (by: boolean) => void;
 
-  setRnodeNum: (by: number) => void
-  addRnodeNum: (by: number) => void,
-}
+    setQnodeNum: (by: number) => void;
+    addQnodeNum: (by: number) => void;
+
+    setRnodeNum: (by: number) => void;
+    addRnodeNum: (by: number) => void;
+    setIsSidebarOpen: (by: boolean) => void;
+};
 
 export type Graph = {
-  labels: string[];
-  datas: number[];
-}
-
-
-
-
-
+    labels: string[];
+    datas: number[];
+};
