@@ -35,7 +35,9 @@ const useConnectHook = (setEdges: Dispatch<SetStateAction<Edge[]>>) => {
                 return;
             }
 
-            setEdges((eds) => addEdge({ ...params, type: "smoothstep" }, eds));
+            setEdges((edges) =>
+                addEdge({ ...params, type: "smoothstep" }, edges)
+            );
         },
         [setEdges]
     );

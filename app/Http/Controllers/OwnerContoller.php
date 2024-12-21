@@ -37,7 +37,7 @@ class OwnerContoller extends Controller
             ]);
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             
             return Inertia::render('Owner/board/MainBoard', [
                 'initialFlows' =>  [],
@@ -79,7 +79,7 @@ class OwnerContoller extends Controller
             return Inertia::render("Owner/flow/FlowLayout", $data);
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             return redirect()->route('dashboard');
         }
     }
@@ -120,7 +120,7 @@ class OwnerContoller extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             
             return redirect()->route('dashboard');
         }
@@ -158,7 +158,7 @@ class OwnerContoller extends Controller
             return to_route('dashboard');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             return to_route('dashboard');
         }
     }
@@ -176,7 +176,7 @@ class OwnerContoller extends Controller
                 return response()->json(['error' => '削除対象が見つかりませんでした'], 404);
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage() . '(errLine.' . $e->getLine() . ')');
+            Log::error($e->getMessage() . '(errLine.' . $e->getLine() . ')');
             return response()->json(['error' => '削除に失敗しました'], 500);
         }
     }
@@ -200,14 +200,31 @@ class OwnerContoller extends Controller
                     return $query->where('user_id', $user_id);
                 })->ignore($id),
             ],       
-            'first_question_id' => ['required'],            
+            'first_question_id' => ['required'],      
+            // 'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // 配列のバリデーション      
         ]);
 
         $params = $request->only(['update_questions','update_results','update_edges','x','y','zoom' ]);
 
+        
+        // 画像の保存処理
+        $timestamp = now()->timestamp; // 現在のタイムスタンプ
+        $paths = [];
+        
         DB::beginTransaction();
         
         try {
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $originalName = $image->getClientOriginalName(); // 例: AAA.jpg
+                    $uniqueFileName = $timestamp . '_' . $originalName; // 例: 1674456789_AAA.jpg
+                    
+                    // ユーザーごとのディレクトリに保存
+                    $paths[] = $image->storeAs("user_{$user_id}/images", $uniqueFileName, 'public');
+                }
+            }
+
             DB::table('flows')
             ->where('id', $id)
             ->update([
@@ -238,11 +255,15 @@ class OwnerContoller extends Controller
             ]);
 
             DB::commit();
+
+
+
+
             return to_route('flow.index', $id);
         }
         catch (\Exception $e) {
             DB::rollBack();
-            \Log::error($e->getMessage(). ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage(). ' (errLine: ' . $e->getLine() . ')');
             return redirect()->back()->withErrors('更新に失敗しました');
         }
     }
@@ -268,7 +289,7 @@ class OwnerContoller extends Controller
             $flows = $flow_records ?? [];        
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
             $flows = []; // エラー時のデフォルト値
         }
         return Inertia::render('Owner/Totalling/Totalling', [
@@ -296,7 +317,7 @@ class OwnerContoller extends Controller
 
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
         
             // エラー時は空のラベルとデータを返す
             $labels = [];

@@ -37,10 +37,21 @@ export type RecommendNodeType = {
     message?: string;
 };
 
+export interface SubmitError {
+    title?: string;
+    url?: string;
+}
+
+export interface FlowImage {
+    id: string;
+    imageFile: File;
+}
+
 export type OwnerState = {
-    firstNodeId: string;
+    flowId?: number;
     flowTitle: string;
     flowUrl: string;
+    firstNodeId: string;
     isDirty: boolean;
 
     qNodeNum: number;
@@ -48,9 +59,14 @@ export type OwnerState = {
 
     isSidebarOpen: boolean;
 
-    setFirstNodeId: (by: string) => void;
+    submitError: SubmitError;
+
+    flowImages: FlowImage[];
+
+    setFlowId: (by: number) => void;
     setFlowTitle: (by: string) => void;
     setFlowUrl: (by: string) => void;
+    setFirstNodeId: (by: string) => void;
     setIsDirty: (by: boolean) => void;
 
     setQnodeNum: (by: number) => void;
@@ -59,6 +75,10 @@ export type OwnerState = {
     setRnodeNum: (by: number) => void;
     addRnodeNum: (by: number) => void;
     setIsSidebarOpen: (by: boolean) => void;
+
+    setSubmitError: (by: SubmitError) => void;
+    addImage: (by: FlowImage) => void;
+    delImage: (by: string) => void;
 };
 
 export type Graph = {

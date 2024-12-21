@@ -41,14 +41,8 @@ const BoardMenu = ({ setFlows }: Props) => {
     const [editId, setEditId] = useState(0);
     const [isOpenEditModal, setIsOpenEditModal] = useState(false);
 
-    const {
-        props: {
-            auth: {
-                user: { english_name },
-            },
-        },
-    } = usePage();
-
+    const { props } = usePage();
+    const owner = props.auth.user.english_name;
     const BASE_URL = useMemo(() => import.meta.env.VITE_BASE_URL, []);
 
     const handleFlowDelete = useCallback(
@@ -80,7 +74,7 @@ const BoardMenu = ({ setFlows }: Props) => {
 
     const handleCopy = useCallback(async ({ props: { url } }: ItemParams) => {
         try {
-            const flowFullUrl = `${BASE_URL}/${english_name}/${url}`;
+            const flowFullUrl = `${BASE_URL}/${owner}/${url}`;
             await navigator.clipboard.writeText(flowFullUrl);
             toast.success("URLをクリップボードにコピーしました", {
                 duration: 3000,
@@ -89,18 +83,6 @@ const BoardMenu = ({ setFlows }: Props) => {
             toast.error("URLのコピーに失敗しました", { duration: 3000 });
         }
     }, []);
-
-    // const handleCopy = async ({ props: { url } }: ItemParams) => {
-    //     try {
-    //         const flowFullUrl = `${BASE_URL}/${auth.user.english_name}/${url}`;
-    //         await navigator.clipboard.writeText(flowFullUrl);
-    //         toast.success("URLをクリップボードにコピーしました", {
-    //             duration: 3000,
-    //         });
-    //     } catch (error) {
-    //         toast.error("URLのコピーに失敗しました", { duration: 3000 });
-    //     }
-    // };
 
     return (
         <>
