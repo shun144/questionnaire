@@ -1,0 +1,1 @@
+import{r,j as t}from"./app-MNzaSWed.js";import{a}from"./core.esm-ClfLRJV2.js";const p=({children:e,id:s})=>{const{setNodeRef:o}=a({id:s});return t.jsx("div",{ref:o,className:"bg-slate-950 w-full",children:e})},f=r.memo(p);export{f as default};

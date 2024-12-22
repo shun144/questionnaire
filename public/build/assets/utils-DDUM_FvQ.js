@@ -1,0 +1,1 @@
+import{b as e}from"./app-MNzaSWed.js";const s=async t=>{try{return(await e.get(`totalling/${t}`)).data}catch{return{labels:[],datas:[]}}},o=async t=>{try{return await e.delete(`/flow/${t}`),!0}catch{return!1}},n=()=>Math.random().toString(32).substring(2);export{o as d,s as f,n as g};
