@@ -5,15 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Inertia\Response;
 use App\Models\Flow;
-use App\Models\Question;
-use App\Models\Choice;
-use App\Models\Result;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Log;
 use App\Rules\ProhibitedNames;
 
@@ -37,7 +31,7 @@ class OwnerContoller extends Controller
             ]);
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             
             return Inertia::render('Owner/board/MainBoard', [
                 'initialFlows' =>  [],
@@ -57,7 +51,6 @@ class OwnerContoller extends Controller
                 ->select('title', 'url', 'first_question_id', 'x', 'y', 'zoom')
                 ->first();
         
-            
             // node_datasやedge_datasのデータをそれぞれ取得し、nullの場合のデフォルト値を設定
             $questions = DB::table('questions')->where('flow_id', $id)->value('node_datas') ?? '[]';
             $results = DB::table('results')->where('flow_id', $id)->value('node_datas') ?? '[]';
@@ -75,11 +68,11 @@ class OwnerContoller extends Controller
                 'zoom' => $flow->zoom,
                 'initFirstQuestionId' => $flow->first_question_id,
             ];
-        
+
             return Inertia::render("Owner/flow/FlowLayout", $data);
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             return redirect()->route('dashboard');
         }
     }
@@ -120,7 +113,7 @@ class OwnerContoller extends Controller
         } catch (\Exception $e) {
             DB::rollBack();
             
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             
             return redirect()->route('dashboard');
         }
@@ -158,7 +151,7 @@ class OwnerContoller extends Controller
             return to_route('dashboard');
         } catch (\Exception $e) {
             DB::rollBack();
-            \Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
+            Log::error($e->getMessage().'(errLine.'.$e->getLine().')');
             return to_route('dashboard');
         }
     }
@@ -176,7 +169,7 @@ class OwnerContoller extends Controller
                 return response()->json(['error' => '削除対象が見つかりませんでした'], 404);
             }
         } catch (\Exception $e) {
-            \Log::error($e->getMessage() . '(errLine.' . $e->getLine() . ')');
+            Log::error($e->getMessage() . '(errLine.' . $e->getLine() . ')');
             return response()->json(['error' => '削除に失敗しました'], 500);
         }
     }
@@ -200,14 +193,43 @@ class OwnerContoller extends Controller
                     return $query->where('user_id', $user_id);
                 })->ignore($id),
             ],       
-            'first_question_id' => ['required'],            
+            'first_question_id' => ['required'],      
+            // 'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // 配列のバリデーション      
         ]);
 
         $params = $request->only(['update_questions','update_results','update_edges','x','y','zoom' ]);
 
+        
+        // 画像の保存処理
+        $timestamp = now()->timestamp; // 現在のタイムスタンプ
+        $savedFiles = [];
+        
         DB::beginTransaction();
         
         try {
+
+            if ($request->hasFile('images')) {
+            
+                $images = $request->file('images'); // アップロードされたファイル
+                $imageNodeIds = $request->input('imageNodeIds'); // フロントエンドから送信されたファイル名
+
+                // dd($fileNames);
+                foreach ($images as $index => $image) {
+                    // $fileName = $fileNames[$index] ?? uniqid() . '.' . $image->getClientOriginalExtension();
+
+                    $fileName = $imageNodeIds[$index] . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs("user_{$user_id}/images", $fileName, 'public');
+                    $savedFiles[] = $path; // 保存したパスを格納
+
+
+                    // $originalName = $image->getClientOriginalName(); // 例: AAA.jpg
+                    // $uniqueFileName = $timestamp . '_' . $originalName; // 例: 1674456789_AAA.jpg
+                    
+                    // // ユーザーごとのディレクトリに保存
+                    // $paths[] = $image->storeAs("user_{$user_id}/images", $uniqueFileName, 'public');
+                }
+            }
+
             DB::table('flows')
             ->where('id', $id)
             ->update([
@@ -238,11 +260,13 @@ class OwnerContoller extends Controller
             ]);
 
             DB::commit();
+
+
             return to_route('flow.index', $id);
         }
         catch (\Exception $e) {
             DB::rollBack();
-            \Log::error($e->getMessage(). ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage(). ' (errLine: ' . $e->getLine() . ')');
             return redirect()->back()->withErrors('更新に失敗しました');
         }
     }
@@ -268,7 +292,7 @@ class OwnerContoller extends Controller
             $flows = $flow_records ?? [];        
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
             $flows = []; // エラー時のデフォルト値
         }
         return Inertia::render('Owner/Totalling/Totalling', [
@@ -296,7 +320,7 @@ class OwnerContoller extends Controller
 
         }
         catch (\Exception $e) {
-            \Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
+            Log::error($e->getMessage() . ' (errLine: ' . $e->getLine() . ')');
         
             // エラー時は空のラベルとデータを返す
             $labels = [];

@@ -55,7 +55,24 @@ export default {
         },
     },
 
-    plugins: [forms],
+    plugins: [
+        forms,
+        function ({ addUtilities, theme }) {
+            const topValues = theme("spacing");
+
+            const customTopUtilities = Object.entries(topValues).reduce(
+                (acc, [key, value]) => {
+                    acc[`.react-flow__panel.top.panel-top-${key}`] = {
+                        top: value,
+                    };
+                    return acc;
+                },
+                {}
+            );
+            // ユーティリティを追加
+            addUtilities(customTopUtilities, ["responsive"]);
+        },
+    ],
 
     future: {
         hoverOnlyWhenSupported: true,

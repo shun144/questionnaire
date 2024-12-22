@@ -7,7 +7,6 @@ import { useOwnerStore } from "@/Pages/Owner/store";
 import { CustomToaster } from "@/Pages/Owner/components/toast/CustomToaster";
 import QuestionSubMenu from "@/Pages/Owner/components/subMenu/QuestionSubMenu";
 import ResultSubMenu from "@/Pages/Owner/components/subMenu/ResultSubMenu";
-import FlowHeader from "@/Pages/Owner/components/FlowHeader";
 
 type Props = {
     id: number;
@@ -22,22 +21,17 @@ type Props = {
     zoom: number;
 };
 
-const FlowLayout = ({
-    id,
-    questions,
-    results,
-    edges,
-    title,
-    url,
-    initFirstQuestionId,
-    x,
-    y,
-    zoom,
-}: Props) => {
+const FlowLayout = (props: Props) => {
     const setFirstNodeId = useOwnerStore((state) => state.setFirstNodeId);
+    const setFlowTitle = useOwnerStore((state) => state.setFlowTitle);
+    const setFlowUrl = useOwnerStore((state) => state.setFlowUrl);
+    const setFlowId = useOwnerStore((state) => state.setFlowId);
 
     useEffect(() => {
-        setFirstNodeId(initFirstQuestionId);
+        setFlowId(props.id);
+        setFirstNodeId(props.initFirstQuestionId);
+        setFlowTitle(props.title);
+        setFlowUrl(props.url);
     }, []);
 
     return (
@@ -46,14 +40,17 @@ const FlowLayout = ({
 
             <ReactFlowProvider>
                 <div className="h-full w-full flex flex-col">
-                    <FlowHeader id={id} initialTitle={title} initialUrl={url} />
                     <Flow
                         initialNodes={[
-                            ...JSON.parse(questions),
-                            ...JSON.parse(results),
+                            ...JSON.parse(props.questions),
+                            ...JSON.parse(props.results),
                         ]}
-                        initialEdges={JSON.parse(edges)}
-                        defaultViewport={{ x, y, zoom }}
+                        initialEdges={JSON.parse(props.edges)}
+                        defaultViewport={{
+                            x: props.x,
+                            y: props.y,
+                            zoom: props.zoom,
+                        }}
                     />
                 </div>
 

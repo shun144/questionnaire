@@ -24,7 +24,6 @@ const QuestionNode = ({
     const handleUpdateTopic = useCallback(
         (event: ChangeEvent<HTMLTextAreaElement>) => {
             updateNodeData(nodeId, {
-                ...nodeData,
                 topic: event.currentTarget.value,
             });
         },
@@ -33,10 +32,9 @@ const QuestionNode = ({
 
     // 選択肢の追加
     const handleAddChoice = () => {
-        const newChoiceNo = getNewId();
         updateNodeData(nodeId, {
             ...nodeData,
-            choices: [...nodeData.choices, { id: newChoiceNo, content: "" }],
+            choices: [...nodeData.choices, { id: getNewId(), content: "" }],
         });
     };
 

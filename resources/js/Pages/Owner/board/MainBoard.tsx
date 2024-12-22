@@ -17,15 +17,8 @@ type Props = {
 const MainBoard = ({ initialFlows }: Props) => {
     const [flows, setFlows] = useState<FlowType[]>(initialFlows);
     const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
-    const {
-        props: {
-            auth: {
-                user: { english_name },
-            },
-        },
-    } = usePage();
-
-    // const BASE_URL = useMemo(() => import.meta.env.VITE_BASE_URL, []);
+    const { props } = usePage();
+    const owner = props.auth.user.english_name;
 
     useEffect(() => {
         setFlows(initialFlows);
@@ -46,7 +39,7 @@ const MainBoard = ({ initialFlows }: Props) => {
                                             key={id}
                                             id={id}
                                             title={title}
-                                            fullUrl={`${english_name}/${url}`}
+                                            fullUrl={`${owner}/${url}`}
                                         />
                                     ))}
                                 </div>

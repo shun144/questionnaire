@@ -70,7 +70,7 @@ class RespondentController extends Controller
                 return Inertia::render('Respondent/questionnarie/components/NotFound');
             }
 
-            return Inertia::render('Respondent/questionnarie/Index', [
+            return Inertia::render('Respondent/questionnarie/Questionnaire', [
                 'ownerName' => $user_record->name,
                 'title' => $title,
                 'questions' => $questions,
