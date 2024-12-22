@@ -24,7 +24,6 @@ const QuestionNode = ({
     const handleUpdateTopic = useCallback(
         (event: ChangeEvent<HTMLTextAreaElement>) => {
             updateNodeData(nodeId, {
-                ...nodeData,
                 topic: event.currentTarget.value,
             });
         },

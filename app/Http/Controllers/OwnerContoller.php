@@ -5,15 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Inertia\Response;
 use App\Models\Flow;
-use App\Models\Question;
-use App\Models\Choice;
-use App\Models\Result;
 use Inertia\Inertia;
 use Illuminate\Validation\Rule;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Log;
 use App\Rules\ProhibitedNames;
 
@@ -57,7 +51,6 @@ class OwnerContoller extends Controller
                 ->select('title', 'url', 'first_question_id', 'x', 'y', 'zoom')
                 ->first();
         
-            
             // node_datasやedge_datasのデータをそれぞれ取得し、nullの場合のデフォルト値を設定
             $questions = DB::table('questions')->where('flow_id', $id)->value('node_datas') ?? '[]';
             $results = DB::table('results')->where('flow_id', $id)->value('node_datas') ?? '[]';
@@ -75,7 +68,7 @@ class OwnerContoller extends Controller
                 'zoom' => $flow->zoom,
                 'initFirstQuestionId' => $flow->first_question_id,
             ];
-        
+
             return Inertia::render("Owner/flow/FlowLayout", $data);
         }
         catch (\Exception $e) {
@@ -209,19 +202,31 @@ class OwnerContoller extends Controller
         
         // 画像の保存処理
         $timestamp = now()->timestamp; // 現在のタイムスタンプ
-        $paths = [];
+        $savedFiles = [];
         
         DB::beginTransaction();
         
         try {
 
             if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $originalName = $image->getClientOriginalName(); // 例: AAA.jpg
-                    $uniqueFileName = $timestamp . '_' . $originalName; // 例: 1674456789_AAA.jpg
+            
+                $images = $request->file('images'); // アップロードされたファイル
+                $imageNodeIds = $request->input('imageNodeIds'); // フロントエンドから送信されたファイル名
+
+                // dd($fileNames);
+                foreach ($images as $index => $image) {
+                    // $fileName = $fileNames[$index] ?? uniqid() . '.' . $image->getClientOriginalExtension();
+
+                    $fileName = $imageNodeIds[$index] . '.' . $image->getClientOriginalExtension();
+                    $path = $image->storeAs("user_{$user_id}/images", $fileName, 'public');
+                    $savedFiles[] = $path; // 保存したパスを格納
+
+
+                    // $originalName = $image->getClientOriginalName(); // 例: AAA.jpg
+                    // $uniqueFileName = $timestamp . '_' . $originalName; // 例: 1674456789_AAA.jpg
                     
-                    // ユーザーごとのディレクトリに保存
-                    $paths[] = $image->storeAs("user_{$user_id}/images", $uniqueFileName, 'public');
+                    // // ユーザーごとのディレクトリに保存
+                    // $paths[] = $image->storeAs("user_{$user_id}/images", $uniqueFileName, 'public');
                 }
             }
 
@@ -255,8 +260,6 @@ class OwnerContoller extends Controller
             ]);
 
             DB::commit();
-
-
 
 
             return to_route('flow.index', $id);

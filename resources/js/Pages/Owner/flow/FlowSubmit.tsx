@@ -39,6 +39,8 @@ const FlowSubmit = () => {
         formData.append("update_results", JSON.stringify(results));
         formData.append("update_edges", JSON.stringify(edges));
 
+        console.log(questions);
+
         // その他のフィールドをそのまま追加
         formData.append("first_question_id", firstNodeId.toString());
         formData.append("title", flowTitle);
@@ -47,10 +49,10 @@ const FlowSubmit = () => {
         formData.append("y", y.toString());
         formData.append("zoom", zoom.toString());
 
-        console.log(flowImages);
         // 画像ファイルを追加
-        flowImages.forEach(({ imageFile }, index) => {
-            formData.append(`images[${index}]`, imageFile); // 配列形式で送信
+        flowImages.forEach(({ nodeId, file }, index) => {
+            formData.append(`images[${index}]`, file);
+            formData.append(`imageNodeIds[${index}]`, nodeId);
         });
 
         router.post(`/flow/${flowId}`, formData, {

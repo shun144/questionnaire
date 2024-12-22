@@ -32,8 +32,9 @@ export const useOwnerStore = create<OwnerState>((set) => ({
 
     addImage: (by: FlowImage) =>
         set((state) => ({ flowImages: [...state.flowImages, by] })),
+
     delImage: (by: string) =>
         set((state) => ({
-            flowImages: state.flowImages.filter((x) => x.id !== by),
+            flowImages: state.flowImages.filter((x) => x.nodeId !== by),
         })),
 }));

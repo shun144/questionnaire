@@ -43,8 +43,8 @@ export interface SubmitError {
 }
 
 export interface FlowImage {
-    id: string;
-    imageFile: File;
+    nodeId: string;
+    file: File;
 }
 
 export type OwnerState = {

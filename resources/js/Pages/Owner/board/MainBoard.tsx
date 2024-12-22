@@ -19,7 +19,6 @@ const MainBoard = ({ initialFlows }: Props) => {
     const [isOpenCreateModal, setIsOpenCreateModal] = useState(false);
     const { props } = usePage();
     const owner = props.auth.user.english_name;
-    // const BASE_URL = useMemo(() => import.meta.env.VITE_BASE_URL, []);
 
     useEffect(() => {
         setFlows(initialFlows);

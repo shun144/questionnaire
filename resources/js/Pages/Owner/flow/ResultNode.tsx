@@ -14,24 +14,12 @@ const ResultNode = ({
 
     const handleUpdateResult = (evt: ChangeEvent<HTMLTextAreaElement>) => {
         updateNodeData(nodeId, {
-            ...nodeData,
             result: evt.currentTarget.value,
         });
     };
 
-    const handelUpdateImage = useCallback(
-        (val: string) => {
-            updateNodeData(nodeId, {
-                ...nodeData,
-                image: val,
-            });
-        },
-        [nodeData]
-    );
-
     const handleUpdateMessage = (evt: ChangeEvent<HTMLTextAreaElement>) => {
         updateNodeData(nodeId, {
-            ...nodeData,
             message: evt.currentTarget.value,
         });
     };
@@ -47,10 +35,7 @@ const ResultNode = ({
 
             {/* 画像アップロード */}
             <div className="flex flex-col justify-center items-center cursor-default pt-3 px-3">
-                <ImageUploader
-                    imgId={`img-${nodeId}`}
-                    onUpdateImage={handelUpdateImage}
-                />
+                <ImageUploader nodeId={nodeId} initImgUrl={nodeData.img} />
             </div>
 
             <div className="flex flex-col justify-center items-center cursor-default pt-3 px-3">
